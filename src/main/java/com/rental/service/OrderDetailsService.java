@@ -6,10 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.rental.service.dto.OrderDetailsDTO;
-
-/**
- * Service Interface for managing {@link com.swp391.domain.OrderDetails}.
- */
 public interface OrderDetailsService {
 
     OrderDetailsDTO save(OrderDetailsDTO orderDetailsDTO);

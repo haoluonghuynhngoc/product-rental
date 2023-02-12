@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,21 +24,14 @@ import com.rental.repository.CategoryRepository;
 import com.rental.service.CategoryService;
 import com.rental.service.dto.CategoryDTO;
 
-/**
- * REST controller for managing {@link com.swp391.domain.Category}.
- */
 @RestController
 @RequestMapping("/api")
 public class CategoryResource {
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    private final CategoryService categoryService;
-
-    private final CategoryRepository categoryRepository;
-
-    public CategoryResource(CategoryService categoryService, CategoryRepository categoryRepository) {
-        this.categoryService = categoryService;
-        this.categoryRepository = categoryRepository;
-    }
 
     @PostMapping("/categories")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
@@ -71,7 +65,7 @@ public class CategoryResource {
 
     }
 
-    @PatchMapping(value = "/categories/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/categories/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<CategoryDTO> partialUpdateCategory(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody CategoryDTO categoryDTO) {

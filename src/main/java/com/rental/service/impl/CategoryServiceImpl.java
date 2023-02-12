@@ -14,22 +14,16 @@ import com.rental.repository.CategoryRepository;
 import com.rental.service.CategoryService;
 import com.rental.service.dto.CategoryDTO;
 
-/**
- * Service Implementation for managing {@link Category}.
- */
+
 @Service
 @Transactional
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryRepository categoryRepository;
-
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-
-    }
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {

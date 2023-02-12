@@ -17,22 +17,17 @@ import com.rental.repository.BrandRepository;
 import com.rental.service.BrandService;
 import com.rental.service.dto.BrandDTO;
 
-/**
- * Service Implementation for managing {@link Brand}.
- */
 @Service
 @Transactional
 public class BrandServiceImpl implements BrandService {
 
-    private final BrandRepository brandRepository;
+
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private BrandRepository brandRepository;
 
-    public BrandServiceImpl(BrandRepository brandRepository) {
-        this.brandRepository = brandRepository;
-
-    }
 
     @Override
     public BrandDTO save(BrandDTO brandDTO) {

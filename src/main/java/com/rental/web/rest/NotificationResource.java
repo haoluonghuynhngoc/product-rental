@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,22 +24,14 @@ import com.rental.repository.NotificationRepository;
 import com.rental.service.NotificationService;
 import com.rental.service.dto.NotificationDTO;
 
-/**
- * REST controller for managing {@link com.swp391.domain.Notification}.
- */
 @RestController
 @RequestMapping("/api")
 public class NotificationResource {
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
-    private final NotificationService notificationService;
-
-    private final NotificationRepository notificationRepository;
-
-    public NotificationResource(NotificationService notificationService,
-            NotificationRepository notificationRepository) {
-        this.notificationService = notificationService;
-        this.notificationRepository = notificationRepository;
-    }
 
     @PostMapping("/notifications")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
@@ -73,7 +66,7 @@ public class NotificationResource {
                 .body(result);
     }
 
-    @PatchMapping(value = "/notifications/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/notifications/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<NotificationDTO> partialUpdateNotification(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody NotificationDTO notificationDTO) {

@@ -10,9 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import com.rental.domain.User;
 
-/**
- * Spring Data JPA repository for the {@link User} entity.
- */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 

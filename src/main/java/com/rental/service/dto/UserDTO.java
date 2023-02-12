@@ -1,10 +1,9 @@
 package com.rental.service.dto;
 
-import java.io.Serializable;
+import lombok.Data;
 
-/**
- * A DTO for the {@link com.Users.domain.ApplicationUser} entity.
- */
+import java.io.Serializable;
+@Data
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class UserDTO implements Serializable {
 

@@ -7,9 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.rental.service.dto.VoucherDTO;
 
-/**
- * Service Interface for managing {@link com.swp391.domain.Voucher}.
- */
 public interface VoucherService {
 
     VoucherDTO save(VoucherDTO voucherDTO);

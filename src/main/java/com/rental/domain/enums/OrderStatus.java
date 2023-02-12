@@ -1,8 +1,5 @@
-package com.rental.domain.enumeration;
+package com.rental.domain.enums;
 
-/**
- * The OrderStatus enumeration.
- */
 public enum OrderStatus {
     PENDING,
     DELIVERING,

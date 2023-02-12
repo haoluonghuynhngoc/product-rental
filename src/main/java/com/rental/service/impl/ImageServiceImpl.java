@@ -14,22 +14,15 @@ import com.rental.repository.ImageRepository;
 import com.rental.service.ImageService;
 import com.rental.service.dto.ImageDTO;
 
-/**
- * Service Implementation for managing {@link Image}.
- */
+
 @Service
 @Transactional
 public class ImageServiceImpl implements ImageService {
-
-    private final ImageRepository imageRepository;
-
+    @Autowired
+    private ImageRepository imageRepository;
     @Autowired
     private ModelMapper modelMapper;
 
-    public ImageServiceImpl(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-
-    }
 
     @Override
     public ImageDTO save(ImageDTO imageDTO) {

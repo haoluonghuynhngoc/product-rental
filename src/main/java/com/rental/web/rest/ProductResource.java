@@ -3,6 +3,7 @@ package com.rental.web.rest;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,23 +22,15 @@ import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
 import com.rental.service.dto.ProductDTO;
 
-/**
- * REST controller for managing {@link com.swp391.domain.Product}.
- */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api")
 public class ProductResource {
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
 
-    private final ProductService productService;
-
-    private final ProductRepository productRepository;
-
-    public ProductResource(ProductService productService, ProductRepository productRepository) {
-        this.productService = productService;
-        this.productRepository = productRepository;
-
-    }
 
     @PostMapping("/products")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
@@ -72,7 +65,7 @@ public class ProductResource {
                 .body(result);
     }
 
-    @PatchMapping(value = "/products/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/products/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<ProductDTO> partialUpdateProduct(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody ProductDTO productDTO) {

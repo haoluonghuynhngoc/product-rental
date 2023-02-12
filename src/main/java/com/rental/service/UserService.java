@@ -7,10 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.rental.service.dto.UserDTO;
 
-/**
- * Service class for managing users.
- */
-
 public interface UserService {
 
     UserDTO save(UserDTO applicationUserDTO);
