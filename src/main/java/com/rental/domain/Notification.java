@@ -63,7 +63,7 @@ public class Notification implements Serializable {
     @ManyToMany(mappedBy = "notifications")
     @JsonIgnoreProperties(value = { "role", "orders", "notifications" }, allowSetters = true)
     @ToString.Exclude
-    private Set<User> user = new HashSet<>();
+    private Set<Account> accounts = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

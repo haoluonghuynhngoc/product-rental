@@ -7,6 +7,7 @@ import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -63,24 +64,28 @@ public class Product implements Serializable {
     private String modifiedBy;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "product" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
     @ToString.Exclude
     private Set<Image> images = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
-    @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
     private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
     private Category category;
 
     @OneToMany(mappedBy = "product")
-    @JsonIgnoreProperties(value = { "order", "product" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
     @ToString.Exclude
     private Set<OrderDetails> orderDetails = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
+    private Account account;
 
     @Override
     public boolean equals(Object o) {

@@ -31,7 +31,6 @@ public class ProductResource {
     @Autowired
     private ProductRepository productRepository;
 
-
     @PostMapping("/products")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
 

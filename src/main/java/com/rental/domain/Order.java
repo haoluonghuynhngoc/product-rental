@@ -62,16 +62,16 @@ public class Order implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "voucher_id")
-    @JsonIgnoreProperties(value = { "orders" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"orders"}, allowSetters = true)
     private Voucher voucher;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties(value = { "orders", "notifications" }, allowSetters = true)
-    private User user;
+    @JoinColumn(name = "account_id")
+    @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
+    private Account account;
 
-    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
-    @JsonIgnoreProperties(value = { "order", "product" }, allowSetters = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
     @ToString.Exclude
     private Set<OrderDetails> orderDetails = new HashSet<>();
 

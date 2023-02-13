@@ -1,8 +1,9 @@
 package com.rental.web.rest;
 
+import com.rental.service.AccountService;
 import com.rental.service.dto.AccountCreateDTO;
-import com.rental.service.dto.AccountInfoDTO;
 import com.rental.service.dto.AccountDTO;
+import com.rental.service.dto.AccountInfoDTO;
 import com.rental.service.dto.AccountPasswordDTO;
 import com.rental.web.rest.restponse.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,19 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.rental.service.AccountService;
-
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserResource {
+@RequestMapping("/api/admin")
+public class AdminResource {
     @Autowired
     private AccountService accountService;
-
-    @PostMapping("/create") // có thời gian thì thêm check điều kiện  gmail và phone
+    @PostMapping("/create")
     public ResponseEntity<ResponseObject> createUser(@RequestBody AccountCreateDTO accountCreateDTO) {
-        AccountDTO checkUsers = accountService.createUser(accountCreateDTO);
+        AccountDTO checkUsers = accountService.createAdmin(accountCreateDTO);
         return checkUsers == null ? ResponseEntity.status(HttpStatus.CONFLICT).body(
                 new ResponseObject("FAIL", "Fail !!! Because the userName : " + accountCreateDTO.getUserName() + " in exit", "")
         ) : ResponseEntity.status(HttpStatus.OK).body(
@@ -33,12 +31,22 @@ public class UserResource {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseObject> loginUser(@RequestBody AccountCreateDTO accountCreateDTO) {
-        AccountDTO checkUser = accountService.loginUsers(accountCreateDTO);
-        return checkUser == null ? ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+    public ResponseEntity<ResponseObject> loginUser(@RequestBody AccountCreateDTO AccountCreateDTO) {
+        AccountDTO checkAccount = accountService.loginUsers(AccountCreateDTO);
+        return checkAccount == null ? ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
                 new ResponseObject("FAIL", "Fail !!! Because incorrect userName or password ", "")
         ) : ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("SUCCESS", "Login Successfully", checkUser)
+                new ResponseObject("SUCCESS", "Login Successfully", checkAccount)
+        );
+    }
+
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<ResponseObject> removeUser(@PathVariable(value = "id") Long id) {
+        boolean check = accountService.removeUser(id);
+        return check ? ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("SUCCESS", "Remove Users Successfully", "")
+        ) : ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ResponseObject("FAIL", "Fail !!! Because cant not found the user have id : " + id + " in the table ", "")
         );
     }
 
@@ -59,6 +67,13 @@ public class UserResource {
                 new ResponseObject("SUCCESS", "Change password have Users :" + changePassword.getUserName() + " Successfully", "")
         );
     }
-
-
+    @GetMapping("/getListUser")
+    public ResponseEntity<ResponseObject> getListUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        Page<AccountDTO> page = accountService.findAll(pageable);
+        return !page.isEmpty() ? ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("SUCCESS", "Update Users Successfully", page.getContent())
+        ) : ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ResponseObject("FAIL", "Fail !!! Because Size or Page element too large ", "")
+        );
+    }
 }
