@@ -70,7 +70,7 @@ public class Order implements Serializable {
     @JsonIgnoreProperties(value = { "orders", "notifications" }, allowSetters = true)
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = { "order", "product" }, allowSetters = true)
     @ToString.Exclude
     private Set<OrderDetails> orderDetails = new HashSet<>();

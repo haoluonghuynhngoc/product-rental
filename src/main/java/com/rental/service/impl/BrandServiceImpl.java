@@ -21,8 +21,6 @@ import com.rental.service.dto.BrandDTO;
 @Transactional
 public class BrandServiceImpl implements BrandService {
 
-
-
     @Autowired
     private ModelMapper modelMapper;
     @Autowired

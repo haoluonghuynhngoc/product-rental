@@ -2,7 +2,10 @@ package com.rental.service.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.rental.domain.OrderDetails;
 import com.rental.domain.enums.OrderStatus;
 import lombok.Data;
 
@@ -33,6 +36,7 @@ public class OrderDTO implements Serializable {
     private VoucherDTO voucher;
 
     private UserDTO appUser;
+
 
 
 }
