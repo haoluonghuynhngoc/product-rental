@@ -41,9 +41,7 @@ public class UserServiceImpl implements UserService {
         if (userEntity != null) {
             return null;
         } else {
-            //Role role = roleRepository.findByName(String.valueOf(RoleName.USERS));
             User user = modelMapper.map(userDto, User.class);
-           // user.getRole().add(role);
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             System.out.println(user.getPassword());
             return modelMapper.map(userRepository.save(user), UserDTO.class);
