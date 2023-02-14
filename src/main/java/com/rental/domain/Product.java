@@ -1,20 +1,29 @@
 package com.rental.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rental.domain.enumeration.ProductStatus;
+import com.rental.domain.enums.ProductStatus;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import javax.persistence.*;
 
-/**
- * A Product.
- */
+
 @Entity
 @Table(name = "product")
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
+@EntityListeners(AuditingEntityListener.class)
 public class Product implements Serializable {
 
     @Id
@@ -41,19 +50,22 @@ public class Product implements Serializable {
     private ProductStatus status;
 
     @Column(name = "created_date")
+    @CreatedDate
     private Instant createdDate;
 
     @Column(name = "created_by")
     private String createdBy;
 
     @Column(name = "modified_date")
+    @LastModifiedDate
     private Instant modifiedDate;
 
     @Column(name = "modified_by")
     private String modifiedBy;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "product" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
+    @ToString.Exclude
     private Set<Image> images = new HashSet<>();
 
     @ManyToOne
@@ -67,12 +79,14 @@ public class Product implements Serializable {
     private Category category;
 
     @OneToMany(mappedBy = "product")
-    @JsonIgnoreProperties(value = { "order", "product" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
+    @ToString.Exclude
     private Set<OrderDetails> orderDetails = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
     private Account account;
+<<<<<<< HEAD
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -309,40 +323,19 @@ public class Product implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
     // setters here
+=======
+>>>>>>> d366af6133a04a2e3466686493bfced099525e4c
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Product)) {
-            return false;
-        }
-        return id != null && id.equals(((Product) o).id);
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Product product = (Product) o;
+        return id != null && Objects.equals(id, product.id);
     }
 
     @Override
     public int hashCode() {
-        // see
-        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + getId() +
-                ", name='" + getName() + "'" +
-                ", price=" + getPrice() +
-                ", description='" + getDescription() + "'" +
-                ", sortDescription='" + getSortDescription() + "'" +
-                ", quantity=" + getQuantity() +
-                ", status='" + getStatus() + "'" +
-                ", createdDate='" + getCreatedDate() + "'" +
-                ", createdBy='" + getCreatedBy() + "'" +
-                ", modifiedDate='" + getModifiedDate() + "'" +
-                ", modifiedBy='" + getModifiedBy() + "'" +
-                "}";
     }
 }

@@ -5,9 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.rental.domain.Notification;
 
-/**
- * Spring Data JPA repository for the Notification entity.
- */
 @SuppressWarnings("unused")
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {

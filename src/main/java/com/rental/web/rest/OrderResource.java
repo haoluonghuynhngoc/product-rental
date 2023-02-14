@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,15 +27,11 @@ import com.rental.service.dto.OrderDTO;
 @RestController
 @RequestMapping("/api")
 public class OrderResource {
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    private final OrderService orderService;
-
-    private final OrderRepository orderRepository;
-
-    public OrderResource(OrderService orderService, OrderRepository orderRepository) {
-        this.orderService = orderService;
-        this.orderRepository = orderRepository;
-    }
 
     @PostMapping("/orders")
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
@@ -69,7 +66,7 @@ public class OrderResource {
                 .body(result);
     }
 
-    @PatchMapping(value = "/orders/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/orders/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<OrderDTO> partialUpdateOrder(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody OrderDTO orderDTO) {

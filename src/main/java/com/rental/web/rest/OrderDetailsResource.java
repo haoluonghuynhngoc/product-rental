@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,22 +24,14 @@ import com.rental.repository.OrderDetailsRepository;
 import com.rental.service.OrderDetailsService;
 import com.rental.service.dto.OrderDetailsDTO;
 
-/**
- * REST controller for managing {@link com.swp391.domain.OrderDetails}.
- */
 @RestController
 @RequestMapping("/api")
 public class OrderDetailsResource {
+    @Autowired
+    private OrderDetailsService orderDetailsService;
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
 
-    private final OrderDetailsService orderDetailsService;
-
-    private final OrderDetailsRepository orderDetailsRepository;
-
-    public OrderDetailsResource(OrderDetailsService orderDetailsService,
-            OrderDetailsRepository orderDetailsRepository) {
-        this.orderDetailsService = orderDetailsService;
-        this.orderDetailsRepository = orderDetailsRepository;
-    }
 
     @PostMapping("/order-details")
     public ResponseEntity<OrderDetailsDTO> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
@@ -73,7 +66,7 @@ public class OrderDetailsResource {
                 .body(result);
     }
 
-    @PatchMapping(value = "/order-details/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/order-details/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<OrderDetailsDTO> partialUpdateOrderDetails(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody OrderDetailsDTO orderDetailsDTO) {

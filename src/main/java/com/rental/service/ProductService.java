@@ -6,10 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.rental.service.dto.ProductDTO;
-
-/**
- * Service Interface for managing {@link com.swp391.domain.Product}.
- */
 public interface ProductService {
 
     ProductDTO save(ProductDTO productDTO);

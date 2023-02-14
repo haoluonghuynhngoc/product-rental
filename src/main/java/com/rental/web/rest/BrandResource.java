@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,21 +24,14 @@ import com.rental.repository.BrandRepository;
 import com.rental.service.BrandService;
 import com.rental.service.dto.BrandDTO;
 
-/**
- * REST controller for managing {@link com.swp391.domain.Brand}.
- */
 @RestController
 @RequestMapping("/api")
 public class BrandResource {
 
-    private final BrandService brandService;
-
-    private final BrandRepository brandRepository;
-
-    public BrandResource(BrandService brandService, BrandRepository brandRepository) {
-        this.brandService = brandService;
-        this.brandRepository = brandRepository;
-    }
+    @Autowired
+    private BrandService brandService;
+    @Autowired
+    private BrandRepository brandRepository;
 
     @PostMapping("/brands")
     public ResponseEntity<BrandDTO> createBrand(@RequestBody BrandDTO brandDTO) {
@@ -65,7 +59,7 @@ public class BrandResource {
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping(value = "/brands/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/brands/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<BrandDTO> partialUpdateBrand(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody BrandDTO brandDTO) {

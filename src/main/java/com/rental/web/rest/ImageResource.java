@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,21 +24,14 @@ import com.rental.repository.ImageRepository;
 import com.rental.service.ImageService;
 import com.rental.service.dto.ImageDTO;
 
-/**
- * REST controller for managing {@link com.swp391.domain.Image}.
- */
 @RestController
 @RequestMapping("/api")
 public class ImageResource {
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private ImageRepository imageRepository;
 
-    private final ImageService imageService;
-
-    private final ImageRepository imageRepository;
-
-    public ImageResource(ImageService imageService, ImageRepository imageRepository) {
-        this.imageService = imageService;
-        this.imageRepository = imageRepository;
-    }
 
     @PostMapping("/images")
     public ResponseEntity<ImageDTO> createImage(@RequestBody ImageDTO imageDTO) {
@@ -72,7 +66,7 @@ public class ImageResource {
 
     }
 
-    @PatchMapping(value = "/images/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/images/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<ImageDTO> partialUpdateImage(
             @PathVariable(value = "id", required = false) final Long id,
             @RequestBody ImageDTO imageDTO) {
