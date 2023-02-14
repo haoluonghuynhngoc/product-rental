@@ -34,7 +34,8 @@ public class OrderDTO implements Serializable {
 
     private VoucherDTO voucher;
 
-    private UserDTO appUser;
+    private AccountDTO appUser;
+
 
     public Long getId() {
         return id;

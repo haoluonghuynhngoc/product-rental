@@ -14,9 +14,7 @@ import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
 import com.rental.service.dto.ProductDTO;
 
-/**
- * Service Implementation for managing {@link Product}.
- */
+
 @Service
 // @Transactional
 public class ProductServiceImpl implements ProductService {
@@ -41,7 +39,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO update(ProductDTO productDTO) {
-
         Product product = modelMapper.map(productDTO, Product.class);
         product = productRepository.save(product);
         return modelMapper.map(product, ProductDTO.class);
@@ -65,7 +62,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable) {
-
         return productRepository.findAll(pageable).map(p -> {
             return modelMapper.map(p, ProductDTO.class);
         });

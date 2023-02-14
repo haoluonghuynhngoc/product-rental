@@ -49,7 +49,7 @@ public class Voucher implements Serializable {
     @Column(name = "modified_by")
     private String modifiedBy;
 
-    @OneToMany(mappedBy = "voucher")
+    @OneToMany(mappedBy = "voucher",cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
     private Set<Order> orders = new HashSet<>();
 

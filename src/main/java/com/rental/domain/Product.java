@@ -58,17 +58,21 @@ public class Product implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
-    @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
     private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
     private Category category;
 
     @OneToMany(mappedBy = "product")
     @JsonIgnoreProperties(value = { "order", "product" }, allowSetters = true)
     private Set<OrderDetails> orderDetails = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
+    private Account account;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
