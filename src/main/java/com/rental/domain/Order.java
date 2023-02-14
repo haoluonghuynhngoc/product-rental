@@ -25,56 +25,42 @@ import java.util.Set;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 @EntityListeners(AuditingEntityListener.class)
 public class Order implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "total_quantity")
     private Integer totalQuantity;
-
     @Column(name = "total_price")
     private Double totalPrice;
-
-    @Column(name = "order_brorrow_date")
-    private Instant orderBrorrowDate;
-
+    @Column(name = "order_borrow_date")
+    private Instant orderBorrowDate;
     @Column(name = "order_return_date")
     private Instant orderReturnDate;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus status;
-
     @Column(name = "created_date")
     @CreatedDate
     private Instant createdDate;
-
     @Column(name = "created_by")
     private String createdBy;
-
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-
     @Column(name = "modified_by")
     private String modifiedBy;
-
     @ManyToOne
     @JoinColumn(name = "voucher_id")
     @JsonIgnoreProperties(value = {"orders"}, allowSetters = true)
     private Voucher voucher;
-
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "user_id")
     @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
-    private Account account;
-
+    private User user;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
     @ToString.Exclude
     private Set<OrderDetails> orderDetails = new HashSet<>();
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

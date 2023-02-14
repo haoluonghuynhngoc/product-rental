@@ -1,19 +1,34 @@
 package com.rental.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rental.domain.enums.NotificationStatus;
-import lombok.*;
-import org.hibernate.Hibernate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rental.domain.enums.NotificationStatus;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 
 @Entity
@@ -33,8 +48,8 @@ public class Notification implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "sort_descripsion")
-    private String sortDescripsion;
+    @Column(name = "sort_description")
+    private String sortDescription;
 
     @Column(name = "description")
     private String description;
@@ -51,6 +66,7 @@ public class Notification implements Serializable {
     private Instant createdDate;
 
     @Column(name = "created_by")
+    @CreatedDate
     private String createdBy;
 
     @Column(name = "modified_date")
@@ -63,7 +79,7 @@ public class Notification implements Serializable {
     @ManyToMany(mappedBy = "notifications")
     @JsonIgnoreProperties(value = { "role", "orders", "notifications" }, allowSetters = true)
     @ToString.Exclude
-    private Set<Account> accounts = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -1,7 +1,7 @@
 package com.rental.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rental.domain.enums.VoucherStatus;
+import com.rental.domain.enums.VorcherStatus;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
@@ -43,7 +43,7 @@ public class Voucher implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private VoucherStatus status;
+    private VorcherStatus status;
 
     @Column(name = "created_date")
     @CreatedDate

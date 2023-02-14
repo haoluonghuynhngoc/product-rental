@@ -18,7 +18,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Brand implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

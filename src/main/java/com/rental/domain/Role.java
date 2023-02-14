@@ -1,5 +1,7 @@
 package com.rental.domain;
 
+import com.rental.domain.enums.ProductStatus;
+import com.rental.domain.enums.RoleName;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -21,11 +23,11 @@ public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Size(max = 50)
     @Column(length = 50)
-    private String name;
+    private RoleName name;
 
     @Override
     public boolean equals(Object o) {

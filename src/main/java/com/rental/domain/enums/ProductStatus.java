@@ -1,4 +1,4 @@
-package com.rental.domain.enumeration;
+package com.rental.domain.enums;
 
 /**
  * The ProductStatus enumeration.

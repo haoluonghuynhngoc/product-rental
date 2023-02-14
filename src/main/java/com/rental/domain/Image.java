@@ -21,18 +21,14 @@ public class Image implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "name")
     private String name;
-
     @Column(name = "url")
     private String url;
-
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonIgnoreProperties(value = { "images", "brand", "category", "orderDetails" }, allowSetters = true)
     private Product product;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,7 +36,6 @@ public class Image implements Serializable {
         Image image = (Image) o;
         return id != null && Objects.equals(id, image.id);
     }
-
     @Override
     public int hashCode() {
         return getClass().hashCode();

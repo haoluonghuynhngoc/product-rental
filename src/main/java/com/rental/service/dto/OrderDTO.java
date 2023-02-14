@@ -16,7 +16,7 @@ public class OrderDTO implements Serializable {
 
     private Double totalPrice;
 
-    private Instant orderBrorrowDate;
+    private Instant orderBorrowDate; //sua ow day
 
     private Instant orderReturnDate;
 
@@ -33,17 +33,5 @@ public class OrderDTO implements Serializable {
     private VoucherDTO voucher;
 
     private AccountDTO appUser;
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> d366af6133a04a2e3466686493bfced099525e4c
-
-
-
-=======
-
-
-
->>>>>>> d366af6133a04a2e3466686493bfced099525e4c
 }

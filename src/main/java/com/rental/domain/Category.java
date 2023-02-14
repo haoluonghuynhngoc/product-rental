@@ -12,25 +12,22 @@ import java.util.Set;
 
 @Entity
 @Table(name = "category")
-@SuppressWarnings("common-java:DuplicatedBlocks")
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Category implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "name")
     private String name;
-
     @OneToMany(mappedBy = "category")
     @JsonIgnoreProperties(value = { "images", "brand", "category", "orderDetails" }, allowSetters = true)
     @ToString.Exclude
     private Set<Product> products = new HashSet<>();
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -38,7 +35,6 @@ public class Category implements Serializable {
         Category category = (Category) o;
         return id != null && Objects.equals(id, category.id);
     }
-
     @Override
     public int hashCode() {
         return getClass().hashCode();
