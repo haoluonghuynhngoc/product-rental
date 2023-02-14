@@ -87,6 +87,7 @@ public class Product implements Serializable {
     @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
     private Account account;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -323,6 +324,8 @@ public class Product implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
     // setters here
+=======
+>>>>>>> d366af6133a04a2e3466686493bfced099525e4c
 =======
 >>>>>>> d366af6133a04a2e3466686493bfced099525e4c
 
