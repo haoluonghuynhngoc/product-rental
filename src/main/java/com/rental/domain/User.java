@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,7 +37,6 @@ public class User implements Serializable {
     private String username;
 
     @JsonIgnore
-    @NotNull
     @Column(name = "password",nullable = false)
     private String password;
 
@@ -51,7 +51,7 @@ public class User implements Serializable {
     private String avatar;
 
     @Column(name = "birthday")
-    private Instant birthday;
+    private Date birthday;
 
     @Column(name = "phone")
     private String phone;
@@ -60,45 +60,44 @@ public class User implements Serializable {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Email
+
     @Column(length = 254)
     private String email;
 
-    @Size(max = 256)
     @Column(name = "image_url")
     private String imageUrl;
 
     @Column(name = "created_date")
     @CreatedDate
-    private Instant createdDate;
+    private Instant createdDate;//neu sai thi doi thanh date
 
     @Column(name = "created_by")
     private String createdBy;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private Instant modifiedDate;
+    private Instant modifiedDate;//neu sai thi doi thanh date
 
     @Column(name = "modified_by")
     private String modifiedBy;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
-    @ToString.Exclude
     private Set<Order> orders = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(name = "user_notification", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "notification_id"))
+    @JoinTable(name = "user_notification",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "notification_id"))
     @JsonIgnoreProperties(value = { "user" }, allowSetters = true)
     @ToString.Exclude
     private Set<Notification> notifications = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "user_role", joinColumns = {
-            @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "role_id", referencedColumnName = "id") })
-    @BatchSize(size = 20)
+    @JoinTable(name = "user_role",
+            joinColumns =  @JoinColumn(name = "user_id"),
+           inverseJoinColumns =@JoinColumn(name = "role_id"))
     @ToString.Exclude
     private Set<Role> role = new HashSet<>();
 

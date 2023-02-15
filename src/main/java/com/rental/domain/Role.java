@@ -23,10 +23,9 @@ public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+
     @Enumerated(EnumType.STRING)
-    @Size(max = 50)
-    @Column(length = 50)
+    @Column(length = 50,nullable = false)
     private RoleName name;
 
     @Override

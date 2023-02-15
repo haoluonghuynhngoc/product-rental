@@ -32,6 +32,6 @@ public class OrderDTO implements Serializable {
 
     private VoucherDTO voucher;
 
-    private AccountDTO appUser;
+    private UserDTO appUser;
 
 }
