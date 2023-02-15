@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.rental.domain.Order;
 import com.rental.domain.Role;
 import com.rental.domain.User;
 import com.rental.domain.enums.RoleName;
@@ -54,6 +55,9 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDTO> updateUser(UserDTO applicationUserDTO) {
         return userRepository.findById(applicationUserDTO.getId()).map(
                 userEntity -> {
+                    applicationUserDTO.setUsername(userEntity.getUsername());
+                    applicationUserDTO.setPassword(userEntity.getPassword());
+                    applicationUserDTO.setRole(userEntity.getRole());
                     modelMapper.map(applicationUserDTO, userEntity);
                     return userEntity;
                 }

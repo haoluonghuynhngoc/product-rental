@@ -28,7 +28,7 @@ public class UserResource {
     @PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO users) {
         if (userRepository.findByUsername(users.getUsername())!=null)
-            throw new IllegalArgumentException("UserId vace in data  ");
+            throw new IllegalArgumentException("UserId invalid ");
         if (users.getId() != 0)
             throw new IllegalArgumentException("Id must be 0 ");
         if (users.getUsername().isEmpty())
@@ -52,7 +52,7 @@ public class UserResource {
 
     @PutMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
-        if (userRepository.findById(userDTO.getId()).isPresent())
+        if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Cant not find the User");
         return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
@@ -90,7 +90,7 @@ public class UserResource {
         if (!userRepository.findById(id).isPresent())
             throw new IllegalArgumentException("Cant not find the user have Id :" + id);
         userService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
 

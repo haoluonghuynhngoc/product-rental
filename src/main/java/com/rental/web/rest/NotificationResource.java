@@ -36,8 +36,8 @@ public class NotificationResource {
     @PostMapping("/notifications")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
 
-        if (notificationDTO.getId() != null) {
-            throw new IllegalArgumentException("A new notification cannot already have an ID : idexists");
+        if (notificationDTO.getId() != 0) {
+            throw new IllegalArgumentException("A new notification cannot already have an ID ");
         }
         NotificationDTO result = notificationService.save(notificationDTO);
         return ResponseEntity.ok().body(result);

@@ -2,6 +2,7 @@ package com.rental.service;
 
 import java.util.Optional;
 
+import com.rental.domain.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

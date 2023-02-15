@@ -1,7 +1,11 @@
 package com.rental.service.impl;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
+import com.rental.domain.User;
+import com.rental.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,29 +24,26 @@ import com.rental.service.dto.NotificationDTO;
 @Service
 @Transactional
 public class NotificationServiceImpl implements NotificationService {
-
-    private final NotificationRepository notificationRepository;
-
+    @Autowired
+    private NotificationRepository notificationRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
-
-    public NotificationServiceImpl(NotificationRepository notificationRepository) {
-        this.notificationRepository = notificationRepository;
-
-    }
-
     @Override
     public NotificationDTO save(NotificationDTO notificationDTO) {
-
         Notification notification = modelMapper.map(notificationDTO, Notification.class);
         notification = notificationRepository.save(notification);
+        System.out.println(notification);
         return modelMapper.map(notification, NotificationDTO.class);
     }
 
     @Override
     public NotificationDTO update(NotificationDTO notificationDTO) {
-
         Notification notification = modelMapper.map(notificationDTO, Notification.class);
+//        for (User cast : userRepository.findAll()) {
+//            notification.getUsers().add(cast);
+//        }
         notification = notificationRepository.save(notification);
         return modelMapper.map(notification, NotificationDTO.class);
     }

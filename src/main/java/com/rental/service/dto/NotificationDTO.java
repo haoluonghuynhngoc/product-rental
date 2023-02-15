@@ -14,20 +14,15 @@ public class NotificationDTO implements Serializable {
 
     private String title;
 
-    private String sortDescription; //sua ow day
+    private String sortDescription;
 
     private String description;
 
     private Boolean isRead;
 
     private NotificationStatus status;
-
-    private Instant createdDate;
-
     private String createdBy;
-
-    private Instant modifiedDate;
-
     private String modifiedBy;
+
 
 }
