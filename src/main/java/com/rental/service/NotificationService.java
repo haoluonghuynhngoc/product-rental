@@ -10,7 +10,7 @@ import com.rental.service.dto.NotificationDTO;
 
 public interface NotificationService {
 
-    NotificationDTO save(NotificationDTO notificationDTO);
+    NotificationDTO createNotification(NotificationDTO notificationDTO);
 
     NotificationDTO update(NotificationDTO notificationDTO);
 

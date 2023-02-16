@@ -2,7 +2,10 @@ package com.rental.service.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.rental.domain.User;
 import com.rental.domain.enums.NotificationStatus;
 import lombok.Data;
 
@@ -23,6 +26,6 @@ public class NotificationDTO implements Serializable {
     private NotificationStatus status;
     private String createdBy;
     private String modifiedBy;
-
+  //  private Set<User> users = new HashSet<>();
 
 }

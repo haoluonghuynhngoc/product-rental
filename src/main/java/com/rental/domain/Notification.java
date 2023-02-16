@@ -6,16 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
@@ -77,7 +68,7 @@ public class Notification implements Serializable {
     private String modifiedBy;
 
     @ManyToMany(mappedBy = "notifications")
-    @JsonIgnoreProperties(value = { "role", "orders", "notifications" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "role", "orders", "notifications", "product" }, allowSetters = true)
     @ToString.Exclude
     private Set<User> users = new HashSet<>();
 

@@ -22,7 +22,7 @@ public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "nvarchar(200)")
     private String name;
     @OneToMany(mappedBy = "category")
     @JsonIgnoreProperties(value = { "images", "brand", "category", "orderDetails" }, allowSetters = true)

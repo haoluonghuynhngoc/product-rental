@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -32,14 +33,14 @@ public class Voucher implements Serializable {
     @Column(name = "discount")
     private Double discount;
 
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "nvarchar(200)")
     private String name;
 
     @Column(name = "start_date")
-    private Instant startDate;
+    private Date startDate;
 
     @Column(name = "end_date")
-    private Instant endDate;
+    private Date endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

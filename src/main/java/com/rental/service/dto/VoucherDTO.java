@@ -2,6 +2,7 @@ package com.rental.service.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 import com.rental.domain.enums.VorcherStatus;
@@ -12,23 +13,12 @@ import lombok.Data;
 public class VoucherDTO implements Serializable {
 
     private Long id;
-
     private Double discount;
-
     private String name;
-
-    private Instant startDate;
-
-    private Instant endDate;
-
+    private Date startDate;
+    private Date endDate;
     private VorcherStatus status;
-
-    private Instant createdDate;
-
     private String createdBy;
-
-    private Instant modifiedDate;
-
     private String modifiedBy;
 
 

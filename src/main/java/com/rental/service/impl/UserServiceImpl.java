@@ -8,6 +8,7 @@ import com.rental.domain.Order;
 import com.rental.domain.Role;
 import com.rental.domain.User;
 import com.rental.domain.enums.RoleName;
+import com.rental.domain.enums.UserStatus;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.RoleRepository;
 import com.rental.repository.UserRepository;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> role = new HashSet<>();
         role.add(roleRepository.findByName(RoleName.USERS));
         applicationUserDTO.setRole(role);
-        //
+        applicationUserDTO.setStatus(UserStatus.UNLOCKED);
         applicationUserDTO.setPassword(bCryptPasswordEncoder.encode(applicationUserDTO.getPassword()));
         return modelMapper.map(userRepository.save(modelMapper.map(applicationUserDTO, User.class)), UserDTO.class);
     }

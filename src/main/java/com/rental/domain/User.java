@@ -2,6 +2,7 @@ package com.rental.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rental.domain.enums.UserStatus;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.BatchSize;
@@ -73,6 +74,9 @@ public class User implements Serializable {
 
     @Column(name = "created_by")
     private String createdBy;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private UserStatus status;
 
     @Column(name = "modified_date")
     @LastModifiedDate
@@ -89,7 +93,7 @@ public class User implements Serializable {
     @JoinTable(name = "user_notification",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "notification_id"))
-    @JsonIgnoreProperties(value = { "user" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "user","products" }, allowSetters = true)
     @ToString.Exclude
     private Set<Notification> notifications = new HashSet<>();
 

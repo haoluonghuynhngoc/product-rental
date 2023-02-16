@@ -39,7 +39,7 @@ public class NotificationResource {
         if (notificationDTO.getId() != 0) {
             throw new IllegalArgumentException("A new notification cannot already have an ID ");
         }
-        NotificationDTO result = notificationService.save(notificationDTO);
+        NotificationDTO result = notificationService.createNotification(notificationDTO);
         return ResponseEntity.ok().body(result);
 
     }

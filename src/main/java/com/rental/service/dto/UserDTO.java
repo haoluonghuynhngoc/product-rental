@@ -4,6 +4,7 @@ import com.rental.domain.Notification;
 import com.rental.domain.Order;
 import com.rental.domain.Product;
 import com.rental.domain.Role;
+import com.rental.domain.enums.UserStatus;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class UserDTO implements Serializable {
     private String avatar;
     private Date birthday;
     private String phone;
+    private UserStatus status;
     private String lastName;
     private String email;
     private String imageUrl;

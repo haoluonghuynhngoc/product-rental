@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.rental.domain.Role;
 import com.rental.domain.User;
 import com.rental.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -30,11 +31,14 @@ public class NotificationServiceImpl implements NotificationService {
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
+
     @Override
-    public NotificationDTO save(NotificationDTO notificationDTO) {
+    public NotificationDTO createNotification(NotificationDTO notificationDTO) {
+//        Set<User> users = new HashSet<>();
+//        users.addAll(userRepository.findAll());
+//        notificationDTO.setUsers(users);
         Notification notification = modelMapper.map(notificationDTO, Notification.class);
         notification = notificationRepository.save(notification);
-        System.out.println(notification);
         return modelMapper.map(notification, NotificationDTO.class);
     }
 
@@ -43,6 +47,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = modelMapper.map(notificationDTO, Notification.class);
 //        for (User cast : userRepository.findAll()) {
 //            notification.getUsers().add(cast);
+//           userRepository.findBy(cast)
 //        }
         notification = notificationRepository.save(notification);
         return modelMapper.map(notification, NotificationDTO.class);

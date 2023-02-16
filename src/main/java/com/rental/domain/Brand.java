@@ -22,7 +22,7 @@ public class Brand implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "nvarchar(200)")
     private String name;
 
     @OneToMany(mappedBy = "brand")
