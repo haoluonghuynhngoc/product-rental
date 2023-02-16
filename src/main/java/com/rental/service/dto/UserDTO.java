@@ -29,6 +29,7 @@ public class UserDTO implements Serializable {
     private String createdBy;
     private String modifiedBy;
     private Set<Role> role = new HashSet<>();
+    // nên khai báo là DTO
 //  private Set<Order> orders = new HashSet<>();
 //    private Set<Notification> notifications = new HashSet<>();
 //    private Set<Product> products = new HashSet<>();

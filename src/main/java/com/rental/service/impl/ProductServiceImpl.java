@@ -44,11 +44,17 @@ public class ProductServiceImpl implements ProductService {
         return modelMapper.map(product, ProductDTO.class);
     }
 
+    // update chua xong
     @Override
     public Optional<ProductDTO> update(ProductDTO productDTO) {
         return productRepository
                 .findById(productDTO.getId())
                 .map(existingProduct -> {
+                    existingProduct.setCategory(categoryRepository.findById(productDTO.getCategory().getId()).orElseThrow(null));
+                    existingProduct.setBrand(brandRepository.findById(productDTO.getBrand().getId()).orElseThrow(null));
+//                    for (Image imageClient: existingProduct.getImages()  ) {
+//                        imageClient.setProduct(existingProduct);
+//                    }
                     modelMapper.map(productDTO, existingProduct);
                     return existingProduct;
                 })
