@@ -7,4 +7,5 @@ import com.rental.domain.Brand;
 @SuppressWarnings("unused")
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Long> {
+    Brand findByName(String name);
 }

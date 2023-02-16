@@ -10,9 +10,7 @@ public interface ProductService {
 
     ProductDTO save(ProductDTO productDTO);
 
-    ProductDTO update(ProductDTO productDTO);
-
-    Optional<ProductDTO> partialUpdate(ProductDTO productDTO);
+   Optional<ProductDTO> update(ProductDTO productDTO);
 
     Page<ProductDTO> findAll(Pageable pageable);
 

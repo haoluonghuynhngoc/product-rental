@@ -8,4 +8,5 @@ import com.rental.domain.Category;
 @SuppressWarnings("unused")
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+    Category findByName(String name);
 }

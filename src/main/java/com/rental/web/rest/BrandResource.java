@@ -25,7 +25,7 @@ import com.rental.service.BrandService;
 import com.rental.service.dto.BrandDTO;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/brands")
 public class BrandResource {
 
     @Autowired
@@ -33,76 +33,48 @@ public class BrandResource {
     @Autowired
     private BrandRepository brandRepository;
 
-    @PostMapping("/brands")
+    @PostMapping("/create")
     public ResponseEntity<BrandDTO> createBrand(@RequestBody BrandDTO brandDTO) {
-        if (brandDTO.getId() != null) {
-            throw new IllegalArgumentException("A   : idexists");
-        }
-        BrandDTO result = brandService.save(brandDTO);
-        return ResponseEntity.ok(result);
+        if (brandDTO.getId() != null)
+            throw new IllegalArgumentException("A new brand cannot already have an ID  : exists the id ");
+        if (brandRepository.findByName(brandDTO.getName()) != null)
+            throw new IllegalArgumentException("Exist name brand ");
+        return ResponseEntity.status(HttpStatus.OK).body(brandService.save(brandDTO));
     }
-
-    @PutMapping("/brands/{id}")
-    public ResponseEntity<BrandDTO> updateBrand(
-            @PathVariable(value = "id", required = false) final Long id,
-            @RequestBody BrandDTO brandDTO) {
-        if (brandDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id : idnull");
+    @PutMapping("/update/{id}")
+    public ResponseEntity<BrandDTO> updateBrand(@RequestBody BrandDTO brandDTO) {
+        if (brandDTO.getId() == null)
+            throw new IllegalArgumentException("The Id brand is null");
+        if (!brandRepository.existsById(brandDTO.getId())) {
+            throw new IllegalArgumentException("Can not find the brand have Id : " + brandDTO.getId());
         }
-        if (!Objects.equals(id, brandDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID : idinvalid");
-        }
-        if (!brandRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found : idnotfound");
-        }
-        BrandDTO result = brandService.update(brandDTO);
-        return ResponseEntity.ok(result);
+        return brandService.update(brandDTO).map(
+                brandData -> ResponseEntity.status(HttpStatus.OK).body(brandData)).orElseThrow(
+                () -> new IllegalArgumentException("Cant not update Brand")
+        );
     }
-
-    @PatchMapping(value = "/brands/{id}", consumes = {"application/json", "application/merge-patch+json"})
-    public ResponseEntity<BrandDTO> partialUpdateBrand(
-            @PathVariable(value = "id", required = false) final Long id,
-            @RequestBody BrandDTO brandDTO) {
-
-        if (brandDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id " + "idnull");
-        }
-        if (!Objects.equals(id, brandDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID : idinvalid");
-        }
-
-        if (!brandRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found : idnotfound");
-        }
-
-        Optional<BrandDTO> result = brandService.partialUpdate(brandDTO);
-
-        return result.map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("/brands")
+    @GetMapping("/getAll")
     public ResponseEntity<List<BrandDTO>> getAllBrands(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-
         Page<BrandDTO> page = brandService.findAll(pageable);
-
-        return ResponseEntity.ok(page.getContent());
+        if (page.isEmpty())
+            throw new IllegalArgumentException("Cant not find any category in the data");
+        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
 
-    @GetMapping("/brands/{id}")
+    @GetMapping("/getOne/{id}")
     public ResponseEntity<BrandDTO> getBrand(@PathVariable Long id) {
-
-        Optional<BrandDTO> brandDTO = brandService.findOne(id);
-
-        return brandDTO.map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        if (!brandRepository.existsById(id))
+            throw new IllegalArgumentException("Cant not find the Id : "+ id +" in the data");
+        return brandService.findOne(id).map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
+                .orElseThrow(() -> new IllegalArgumentException("Cant not get brand "));
     }
 
-    @DeleteMapping("/brands/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBrand(@PathVariable Long id) {
+        if (!brandRepository.existsById(id))
+            throw new IllegalArgumentException("Can not find the brand have Id : " + id + " In the data ");
         brandService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

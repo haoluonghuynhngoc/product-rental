@@ -51,7 +51,9 @@ public class Product implements Serializable {
     private Instant modifiedDate;
     @Column(name = "modified_by")
     private String modifiedBy;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+
+
+    @OneToMany( mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
     @ToString.Exclude
     private Set<Image> images = new HashSet<>();

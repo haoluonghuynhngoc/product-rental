@@ -2,6 +2,7 @@ package com.rental.web.rest;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +36,11 @@ public class CategoryResource {
         if (categoryDTO.getId() != null) {
             throw new IllegalArgumentException("A new category cannot already have an ID  : exists the id ");
         }
-        CategoryDTO result = categoryService.save(categoryDTO);
-        return ResponseEntity.ok(result);
+        if (categoryRepository.findByName(categoryDTO.getName()) != null) {
+            throw new IllegalArgumentException("A name category is exist");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.save(categoryDTO));
+
 
     }
 
@@ -48,14 +52,15 @@ public class CategoryResource {
             throw new IllegalArgumentException("Invalid id : id null");
         }
         if (!categoryRepository.existsById(categoryDTO.getId())) {
-            throw new IllegalArgumentException("Can not find the id : "+ categoryDTO.getId() +" in the date ");
+            throw new IllegalArgumentException("Can not find the id : " + categoryDTO.getId() + " in the date ");
         }
         return categoryService.updateCategory(categoryDTO).map(
-                categoryDate -> ResponseEntity.status(HttpStatus.OK).body(categoryDate)).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                categoryData -> ResponseEntity.status(HttpStatus.OK).body(categoryData)).orElseThrow(
+                () -> new IllegalArgumentException("Cant not update Category ")
         );
 
     }
+
     @GetMapping("/getAll")
     public ResponseEntity<List<CategoryDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
@@ -67,8 +72,8 @@ public class CategoryResource {
 
     @GetMapping("/getOne/{id}")
     public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long id) {
-        Optional<CategoryDTO> categoryDTO = categoryService.findOne(id);
-        return categoryDTO.map(response -> ResponseEntity.ok().body(response))
+      //  Optional<CategoryDTO> categoryDTO = categoryService.findOne(id);
+        return categoryService.findOne(id).map(response -> ResponseEntity.ok().body(response))
                 .orElseThrow(() -> new IllegalArgumentException("Can not find the user have Id : " + id + " In the data "));
     }
 

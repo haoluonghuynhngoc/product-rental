@@ -7,9 +7,7 @@ import java.util.Objects;
 
 @Data
 public class BrandDTO implements Serializable {
-
     private Long id;
-
     private String name;
 
 }
