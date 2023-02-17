@@ -70,11 +70,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO loginUser(UserDTO applicationUserDTO) {
         User userEntity = userRepository.findByUsername(applicationUserDTO.getUsername());
-        if (userEntity == null)
-            throw new IllegalArgumentException("User name is invalid");
-        if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
-            throw new IllegalArgumentException("Password is not correct");
-
+//        if (userEntity == null)
+//            throw new IllegalArgumentException("User name is invalid");
+//        if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
+//            throw new IllegalArgumentException("Password is not correct");
+        if (userEntity == null||!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
+            throw new IllegalArgumentException("Sai tài khoảng hoặc mật khẩu ");
+        if (applicationUserDTO.getStatus() == UserStatus.LOCKED)
+            throw new IllegalArgumentException("Tài khoảng của bạn đã bị khóa ");
         return modelMapper.map(userEntity, UserDTO.class);
     }
 
@@ -101,6 +104,7 @@ public class UserServiceImpl implements UserService {
                 user -> modelMapper.map(user, UserDTO.class)
         );
     }
+
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);

@@ -27,14 +27,16 @@ public class UserResource {
 
     @PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO users) {
-        if (userRepository.findByUsername(users.getUsername())!=null)
-            throw new IllegalArgumentException("UserId invalid ");
-        if (users.getId() != 0)
-            throw new IllegalArgumentException("Id must be 0 ");
+//        if (userRepository.findByUsername(users.getUsername())!=null)
+//            throw new IllegalArgumentException("UserId invalid ");
+//        if (users.getId() != 0)
+//            throw new IllegalArgumentException("Id must be 0 ");
         if (users.getUsername().isEmpty())
             throw new IllegalArgumentException("UserName is empty ");
         if (users.getPassword().isEmpty())
             throw new IllegalArgumentException("Password is empty");
+        if (users.getEmail().isEmpty())
+            throw new IllegalArgumentException("Email is empty");
         return ResponseEntity.status(HttpStatus.OK).body(userService.createUser(users));
 
     }
