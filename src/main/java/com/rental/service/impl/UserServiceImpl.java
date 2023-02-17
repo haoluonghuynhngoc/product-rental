@@ -43,7 +43,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO createUser(UserDTO applicationUserDTO) {
-        // nếu toàn có thẻ nhập id thì hãy xóa vì rold là dạng enum bên phải kiểu là ADMIN hoặc USER
         Set<Role> role = new HashSet<>();
         role.add(roleRepository.findByName(RoleName.USERS));
         applicationUserDTO.setRole(role);
@@ -75,9 +74,7 @@ public class UserServiceImpl implements UserService {
 //        if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
 //            throw new IllegalArgumentException("Password is not correct");
         if (userEntity == null||!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
-            throw new IllegalArgumentException("Sai tài khoảng hoặc mật khẩu ");
-        if (applicationUserDTO.getStatus() == UserStatus.LOCKED)
-            throw new IllegalArgumentException("Tài khoảng của bạn đã bị khóa ");
+            throw new IllegalArgumentException("Sai tài khoản hoặc mật khẩu");
         return modelMapper.map(userEntity, UserDTO.class);
     }
 
@@ -92,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public User changePassword(PasswordChangeDTO changePassword) {
         User userEntity = userRepository.findByUsername(changePassword.getUserName());
         if (!bCryptPasswordEncoder.matches(changePassword.getCurrentPassword(), userEntity.getPassword())) {
-            throw new IllegalArgumentException("Current password is invalid ");
+            throw new IllegalArgumentException("Mật khẩu hiện tại không đúng ");
         }
         userEntity.setPassword(bCryptPasswordEncoder.encode(changePassword.getNewPassword()));
         return userRepository.save(userEntity);
