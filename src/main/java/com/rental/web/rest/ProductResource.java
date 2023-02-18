@@ -1,7 +1,5 @@
 package com.rental.web.rest;
 
-import com.rental.service.dto.BrandDTO;
-import com.rental.service.dto.CategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
 import com.rental.service.dto.ProductDTO;
-
 import java.util.List;
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/products")
@@ -30,7 +26,6 @@ public class ProductResource {
     private ProductService productService;
     @Autowired
     private ProductRepository productRepository;
-
     @PostMapping("/create")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
         if (productDTO.getId() != null)

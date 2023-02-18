@@ -44,28 +44,6 @@ public class ImageResource {
 
     }
 
-    @PutMapping("/images/{id}")
-    public ResponseEntity<ImageDTO> updateImage(
-            @PathVariable(value = "id", required = false) final Long id,
-            @RequestBody ImageDTO imageDTO) {
-
-        if (imageDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id  : idnull");
-        }
-        if (!Objects.equals(id, imageDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID  : idinvalid");
-        }
-
-        if (!imageRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found  : idnotfound");
-        }
-
-        ImageDTO result = imageService.update(imageDTO);
-        return ResponseEntity
-                .ok(result);
-
-    }
-
     @PatchMapping(value = "/images/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<ImageDTO> partialUpdateImage(
             @PathVariable(value = "id", required = false) final Long id,

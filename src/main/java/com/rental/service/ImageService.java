@@ -11,7 +11,7 @@ public interface ImageService {
 
     ImageDTO save(ImageDTO imageDTO);
 
-    ImageDTO update(ImageDTO imageDTO);
+    Optional<ImageDTO> update(ImageDTO imageDTO);
 
     Optional<ImageDTO> partialUpdate(ImageDTO imageDTO);
 

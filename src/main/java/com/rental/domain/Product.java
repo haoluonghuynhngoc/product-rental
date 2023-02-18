@@ -52,8 +52,8 @@ public class Product implements Serializable {
     @Column(name = "modified_by")
     private String modifiedBy;
 
-
-    @OneToMany( mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+// , orphanRemoval = true ,cascade = CascadeType.ALL
+    @OneToMany( mappedBy = "product",cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
     @ToString.Exclude
     private Set<Image> images = new HashSet<>();

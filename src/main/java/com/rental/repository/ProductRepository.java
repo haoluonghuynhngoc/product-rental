@@ -1,5 +1,6 @@
 package com.rental.repository;
 
+import com.rental.service.dto.ProductDTO;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 

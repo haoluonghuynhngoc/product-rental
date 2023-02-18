@@ -1,5 +1,6 @@
 package com.rental.repository;
 
+import com.rental.domain.Product;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,5 @@ import com.rental.domain.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Category findByName(String name);
+
 }
