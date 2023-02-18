@@ -57,7 +57,6 @@ public class Notification implements Serializable {
     private Instant createdDate;
 
     @Column(name = "created_by")
-    @CreatedDate
     private String createdBy;
 
     @Column(name = "modified_date")

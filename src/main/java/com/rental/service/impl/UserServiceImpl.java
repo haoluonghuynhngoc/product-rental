@@ -1,10 +1,7 @@
 package com.rental.service.impl;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import com.rental.domain.Order;
 import com.rental.domain.Role;
 import com.rental.domain.User;
 import com.rental.domain.enums.RoleName;
@@ -12,9 +9,7 @@ import com.rental.domain.enums.UserStatus;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.RoleRepository;
 import com.rental.repository.UserRepository;
-import com.rental.service.dto.BrandDTO;
 import com.rental.service.dto.PasswordChangeDTO;
-import com.rental.service.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.rental.service.UserService;
 import com.rental.service.dto.UserDTO;
 

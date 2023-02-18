@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.rental.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,7 @@ import com.rental.service.NotificationService;
 import com.rental.service.dto.NotificationDTO;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/notification")
 public class NotificationResource {
     @Autowired
     private NotificationService notificationService;
@@ -33,75 +34,47 @@ public class NotificationResource {
     private NotificationRepository notificationRepository;
 
 
-    @PostMapping("/notifications")
+    @PostMapping("/create")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
-
-        if (notificationDTO.getId() != 0) {
+        if (notificationDTO.getId() != null)
             throw new IllegalArgumentException("A new notification cannot already have an ID ");
-        }
-        NotificationDTO result = notificationService.createNotification(notificationDTO);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(notificationService.createNotification(notificationDTO));
 
     }
 
-    @PutMapping("/notifications/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<NotificationDTO> updateNotification(
-            @PathVariable(value = "id", required = false) final Long id,
             @RequestBody NotificationDTO notificationDTO) {
-
-        if (notificationDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id : idnull");
-        }
-        if (!Objects.equals(id, notificationDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID : idinvalid");
-        }
-
-        if (!notificationRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found : idnotfound");
-        }
-
-        NotificationDTO result = notificationService.update(notificationDTO);
-        return ResponseEntity
-                .ok()
-                .body(result);
+        if (notificationDTO.getId() == null)
+            throw new IllegalArgumentException("Invalid id : id is null");
+        if (!notificationRepository.existsById(notificationDTO.getId()))
+            throw new IllegalArgumentException("Entity not found : id is not found");
+        return notificationService.updateNotification(notificationDTO).map(
+                notificationData -> ResponseEntity.status(HttpStatus.OK).body(notificationData)).orElseThrow(
+                () -> new IllegalArgumentException("Cant not update notification")
+        );
     }
 
-    @PatchMapping(value = "/notifications/{id}", consumes = {"application/json", "application/merge-patch+json"})
-    public ResponseEntity<NotificationDTO> partialUpdateNotification(
-            @PathVariable(value = "id", required = false) final Long id,
-            @RequestBody NotificationDTO notificationDTO) {
-        if (notificationDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id : idnull");
-        }
-        if (!Objects.equals(id, notificationDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID : idinvalid");
-        }
-
-        if (!notificationRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found : idnotfound");
-        }
-
-        Optional<NotificationDTO> result = notificationService.partialUpdate(notificationDTO);
-
-        return result.map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("/notifications")
+    @GetMapping("/getAll")
     public ResponseEntity<List<NotificationDTO>> getAllNotifications(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<NotificationDTO> page = notificationService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent());
+        Page<NotificationDTO> notifications = notificationService.findAll(pageable);
+        if (notifications.isEmpty())
+            throw new IllegalArgumentException("Page in over size notification ");
+        return ResponseEntity.status(HttpStatus.OK).body(notifications.getContent());
+
     }
 
-    @GetMapping("/notifications/{id}")
+    @GetMapping("/getOne/{id}")
     public ResponseEntity<NotificationDTO> getNotification(@PathVariable Long id) {
-        Optional<NotificationDTO> notificationDTO = notificationService.findOne(id);
-        return notificationDTO.map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (!notificationRepository.existsById(id))
+            throw new IllegalArgumentException("Cant not find the notification have id " + id + " in the data ");
+        //Optional<NotificationDTO> notificationDTO = notificationService.findOne(id);
+        return notificationService.findOne(id).map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
+                .orElseThrow(() -> new IllegalArgumentException("Cant not find the notification"));
     }
-
-    @DeleteMapping("/notifications/{id}")
+// chua sua
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
         notificationService.delete(id);
         return ResponseEntity

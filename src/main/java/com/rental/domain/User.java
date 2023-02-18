@@ -89,7 +89,7 @@ public class User implements Serializable {
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
     private Set<Order> orders = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_notification",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "notification_id"))

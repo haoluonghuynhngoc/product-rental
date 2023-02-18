@@ -7,6 +7,8 @@ import java.util.Set;
 import com.rental.domain.Role;
 import com.rental.domain.User;
 import com.rental.repository.UserRepository;
+import com.rental.service.dto.BrandDTO;
+import com.rental.service.dto.UserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,35 +36,38 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationDTO createNotification(NotificationDTO notificationDTO) {
-//        Set<User> users = new HashSet<>();
-//        users.addAll(userRepository.findAll());
-//        notificationDTO.setUsers(users);
         Notification notification = modelMapper.map(notificationDTO, Notification.class);
+        for (User user : userRepository.findAll()) {
+            notification.getUsers().add(user);
+            user.getNotifications().add(notification);
+        }
         notification = notificationRepository.save(notification);
         return modelMapper.map(notification, NotificationDTO.class);
     }
 
-    @Override
-    public NotificationDTO update(NotificationDTO notificationDTO) {
-        Notification notification = modelMapper.map(notificationDTO, Notification.class);
-//        for (User cast : userRepository.findAll()) {
-//            notification.getUsers().add(cast);
-//           userRepository.findBy(cast)
-//        }
-        notification = notificationRepository.save(notification);
-        return modelMapper.map(notification, NotificationDTO.class);
-    }
+//    @Override
+//    public NotificationDTO update(NotificationDTO notificationDTO) {
+//        Notification notification = modelMapper.map(notificationDTO, Notification.class);
+//        notification = notificationRepository.save(notification);
+//        return modelMapper.map(notification, NotificationDTO.class);
+//    }
 
     @Override
-    public Optional<NotificationDTO> partialUpdate(NotificationDTO notificationDTO) {
-
-        return null;
+    public Optional<NotificationDTO> updateNotification(NotificationDTO notificationDTO) {
+        return notificationRepository.findById(notificationDTO.getId()).map(
+                notificationEntity -> {
+                    modelMapper.map(notificationDTO, notificationEntity);
+                    return notificationEntity;
+                }).map(notificationRepository::save).map(
+                n -> {
+                    return modelMapper.map(n, NotificationDTO.class);
+                }
+        );
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<NotificationDTO> findAll(Pageable pageable) {
-
         return notificationRepository.findAll(pageable).map(n -> {
             return modelMapper.map(n, NotificationDTO.class);
         });
@@ -71,7 +76,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional(readOnly = true)
     public Optional<NotificationDTO> findOne(Long id) {
-
         return notificationRepository.findById(id).map(n -> {
             return modelMapper.map(n, NotificationDTO.class);
         });
@@ -79,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void delete(Long id) {
-
+        // delete chưa xong
         notificationRepository.deleteById(id);
     }
 }
