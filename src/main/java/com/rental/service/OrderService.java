@@ -11,9 +11,7 @@ public interface OrderService {
 
     OrderDTO save(OrderDTO orderDTO);
 
-    OrderDTO update(OrderDTO orderDTO);
-
-    Optional<OrderDTO> partialUpdate(OrderDTO orderDTO);
+    Optional<OrderDTO> update(OrderDTO orderDTO);
 
     Page<OrderDTO> findAll(Pageable pageable);
 

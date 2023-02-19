@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 @SuppressWarnings("common-java:DuplicatedBlocks")
 @Data
 public class UserDTO implements Serializable {
@@ -30,8 +31,8 @@ public class UserDTO implements Serializable {
     private String modifiedBy;
     private Set<Role> role = new HashSet<>();
     // nên khai báo là DTO
-//  private Set<Order> orders = new HashSet<>();
-//    private Set<Notification> notifications = new HashSet<>();
-//    private Set<Product> products = new HashSet<>();
+//    private Set<OrderDTO> orders = new HashSet<>();
+//    private Set<NotificationDTO> notifications = new HashSet<>();
+//    private Set<ProductDTO> products = new HashSet<>();
 
 }

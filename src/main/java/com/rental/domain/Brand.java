@@ -25,7 +25,7 @@ public class Brand implements Serializable {
     @Column(name = "name", columnDefinition = "nvarchar(200)")
     private String name;
 
-    @OneToMany(mappedBy = "brand",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "brand",cascade = {CascadeType.REMOVE,CascadeType.MERGE})
     @JsonIgnoreProperties(value = { "images", "brand", "category", "orderDetails" }, allowSetters = true)
     @ToString.Exclude
     private Set<Product> products = new HashSet<>();

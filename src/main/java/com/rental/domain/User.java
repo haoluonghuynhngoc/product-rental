@@ -85,7 +85,7 @@ public class User implements Serializable {
     @Column(name = "modified_by")
     private String modifiedBy;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
     private Set<Order> orders = new HashSet<>();
 

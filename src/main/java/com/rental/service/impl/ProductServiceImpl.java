@@ -49,6 +49,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Optional<ProductDTO> update(ProductDTO productDTO) {
+        productDTO.setCategory(modelMapper.map(
+                categoryRepository.findById(productDTO.getCategory().getId()).orElse(null), CategoryDTO.class));
+        productDTO.setBrand(modelMapper.map(
+                brandRepository.findById(productDTO.getBrand().getId()).orElse(null),BrandDTO.class
+        ));
         return productRepository
                 .findById(productDTO.getId())
                 .map(existingProduct -> {

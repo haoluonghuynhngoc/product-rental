@@ -29,9 +29,9 @@ public class UserResource {
             throw new IllegalArgumentException("Tên người dùng phải lớn hơn 5 ");
         if (users.getPassword().trim().length() < 5)
             throw new IllegalArgumentException("Mật khẩu người dùng phải lớn hơn 5 ");
-        if (userRepository.findByUsername(users.getUsername()) != null)
+        if (userRepository.existsByUsername(users.getUsername()))
             throw new IllegalArgumentException("Tên người dùng đã tồn tại ");
-        if (userRepository.findByEmail(users.getEmail()) != null)
+        if (userRepository.existsByEmail(users.getEmail()))
             throw new IllegalArgumentException("Email người dùng đã tồn tại ");
         return ResponseEntity.status(HttpStatus.OK).body(userService.createUser(users));
 
@@ -56,8 +56,10 @@ public class UserResource {
 
     @PostMapping("/change/password")
     public ResponseEntity<?> changeUserPassword(@RequestBody PasswordChangeDTO changePassword) {
-        if (userRepository.findByUsername(changePassword.getUserName()) == null)
+        if (!userRepository.existsByUsername(changePassword.getUserName()))
             throw new IllegalArgumentException("Tên người dùng không tồn tại");
+        if (changePassword.getNewPassword().trim().length()<5)
+            throw new IllegalArgumentException("Mật khẩu mới phải lớn hơn 5");
         return ResponseEntity.status(HttpStatus.OK).body(userService.changePassword(changePassword));
     }
 

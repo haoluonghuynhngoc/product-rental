@@ -19,7 +19,7 @@ public interface UserService {
     Optional<UserDTO> updateUser(UserDTO applicationUserDTO);
     UserDTO loginUser(UserDTO applicationUserDTO);
     Page<UserDTO> findAll(Pageable pageable);
-    User changePassword(PasswordChangeDTO changePassword) ;
+    UserDTO changePassword(PasswordChangeDTO changePassword) ;
     Optional<UserDTO> findOne(Long id);
     void delete(Long id);
 }

@@ -80,13 +80,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changePassword(PasswordChangeDTO changePassword) {
+    public UserDTO changePassword(PasswordChangeDTO changePassword) {
         User userEntity = userRepository.findByUsername(changePassword.getUserName());
         if (!bCryptPasswordEncoder.matches(changePassword.getCurrentPassword(), userEntity.getPassword())) {
             throw new IllegalArgumentException("Mật khẩu hiện tại không đúng ");
         }
         userEntity.setPassword(bCryptPasswordEncoder.encode(changePassword.getNewPassword()));
-        return userRepository.save(userEntity);
+        return modelMapper.map(userRepository.save(userEntity),UserDTO.class) ;
     }
 
     @Override

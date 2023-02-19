@@ -16,6 +16,8 @@ import com.rental.domain.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername (String userName);
-    User findByEmail (String emailName);
+  //  User findByEmail (String emailName);
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String userName);
 
 }

@@ -1,16 +1,12 @@
 package com.rental.service.impl;
-
 import java.util.Optional;
-
 import com.rental.repository.UserRepository;
-import com.rental.service.dto.UserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.rental.domain.Image;
 import com.rental.repository.ImageRepository;
 import com.rental.service.ImageService;

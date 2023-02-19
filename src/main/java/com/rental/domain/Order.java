@@ -32,10 +32,7 @@ public class Order implements Serializable {
     private Integer totalQuantity;
     @Column(name = "total_price")
     private Double totalPrice;
-    @Column(name = "order_borrow_date")
-    private Instant orderBorrowDate;
-    @Column(name = "order_return_date")
-    private Instant orderReturnDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus status;

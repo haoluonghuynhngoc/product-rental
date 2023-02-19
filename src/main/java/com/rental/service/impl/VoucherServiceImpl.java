@@ -2,6 +2,7 @@ package com.rental.service.impl;
 
 import java.util.Optional;
 
+import com.rental.service.dto.BrandDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,39 +34,34 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public VoucherDTO save(VoucherDTO voucherDTO) {
-
         Voucher voucher = modelMapper.map(voucherDTO, Voucher.class);
         voucher = voucherRepository.save(voucher);
         return modelMapper.map(voucher, VoucherDTO.class);
     }
 
     @Override
-    public VoucherDTO update(VoucherDTO voucherDTO) {
-        Voucher voucher = modelMapper.map(voucherDTO, Voucher.class);
-        voucher = voucherRepository.save(voucher);
-        return modelMapper.map(voucher, VoucherDTO.class);
+    public Optional<VoucherDTO> update(VoucherDTO voucherDTO) {
+        return voucherRepository.findById(voucherDTO.getId()).map(
+                voucher -> {
+                    modelMapper.map(voucherDTO, voucher);
+                    return voucher;
+                }
+        ).map(voucherRepository::save).map(
+                v -> {
+                    return modelMapper.map(v, VoucherDTO.class);
+                }
+        );
     }
 
     @Override
-    public Optional<VoucherDTO> partialUpdate(VoucherDTO voucherDTO) {
-
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Page<VoucherDTO> findAll(Pageable pageable) {
-
         return voucherRepository.findAll(pageable).map(v -> {
             return modelMapper.map(v, VoucherDTO.class);
-
         });
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Optional<VoucherDTO> findOne(Long id) {
-
         return voucherRepository.findById(id).map(v -> {
             return modelMapper.map(v, VoucherDTO.class);
         });
@@ -73,7 +69,6 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public void delete(Long id) {
-
         voucherRepository.deleteById(id);
     }
 }

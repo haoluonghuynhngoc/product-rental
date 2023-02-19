@@ -83,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void delete(Long id) {
-        // delete chưa xong
+// delete chưa xong
         notificationRepository.deleteById(id);
     }
 }
