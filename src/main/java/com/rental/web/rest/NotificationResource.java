@@ -78,7 +78,7 @@ public class NotificationResource {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
         if (!notificationRepository.existsById(id))
-            throw new IllegalArgumentException("Cant not find the Id :" + id + "In the data ")
+            throw new IllegalArgumentException("Cant not find the Id :" + id + "In the data ");
         notificationService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
 
