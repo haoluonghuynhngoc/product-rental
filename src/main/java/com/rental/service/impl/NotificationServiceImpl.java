@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.rental.domain.Role;
 import com.rental.domain.User;
+import com.rental.domain.enums.NotificationStatus;
 import com.rental.repository.UserRepository;
 import com.rental.service.dto.BrandDTO;
 import com.rental.service.dto.UserDTO;
@@ -36,26 +37,31 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationDTO createNotification(NotificationDTO notificationDTO) {
+        notificationDTO.setStatus(NotificationStatus.PENDING);
         Notification notification = modelMapper.map(notificationDTO, Notification.class);
-        for (User user : userRepository.findAll()) {
-            notification.getUsers().add(user);
-            user.getNotifications().add(notification);
-        }
+//        for (User user : userRepository.findAll()) {
+//            notification.getUsers().add(user);
+//            user.getNotifications().add(notification);
+//        }
         notification = notificationRepository.save(notification);
         return modelMapper.map(notification, NotificationDTO.class);
     }
-
-//    @Override
-//    public NotificationDTO update(NotificationDTO notificationDTO) {
-//        Notification notification = modelMapper.map(notificationDTO, Notification.class);
-//        notification = notificationRepository.save(notification);
-//        return modelMapper.map(notification, NotificationDTO.class);
-//    }
 
     @Override
     public Optional<NotificationDTO> updateNotification(NotificationDTO notificationDTO) {
         return notificationRepository.findById(notificationDTO.getId()).map(
                 notificationEntity -> {
+                    if (notificationDTO.getStatus().equals(NotificationStatus.APPROVED)) {
+                        for (User user : userRepository.findAll()) {
+                            notificationEntity.getUsers().add(user);
+                            user.getNotifications().add(notificationEntity);
+                        }
+                    } else if (notificationDTO.getStatus().equals(NotificationStatus.REJECTED)) {
+                        for (User user : userRepository.findAll()) {
+                            notificationEntity.getUsers().remove(user);
+                            user.getNotifications().remove(notificationEntity);
+                        }
+                    }
                     modelMapper.map(notificationDTO, notificationEntity);
                     return notificationEntity;
                 }).map(notificationRepository::save).map(

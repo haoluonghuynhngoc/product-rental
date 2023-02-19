@@ -73,12 +73,14 @@ public class NotificationResource {
         return notificationService.findOne(id).map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
                 .orElseThrow(() -> new IllegalArgumentException("Cant not find the notification"));
     }
-// chua sua
+
+    // chua sua
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
+        if (!notificationRepository.existsById(id))
+            throw new IllegalArgumentException("Cant not find the Id :" + id + "In the data ")
         notificationService.delete(id);
-        return ResponseEntity
-                .noContent()
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+
     }
 }
