@@ -7,6 +7,7 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -29,9 +30,9 @@ public class OrderDetails implements Serializable {
     @Column(name = "price")
     private Double price;
     @Column(name = "order_borrow_date")//
-    private Instant orderBorrowDate;
+    private Date orderBorrowDate;
     @Column(name = "order_return_date")//
-    private Instant orderReturnDate;
+    private Date orderReturnDate;
     @Column(name = "image_borrow")//
     private String imageBorrow;
     @Column(name = "image_return")//

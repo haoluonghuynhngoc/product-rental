@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import com.rental.domain.enums.UserStatus;
 import com.rental.service.dto.UserDTO;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -15,9 +16,11 @@ import com.rental.domain.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername (String userName);
-  //  User findByEmail (String emailName);
+    User findByUsername(String userName);
+
     boolean existsByEmail(String email);
+
     boolean existsByUsername(String userName);
+
 
 }

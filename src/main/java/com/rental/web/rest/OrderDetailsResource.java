@@ -25,91 +25,62 @@ import com.rental.service.OrderDetailsService;
 import com.rental.service.dto.OrderDetailsDTO;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/order-details")
 public class OrderDetailsResource {
     @Autowired
     private OrderDetailsService orderDetailsService;
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
 
-
-    @PostMapping("/order-details")
+    @PostMapping("/create")
     public ResponseEntity<OrderDetailsDTO> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
-
         if (orderDetailsDTO.getId() != null) {
-            throw new IllegalArgumentException("A new orderDetails cannot already have an ID : idexists");
+            throw new IllegalArgumentException("A new orderDetails cannot already have an ID ");
         }
-        OrderDetailsDTO result = orderDetailsService.save(orderDetailsDTO);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.save(orderDetailsDTO));
 
     }
 
-    @PutMapping("/order-details/{id}")
-    public ResponseEntity<OrderDetailsDTO> updateOrderDetails(
-            @PathVariable(value = "id", required = false) final Long id,
-            @RequestBody OrderDetailsDTO orderDetailsDTO) {
-
+    @PutMapping("/update")
+    public ResponseEntity<OrderDetailsDTO> updateOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
+//        if (!Objects.equals(id, orderDetailsDTO.getId())) {
+//            throw new IllegalArgumentException("Invalid ID : id in valid");
+//        }
         if (orderDetailsDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id : idnull");
+            throw new IllegalArgumentException("Invalid id : id is null");
         }
-        if (!Objects.equals(id, orderDetailsDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID : idinvalid");
-        }
-
-        if (!orderDetailsRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found : idnotfound");
+        if (!orderDetailsRepository.existsById(orderDetailsDTO.getId())) {
+            throw new IllegalArgumentException("Cant not find the Order Detail have Id : " + orderDetailsDTO.getId());
         }
 
-        OrderDetailsDTO result = orderDetailsService.update(orderDetailsDTO);
-        return ResponseEntity
-                .ok()
-                .body(result);
+        return orderDetailsService.update(orderDetailsDTO).map(
+                orderDetailData -> ResponseEntity.status(HttpStatus.OK).body(orderDetailData)
+        ).orElseThrow(
+                () -> new IllegalArgumentException("Cant not update Order Detail ")
+        );
     }
 
-    @PatchMapping(value = "/order-details/{id}", consumes = {"application/json", "application/merge-patch+json"})
-    public ResponseEntity<OrderDetailsDTO> partialUpdateOrderDetails(
-            @PathVariable(value = "id", required = false) final Long id,
-            @RequestBody OrderDetailsDTO orderDetailsDTO) {
 
-        if (orderDetailsDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id : idnull");
-        }
-        if (!Objects.equals(id, orderDetailsDTO.getId())) {
-            throw new IllegalArgumentException("Invalid ID : idinvalid");
-        }
-
-        if (!orderDetailsRepository.existsById(id)) {
-            throw new IllegalArgumentException("Entity not found : idnotfound");
-        }
-
-        Optional<OrderDetailsDTO> result = orderDetailsService.partialUpdate(orderDetailsDTO);
-
-        return result.map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("/order-details")
+    @GetMapping("/getAll")
     public ResponseEntity<List<OrderDetailsDTO>> getAllOrderDetails(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-
         Page<OrderDetailsDTO> page = orderDetailsService.findAll(pageable);
-        return ResponseEntity.ok().body(page.getContent());
+        if (page.isEmpty())
+            throw new IllegalArgumentException("Page in over size ");
+        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
 
-    @GetMapping("/order-details/{id}")
-    public ResponseEntity<OrderDetailsDTO> getOrderDetails(@PathVariable Long id) {
-
-        Optional<OrderDetailsDTO> orderDetailsDTO = orderDetailsService.findOne(id);
-        return orderDetailsDTO.map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    @GetMapping("/getOne/{id}")
+    public ResponseEntity<OrderDetailsDTO> getOrderDetail(@PathVariable Long id) {
+        return orderDetailsService.findOne(id).map(
+                orderDetailData -> ResponseEntity.status(HttpStatus.OK).body(orderDetailData)).orElseThrow(
+                () -> new IllegalArgumentException("Cant not find Order Detail have Id :" + id + " in the data "));
     }
-
-    @DeleteMapping("/order-details/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteOrderDetails(@PathVariable Long id) {
-
+        if (!orderDetailsRepository.existsById(id))
+            throw new IllegalArgumentException("Cant not find Order Detail have Id :" + id + " in the data ");
         orderDetailsService.delete(id);
-        return ResponseEntity
-                .noContent()
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

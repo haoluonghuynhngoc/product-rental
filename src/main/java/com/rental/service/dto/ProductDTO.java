@@ -8,6 +8,7 @@ import java.util.Set;
 import com.rental.domain.Brand;
 import com.rental.domain.Category;
 import com.rental.domain.Image;
+import com.rental.domain.User;
 import com.rental.domain.enums.ProductStatus;
 import lombok.Data;
 
@@ -26,5 +27,6 @@ public class ProductDTO implements Serializable {
     private BrandDTO brand;
     private CategoryDTO category;
     private Set<ImageDTO> images=new HashSet<>();
+    private UserDTO user;
 
 }

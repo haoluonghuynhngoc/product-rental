@@ -71,7 +71,7 @@ public class OrderResource {
         );
     }
 
-    @DeleteMapping("/orders/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!orderRepository.existsById(id))
             throw new IllegalArgumentException("Cant not find the order have Id :" + id + " In the data ");

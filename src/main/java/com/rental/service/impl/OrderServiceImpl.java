@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Optional<OrderDTO> update(OrderDTO orderDTO) {
-        orderDTO.setUser(modelMapper.map(userRepository.findById(orderDTO.getVoucher().getId()).orElse(null), UserDTO.class));
+        orderDTO.setUser(modelMapper.map(userRepository.findById(orderDTO.getUser().getId()).orElse(null), UserDTO.class));
         orderDTO.setVoucher(modelMapper.map(voucherRepository.findById(orderDTO.getVoucher().getId()).orElse(null), VoucherDTO.class));
         return orderRepository.findById(orderDTO.getId()).map(
                 existingOrder -> {

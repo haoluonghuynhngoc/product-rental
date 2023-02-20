@@ -3,12 +3,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import com.rental.domain.Image;
-import com.rental.repository.BrandRepository;
-import com.rental.repository.CategoryRepository;
-import com.rental.repository.ImageRepository;
-import com.rental.service.dto.BrandDTO;
-import com.rental.service.dto.CategoryDTO;
-import com.rental.service.dto.ImageDTO;
+import com.rental.domain.Role;
+import com.rental.domain.User;
+import com.rental.domain.enums.RoleName;
+import com.rental.repository.*;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,9 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.rental.domain.Product;
-import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
-import com.rental.service.dto.ProductDTO;
 
 
 @Service
@@ -33,9 +30,12 @@ public class ProductServiceImpl implements ProductService {
     private ImageRepository imageRepository;
     @Autowired
     private BrandRepository brandRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public ProductDTO save(ProductDTO productDTO) {
+// nhớ set lại ADMIN
         Product product = modelMapper.map(productDTO, Product.class);
         // set image
         for (Image imageClient : product.getImages()) {
@@ -50,9 +50,13 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Optional<ProductDTO> update(ProductDTO productDTO) {
         productDTO.setCategory(modelMapper.map(
-                categoryRepository.findById(productDTO.getCategory().getId()).orElse(null), CategoryDTO.class));
+                categoryRepository.findById(productDTO.getCategory().getId()).orElse(null), CategoryDTO.class
+        ));
         productDTO.setBrand(modelMapper.map(
                 brandRepository.findById(productDTO.getBrand().getId()).orElse(null),BrandDTO.class
+        ));
+        productDTO.setUser(modelMapper.map(
+                userRepository.findById(productDTO.getUser().getId()).orElse(null), UserDTO.class
         ));
         return productRepository
                 .findById(productDTO.getId())
@@ -62,6 +66,8 @@ public class ProductServiceImpl implements ProductService {
                         productDTO.setBrand(modelMapper.map(existingProduct.getBrand(), BrandDTO.class));
                     if (productDTO.getCategory() == null)
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
+                    if (productDTO.getUser() == null)
+                        productDTO.setUser(modelMapper.map(existingProduct.getUser(), UserDTO.class));
 //                    if (productDTO.getImages().isEmpty()) {
 //                        for (Image imageEntity : existingProduct.getImages()) {
 //                            productDTO.getImages().add(modelMapper.map(imageEntity, ImageDTO.class));
@@ -83,6 +89,9 @@ public class ProductServiceImpl implements ProductService {
                             existingProduct.getCategory()));
                     existingProduct.setBrand(brandRepository.findById(productDTO.getBrand().getId()).orElse(
                             existingProduct.getBrand()
+                    ));
+                    existingProduct.setUser(userRepository.findById(productDTO.getUser().getId()).orElse(
+                            existingProduct.getUser()
                     ));
                     existingProduct.setImages(image);
 // ====

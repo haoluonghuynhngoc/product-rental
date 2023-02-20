@@ -43,7 +43,7 @@ public class ProductResource {
                 () -> new IllegalArgumentException("Cant not update product")
         );
     }
-    @GetMapping("/getProduct/{id}")
+    @GetMapping("/getOne/{id}")
     public ResponseEntity<ProductDTO> getProduct(@PathVariable Long id) {
         if (!productRepository.existsById(id))
             throw new IllegalArgumentException("Cant not find the Product have id : " + id + " in the data ");
@@ -59,7 +59,7 @@ public class ProductResource {
             throw new IllegalArgumentException("Cant not find any product in the data ");
         return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (!productRepository.existsById(id))
             throw new IllegalArgumentException("Cant not find the Product have id : " + id + " in the data ");

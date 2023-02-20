@@ -31,14 +31,14 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private ProductRepository productRepository;
+
 
     @Override
     @Transactional
     public UserDTO createUser(UserDTO applicationUserDTO) {
         Set<Role> role = new HashSet<>();
         role.add(roleRepository.findByName(RoleName.USERS));
+        applicationUserDTO.setNotifications(null);
         applicationUserDTO.setRole(role);
         applicationUserDTO.setStatus(UserStatus.UNLOCKED);
         applicationUserDTO.setPassword(bCryptPasswordEncoder.encode(applicationUserDTO.getPassword()));
@@ -67,7 +67,9 @@ public class UserServiceImpl implements UserService {
 //            throw new IllegalArgumentException("User name is invalid");
 //        if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
 //            throw new IllegalArgumentException("Password is not correct");
-        if (userEntity == null||!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
+        if (userEntity.getStatus().equals(UserStatus.LOCKED))
+            throw new IllegalArgumentException("Tài khoản của bạn đã bị khóa");
+        if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
             throw new IllegalArgumentException("Sai tài khoản hoặc mật khẩu");
         return modelMapper.map(userEntity, UserDTO.class);
     }

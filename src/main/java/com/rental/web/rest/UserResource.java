@@ -1,4 +1,5 @@
 package com.rental.web.rest;
+
 import com.rental.domain.enums.UserStatus;
 import com.rental.repository.UserRepository;
 import com.rental.service.UserService;
@@ -37,16 +38,18 @@ public class UserResource {
 
     }
 
-    @PostMapping("/login") // login loi
+    @PostMapping("/login")
     public ResponseEntity<UserDTO> loginUser(@RequestBody UserDTO users) {
-        if (users.getStatus() == UserStatus.LOCKED)
-            throw new IllegalArgumentException("Tài khoản của bạn đã bị khóa");
+        if (!userRepository.existsByUsername(users.getUsername()))
+            throw new IllegalArgumentException("Sai tài khoản hoặc mật khẩu");
         return ResponseEntity.status(HttpStatus.OK).body(userService.loginUser(users));
     }
 
 
     @PutMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.getEmail()))
+            throw new IllegalArgumentException("Ten gmail đã tồn tại ");
         if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
         return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
@@ -58,12 +61,12 @@ public class UserResource {
     public ResponseEntity<?> changeUserPassword(@RequestBody PasswordChangeDTO changePassword) {
         if (!userRepository.existsByUsername(changePassword.getUserName()))
             throw new IllegalArgumentException("Tên người dùng không tồn tại");
-        if (changePassword.getNewPassword().trim().length()<5)
+        if (changePassword.getNewPassword().trim().length() < 5)
             throw new IllegalArgumentException("Mật khẩu mới phải lớn hơn 5");
         return ResponseEntity.status(HttpStatus.OK).body(userService.changePassword(changePassword));
     }
 
-    @GetMapping("/search/all")
+    @GetMapping("/getAll")
     public ResponseEntity<List<UserDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<UserDTO> findAllUser = userService.findAll(pageable);
         if (findAllUser.isEmpty())
@@ -71,14 +74,14 @@ public class UserResource {
         return ResponseEntity.status(HttpStatus.OK).body(findAllUser.getContent());
     }
 
-    @GetMapping("/search/{id}")
+    @GetMapping("/getOne/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable(value = "id") Long id) {
         return userService.findOne(id).map(user -> ResponseEntity.status(HttpStatus.OK).body(user)).orElseThrow(
                 () -> new IllegalArgumentException("Không thể tìm thấy người dùng có id : " + id)
         );
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable(value = "id") Long id) {
         if (!userRepository.findById(id).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng có id :" + id);
