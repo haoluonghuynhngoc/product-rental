@@ -32,9 +32,9 @@ public class Product implements Serializable {
     private String name;
     @Column(name = "price")
     private Double price;
-    @Column(name = "description")
+    @Column(name = "description" ,columnDefinition = "nvarchar(3000)")
     private String description;
-    @Column(name = "sort_description")
+    @Column(name = "sort_description",columnDefinition = "nvarchar(700)")
     private String sortDescription;
     @Column(name = "quantity")
     private Integer quantity;
