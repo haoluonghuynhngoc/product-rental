@@ -19,7 +19,7 @@ public class ProductDTO implements Serializable {
     private String name;
     private Double price;
     private String description;
-//    private String sortDescription;
+
     private Integer quantity;
     private ProductStatus status;
     private String createdBy;
