@@ -35,13 +35,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO save(ProductDTO productDTO) {
-// nhớ set lại ADMIN
         Product product = modelMapper.map(productDTO, Product.class);
         // set image
         for (Image imageClient : product.getImages()) {
             imageClient.setProduct(product);
         }
         //
+        product.setUser(userRepository.findByUsername("admin"));
         product = productRepository.save(product);
         return modelMapper.map(product, ProductDTO.class);
     }
@@ -55,24 +55,14 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setBrand(modelMapper.map(
                 brandRepository.findById(productDTO.getBrand().getId()).orElse(null),BrandDTO.class
         ));
-        productDTO.setUser(modelMapper.map(
-                userRepository.findById(productDTO.getUser().getId()).orElse(null), UserDTO.class
-        ));
+
         return productRepository
                 .findById(productDTO.getId())
                 .map(existingProduct -> {
-                    // set Brand và category nếu client không truyền về giá trị
                     if (productDTO.getBrand() == null)
                         productDTO.setBrand(modelMapper.map(existingProduct.getBrand(), BrandDTO.class));
                     if (productDTO.getCategory() == null)
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
-                    if (productDTO.getUser() == null)
-                        productDTO.setUser(modelMapper.map(existingProduct.getUser(), UserDTO.class));
-//                    if (productDTO.getImages().isEmpty()) {
-//                        for (Image imageEntity : existingProduct.getImages()) {
-//                            productDTO.getImages().add(modelMapper.map(imageEntity, ImageDTO.class));
-//                        }
-//                    }
 //      Tạo list SET để dễ map qua Entity update
                     Set<Image> image = new HashSet<>();
                     for (ImageDTO img : productDTO.getImages()) {
@@ -89,9 +79,6 @@ public class ProductServiceImpl implements ProductService {
                             existingProduct.getCategory()));
                     existingProduct.setBrand(brandRepository.findById(productDTO.getBrand().getId()).orElse(
                             existingProduct.getBrand()
-                    ));
-                    existingProduct.setUser(userRepository.findById(productDTO.getUser().getId()).orElse(
-                            existingProduct.getUser()
                     ));
                     existingProduct.setImages(image);
 // ====

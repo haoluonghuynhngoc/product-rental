@@ -27,6 +27,6 @@ public class ProductDTO implements Serializable {
     private BrandDTO brand;
     private CategoryDTO category;
     private Set<ImageDTO> images=new HashSet<>();
-    private UserDTO user;
+  //  private UserDTO user;
 
 }
