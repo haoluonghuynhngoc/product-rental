@@ -11,6 +11,8 @@ import java.util.Objects;
 @Table(name = "image")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")

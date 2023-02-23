@@ -20,6 +20,8 @@ import java.util.Set;
 @Table(name = "orders")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
@@ -39,13 +41,13 @@ public class Order implements Serializable {
     @Column(name = "created_date")
     @CreatedDate
     private Instant createdDate;
-    @Column(name = "created_by")
-    private String createdBy;
+//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
+//    private String createdBy;
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-    @Column(name = "modified_by")
-    private String modifiedBy;
+//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
+//    private String modifiedBy;
     @ManyToOne
     @JoinColumn(name = "voucher_id")
     @JsonIgnoreProperties(value = {"orders"}, allowSetters = true)

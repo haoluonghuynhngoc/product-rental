@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,16 +17,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rental.domain.enums.NotificationStatus;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
 
 @Entity
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "notification")
 @SuppressWarnings("common-java:DuplicatedBlocks")
@@ -36,13 +34,13 @@ public class Notification implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", columnDefinition = "nvarchar(250)")
     private String title;
 
-    @Column(name = "sort_description")
+    @Column(name = "sort_description", columnDefinition = "nvarchar(250)")
     private String sortDescription;
 
-    @Column(name = "description")
+    @Column(name = "description",columnDefinition="TEXT")
     private String description;
 
     @Column(name = "is_read")
@@ -56,15 +54,15 @@ public class Notification implements Serializable {
     @CreatedDate
     private Instant createdDate;
 
-    @Column(name = "created_by")
-    private String createdBy;
+//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
+//    private String createdBy;
 
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
 
-    @Column(name = "modified_by")
-    private String modifiedBy;
+//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
+//    private String modifiedBy;
 
     @ManyToMany(mappedBy = "notifications")
     @JsonIgnoreProperties(value = { "role", "orders", "notifications", "product" }, allowSetters = true)

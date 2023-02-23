@@ -15,6 +15,8 @@ import java.util.Objects;
 @Table(name = "order_details")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
@@ -23,7 +25,7 @@ public class OrderDetails implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "nvarchar(250)")
     private String name;
     @Column(name = "quantity")
     private Integer quantity;

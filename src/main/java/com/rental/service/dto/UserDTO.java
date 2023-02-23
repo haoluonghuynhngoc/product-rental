@@ -27,8 +27,8 @@ public class UserDTO implements Serializable {
     private String lastName;
     private String email;
     private String imageUrl;
-    private String createdBy;
-    private String modifiedBy;
+//    private String createdBy;
+//    private String modifiedBy;
     private Set<Role> role = new HashSet<>();
 
     // nên khai báo là DTO

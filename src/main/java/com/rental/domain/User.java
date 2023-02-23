@@ -23,7 +23,8 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
 @Table(name = "users")
@@ -41,11 +42,10 @@ public class User implements Serializable {
     @Column(name = "password",nullable = false)
     private String password;
 
-    @Size(max = 50)
-    @Column(name = "first_name", length = 50)
+    @Column(name = "first_name", columnDefinition = "nvarchar(60)")
     private String firstName;
 
-    @Column(name = "address")
+    @Column(name = "address", columnDefinition = "nvarchar(250)")
     private String address;
 
     @Column(name = "avatar")
@@ -57,8 +57,7 @@ public class User implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @Size(max = 50)
-    @Column(name = "last_name", length = 50)
+    @Column(name = "last_name", columnDefinition = "nvarchar(250)")
     private String lastName;
 
 
@@ -72,8 +71,8 @@ public class User implements Serializable {
     @CreatedDate
     private Instant createdDate;//neu sai thi doi thanh date
 
-    @Column(name = "created_by")
-    private String createdBy;
+//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
+//    private String createdBy;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private UserStatus status;
@@ -82,8 +81,8 @@ public class User implements Serializable {
     @LastModifiedDate
     private Instant modifiedDate;//neu sai thi doi thanh date
 
-    @Column(name = "modified_by")
-    private String modifiedBy;
+//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
+//    private String modifiedBy;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)

@@ -14,6 +14,8 @@ import java.util.Set;
 @Table(name = "category")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")

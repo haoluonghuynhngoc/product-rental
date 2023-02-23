@@ -22,8 +22,8 @@ public class ProductDTO implements Serializable {
 
     private Integer quantity;
     private ProductStatus status;
-    private String createdBy;
-    private String modifiedBy;
+//    private String createdBy;
+//    private String modifiedBy;
     private BrandDTO brand;
     private CategoryDTO category;
     private Set<ImageDTO> images=new HashSet<>();

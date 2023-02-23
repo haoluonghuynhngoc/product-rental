@@ -18,8 +18,8 @@ public class VoucherDTO implements Serializable {
     private Date startDate;
     private Date endDate;
     private VorcherStatus status;
-    private String createdBy;
-    private String modifiedBy;
+//    private String createdBy;
+//    private String modifiedBy;
 
 
 }

@@ -20,6 +20,8 @@ import java.util.Set;
 @Table(name = "product")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
@@ -28,11 +30,11 @@ public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "nvarchar(250)")
     private String name;
     @Column(name = "price")
     private Double price;
-    @Column(name = "description" ,columnDefinition = "nvarchar(3000)")
+    @Column(name = "description" ,columnDefinition="TEXT")
     private String description;
 
     @Column(name = "quantity")
@@ -43,13 +45,13 @@ public class Product implements Serializable {
     @Column(name = "created_date")
     @CreatedDate
     private Instant createdDate;
-    @Column(name = "created_by")
-    private String createdBy;
+//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
+//    private String createdBy; //
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-    @Column(name = "modified_by")
-    private String modifiedBy;
+//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
+//    private String modifiedBy; //
 
 // , orphanRemoval = true ,cascade = CascadeType.ALL
     @OneToMany( mappedBy = "product",cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REMOVE})

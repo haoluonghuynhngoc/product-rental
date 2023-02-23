@@ -15,6 +15,8 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Brand implements Serializable {

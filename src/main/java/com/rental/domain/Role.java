@@ -15,6 +15,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
 @Table(name = "Role")
