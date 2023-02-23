@@ -84,7 +84,6 @@ public class ImageResource {
 
     @DeleteMapping("/images/{id}")
     public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
-
         imageService.delete(id);
         return ResponseEntity
                 .noContent()

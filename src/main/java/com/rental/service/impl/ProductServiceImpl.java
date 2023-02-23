@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
 //      Tạo list SET để dễ map qua Entity update
                     Set<Image> image = new HashSet<>();
-                    for (ImageDTO img : productDTO.getImages()) {
+                    for (ImageDTO img : productDTO.getImages()){
                         image.add(imageRepository.findById(img.getId()).map(
                                 imageE -> {
                                     imageE.setName(img.getName());
