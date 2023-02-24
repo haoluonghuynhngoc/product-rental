@@ -5,15 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rental.domain.enums.UserStatus;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
@@ -69,20 +64,15 @@ public class User implements Serializable {
 
     @Column(name = "created_date")
     @CreatedDate
-    private Instant createdDate;//neu sai thi doi thanh date
+    private Instant createdDate;
 
-//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
-//    private String createdBy;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private UserStatus status;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private Instant modifiedDate;//neu sai thi doi thanh date
-
-//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
-//    private String modifiedBy;
+    private Instant modifiedDate;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)

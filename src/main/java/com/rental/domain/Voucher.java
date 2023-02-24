@@ -52,15 +52,9 @@ public class Voucher implements Serializable {
     @CreatedDate
     private Instant createdDate;
 
-//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
-//    private String createdBy;
-
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-
-//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
-//    private String modifiedBy;
 
     @OneToMany(mappedBy = "voucher",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)

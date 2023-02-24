@@ -40,7 +40,7 @@ public class Notification implements Serializable {
     @Column(name = "sort_description", columnDefinition = "nvarchar(250)")
     private String sortDescription;
 
-    @Column(name = "description",columnDefinition="TEXT")
+    @Column(name = "description",columnDefinition="nvarchar(max)")
     private String description;
 
     @Column(name = "is_read")
@@ -54,15 +54,9 @@ public class Notification implements Serializable {
     @CreatedDate
     private Instant createdDate;
 
-//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
-//    private String createdBy;
-
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-
-//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
-//    private String modifiedBy;
 
     @ManyToMany(mappedBy = "notifications")
     @JsonIgnoreProperties(value = { "role", "orders", "notifications", "product" }, allowSetters = true)

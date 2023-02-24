@@ -36,9 +36,8 @@ public class Product implements Serializable {
     private Double price;
     @Column(name = "deposit")
     private Double deposit;
-    @Column(name = "description" ,columnDefinition="TEXT")
+    @Column(name = "description" ,columnDefinition="nvarchar(max)")
     private String description;
-
     @Column(name = "quantity")
     private Integer quantity;
     @Enumerated(EnumType.STRING)
@@ -47,23 +46,13 @@ public class Product implements Serializable {
     @Column(name = "created_date")
     @CreatedDate
     private Instant createdDate;
-//    @Column(name = "created_by", columnDefinition = "nvarchar(250)")
-//    private String createdBy; //
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-//    @Column(name = "modified_by", columnDefinition = "nvarchar(250)")
-//    private String modifiedBy; //
-
-// , orphanRemoval = true ,cascade = CascadeType.ALL
     @OneToMany( mappedBy = "product",cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
     @ToString.Exclude
     private Set<Image> images = new HashSet<>();
-//    @ManyToOne
-//    @JoinColumn(name = "brand_id")
-//    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
-//    private Brand brand;
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
