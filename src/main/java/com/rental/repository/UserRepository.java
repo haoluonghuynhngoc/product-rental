@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import com.rental.domain.Product;
 import com.rental.domain.enums.UserStatus;
 import com.rental.service.dto.UserDTO;
 import org.springframework.data.domain.*;
@@ -21,6 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     boolean existsByUsername(String userName);
-
-
+    List<User> findByFirstNameLike(String firstName);
 }

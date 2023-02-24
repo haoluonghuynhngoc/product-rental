@@ -62,11 +62,11 @@ public class ProductServiceImpl implements ProductService {
                                             return imageE;
                                         }
                                 ).orElse(
-
-                                        modelMapper.map(img, Image.class))
+                        modelMapper.map(img, Image.class) )
                         );
                     }
 // ====
+                    image.forEach(i->i.setProduct(existingProduct));
                     existingProduct.setCategory(categoryRepository.findById(productDTO.getCategory().getId()).orElse(
                             existingProduct.getCategory()));
                     existingProduct.setImages(image);

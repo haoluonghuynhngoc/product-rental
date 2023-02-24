@@ -4,6 +4,7 @@ import com.rental.domain.enums.UserStatus;
 import com.rental.repository.UserRepository;
 import com.rental.service.UserService;
 import com.rental.service.dto.PasswordChangeDTO;
+import com.rental.service.dto.ProductDTO;
 import com.rental.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,6 +73,10 @@ public class UserResource {
         if (findAllUser.isEmpty())
             throw new IllegalArgumentException("Không thể tìm thấy bất kì người dùng trong dữ liệu");
         return ResponseEntity.status(HttpStatus.OK).body(findAllUser.getContent());
+    }
+    @GetMapping("/{name}")
+    public ResponseEntity<List<UserDTO>> getProductByName(@PathVariable(name = "name") String firstName) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(firstName));
     }
 
     @GetMapping("/getOne/{id}")
