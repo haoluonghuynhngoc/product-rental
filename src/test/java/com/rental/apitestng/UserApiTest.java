@@ -1,7 +1,6 @@
 package com.rental.apitestng;
 
 import com.rental.RentalApplication;
-import com.rental.domain.Brand;
 import com.rental.domain.User;
 import com.rental.repository.UserRepository;
 import com.rental.service.UserService;

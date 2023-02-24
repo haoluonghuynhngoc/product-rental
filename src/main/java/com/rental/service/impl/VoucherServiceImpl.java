@@ -2,7 +2,6 @@ package com.rental.service.impl;
 
 import java.util.Optional;
 
-import com.rental.service.dto.BrandDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

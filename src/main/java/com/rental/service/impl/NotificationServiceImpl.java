@@ -1,15 +1,10 @@
 package com.rental.service.impl;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
-import com.rental.domain.Role;
 import com.rental.domain.User;
 import com.rental.domain.enums.NotificationStatus;
 import com.rental.repository.UserRepository;
-import com.rental.service.dto.BrandDTO;
-import com.rental.service.dto.UserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

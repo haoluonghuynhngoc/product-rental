@@ -34,6 +34,8 @@ public class Product implements Serializable {
     private String name;
     @Column(name = "price")
     private Double price;
+    @Column(name = "deposit")
+    private Double deposit;
     @Column(name = "description" ,columnDefinition="TEXT")
     private String description;
 
@@ -58,10 +60,10 @@ public class Product implements Serializable {
     @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
     @ToString.Exclude
     private Set<Image> images = new HashSet<>();
-    @ManyToOne
-    @JoinColumn(name = "brand_id")
-    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
-    private Brand brand;
+//    @ManyToOne
+//    @JoinColumn(name = "brand_id")
+//    @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
+//    private Brand brand;
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties(value = {"products"}, allowSetters = true)

@@ -3,9 +3,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import com.rental.domain.Image;
-import com.rental.domain.Role;
-import com.rental.domain.User;
-import com.rental.domain.enums.RoleName;
 import com.rental.repository.*;
 import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
@@ -29,8 +26,6 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ImageRepository imageRepository;
     @Autowired
-    private BrandRepository brandRepository;
-    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -52,15 +47,9 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setCategory(modelMapper.map(
                 categoryRepository.findById(productDTO.getCategory().getId()).orElse(null), CategoryDTO.class
         ));
-        productDTO.setBrand(modelMapper.map(
-                brandRepository.findById(productDTO.getBrand().getId()).orElse(null),BrandDTO.class
-        ));
-
         return productRepository
                 .findById(productDTO.getId())
                 .map(existingProduct -> {
-                    if (productDTO.getBrand() == null)
-                        productDTO.setBrand(modelMapper.map(existingProduct.getBrand(), BrandDTO.class));
                     if (productDTO.getCategory() == null)
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
 //      Tạo list SET để dễ map qua Entity update
@@ -72,14 +61,14 @@ public class ProductServiceImpl implements ProductService {
                                     imageE.setUrl(img.getUrl());
                                     return imageE;
                                 }
-                        ).orElseThrow(null));
+                        ).orElse(
+
+                                modelMapper.map(img,Image.class))
+                        );
                     }
 // ====
                     existingProduct.setCategory(categoryRepository.findById(productDTO.getCategory().getId()).orElse(
                             existingProduct.getCategory()));
-                    existingProduct.setBrand(brandRepository.findById(productDTO.getBrand().getId()).orElse(
-                            existingProduct.getBrand()
-                    ));
                     existingProduct.setImages(image);
 // ====
                     modelMapper.map(productDTO, existingProduct);
