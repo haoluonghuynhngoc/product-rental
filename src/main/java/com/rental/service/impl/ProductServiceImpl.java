@@ -1,7 +1,7 @@
 package com.rental.service.impl;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
+
 import com.rental.domain.Image;
 import com.rental.repository.*;
 import com.rental.service.dto.*;
@@ -54,16 +54,16 @@ public class ProductServiceImpl implements ProductService {
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
 //      Tạo list SET để dễ map qua Entity update
                     Set<Image> image = new HashSet<>();
-                    for (ImageDTO img : productDTO.getImages()){
+                    for (ImageDTO img : productDTO.getImages()) {
                         image.add(imageRepository.findById(img.getId()).map(
-                                imageE -> {
-                                    imageE.setName(img.getName());
-                                    imageE.setUrl(img.getUrl());
-                                    return imageE;
-                                }
-                        ).orElse(
+                                        imageE -> {
+                                            imageE.setName(img.getName());
+                                            imageE.setUrl(img.getUrl());
+                                            return imageE;
+                                        }
+                                ).orElse(
 
-                                modelMapper.map(img,Image.class))
+                                        modelMapper.map(img, Image.class))
                         );
                     }
 // ====
@@ -78,6 +78,15 @@ public class ProductServiceImpl implements ProductService {
                 .map(b -> {
                     return modelMapper.map(b, ProductDTO.class);
                 });
+    }
+
+    @Override
+    public List<ProductDTO> searchByName(String nameProduct) {
+        List<ProductDTO> listDTO = new ArrayList<>();
+        for (Product listProduct : productRepository.findByNameLike("%" + nameProduct + "%")) {
+            listDTO.add(modelMapper.map(listProduct, ProductDTO.class));
+        }
+        return listDTO;
     }
 
     @Override

@@ -51,6 +51,11 @@ public class ProductResource {
                         productData -> ResponseEntity.status(HttpStatus.OK).body(productData))
                 .orElseThrow(() -> new IllegalArgumentException("Can not find the product "));
     }
+    @GetMapping("/{name}")
+    public ResponseEntity<List<ProductDTO>> getProductByName(@PathVariable(name = "name") String nameProduct) {
+     //   List<ProductDTO> list = productService.searchByName(nameProduct);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct));
+    }
     @GetMapping("/getAllProduct")
     public ResponseEntity<List<ProductDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {

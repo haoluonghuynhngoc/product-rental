@@ -10,6 +10,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 @SpringBootTest(classes = RentalApplication.class)
 public class ProductApiTest extends AbstractTestNGSpringContextTests {
     @Autowired
@@ -41,5 +43,12 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
         Product product = productRepository.findById(1L).get();
         Assert.assertEquals(product.getName(), expected, "Two result is not correct");
     }
+//    @Test
+//    public void getListProductByNameTestNotIsEmpty(){
+//        List<Product> list= productRepository.findByNameLike("%Spring Boot%");
+//        for (Product x: list) {
+//            list.toString();
+//        }
+//    }
 
 }
