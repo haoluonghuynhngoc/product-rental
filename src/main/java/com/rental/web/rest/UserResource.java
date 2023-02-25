@@ -75,8 +75,8 @@ public class UserResource {
         return ResponseEntity.status(HttpStatus.OK).body(findAllUser.getContent());
     }
     @GetMapping("/{name}")
-    public ResponseEntity<List<UserDTO>> getProductByName(@PathVariable(name = "name") String firstName) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(firstName));
+    public ResponseEntity<List<UserDTO>> getProductByName(@PathVariable(name = "name") String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(name));
     }
 
     @GetMapping("/getOne/{id}")

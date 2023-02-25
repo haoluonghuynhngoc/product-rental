@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> role = new HashSet<>();
         role.add(roleRepository.findByName(RoleName.USERS));
         applicationUserDTO.setNotifications(null);
+        applicationUserDTO.setFirstName(applicationUserDTO.getUsername()); // tên người dùng khi tạo phải trùng với UserName
         applicationUserDTO.setRole(role);
         applicationUserDTO.setStatus(UserStatus.UNLOCKED);
         applicationUserDTO.setPassword(bCryptPasswordEncoder.encode(applicationUserDTO.getPassword()));
@@ -88,9 +89,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> searchUserByFirstName(String firstName) {
+    public List<UserDTO> searchUserByFirstName(String name) {
         List<UserDTO> listDTO = new ArrayList<>();
-        for (User listUser : userRepository.findByFirstNameLike("%" + firstName + "%")) {
+//        for (User listUser : userRepository.findByFirstNameLike("%" + firstName + "%")) {
+//            listDTO.add(modelMapper.map(listUser, UserDTO.class));
+//        }
+        for (User listUser :  userRepository.findByLastNameLikeOrFirstNameLike("%" + name + "%","%" + name + "%")) {
             listDTO.add(modelMapper.map(listUser, UserDTO.class));
         }
         return listDTO;
