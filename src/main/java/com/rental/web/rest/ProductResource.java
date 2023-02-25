@@ -28,6 +28,8 @@ public class ProductResource {
     private ProductRepository productRepository;
     @PostMapping("/create")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
+        if(productDTO.getCategory()==null)
+            throw new IllegalArgumentException("Danh mục sản phẩm không được để trống ");
         if (productDTO.getId() != null)
             throw new IllegalArgumentException("A new product cannot already have an ID : exists  id ");
         return ResponseEntity.status(HttpStatus.OK).body(productService.save(productDTO));

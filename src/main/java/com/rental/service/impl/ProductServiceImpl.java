@@ -3,6 +3,7 @@ package com.rental.service.impl;
 import java.util.*;
 
 import com.rental.domain.Image;
+import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.*;
 import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
@@ -36,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
             imageClient.setProduct(product);
         }
         //
+        product.setStatus(ProductStatus.PENDING);
         product.setUser(userRepository.findByUsername("admin"));
         product = productRepository.save(product);
         return modelMapper.map(product, ProductDTO.class);

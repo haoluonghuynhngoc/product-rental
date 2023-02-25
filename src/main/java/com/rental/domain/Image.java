@@ -23,7 +23,7 @@ public class Image implements Serializable {
     private Long id;
     @Column(name = "name", columnDefinition = "nvarchar(200)")
     private String name;
-    @Column(name = "url")
+    @Column(name = "url", columnDefinition = "nvarchar(max)")
     private String url;
     @ManyToOne
     @JoinColumn(name = "product_id")
