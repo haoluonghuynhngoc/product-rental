@@ -1,4 +1,5 @@
 package com.rental.service.impl;
+
 import java.util.*;
 
 import com.rental.domain.Product;
@@ -50,6 +51,8 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDTO> updateUser(UserDTO applicationUserDTO) {
         return userRepository.findById(applicationUserDTO.getId()).map(
                 userEntity -> {
+                    if (applicationUserDTO.getEmail() == null)
+                        applicationUserDTO.setEmail(userEntity.getEmail());
                     applicationUserDTO.setUsername(userEntity.getUsername());
                     applicationUserDTO.setPassword(userEntity.getPassword());
                     applicationUserDTO.setRole(userEntity.getRole());
@@ -68,6 +71,8 @@ public class UserServiceImpl implements UserService {
 //            throw new IllegalArgumentException("User name is invalid");
 //        if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
 //            throw new IllegalArgumentException("Password is not correct");
+        if (userEntity.getStatus().equals(UserStatus.REJECTED))
+            throw new IllegalArgumentException("Tài khoản đã bị xóa vui lòng liên hệ admin để lấy lại tài khoản");
         if (userEntity.getStatus().equals(UserStatus.LOCKED))
             throw new IllegalArgumentException("Tài khoản của bạn đã bị khóa");
         if (!bCryptPasswordEncoder.matches(applicationUserDTO.getPassword(), userEntity.getPassword()))
@@ -81,10 +86,11 @@ public class UserServiceImpl implements UserService {
             return modelMapper.map(p, UserDTO.class);
         });
     }
+
     @Override
     public List<UserDTO> searchUserByFirstName(String firstName) {
         List<UserDTO> listDTO = new ArrayList<>();
-        for (User listUser :userRepository.findByFirstNameLike("%" + firstName + "%")) {
+        for (User listUser : userRepository.findByFirstNameLike("%" + firstName + "%")) {
             listDTO.add(modelMapper.map(listUser, UserDTO.class));
         }
         return listDTO;
@@ -97,7 +103,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Mật khẩu hiện tại không đúng ");
         }
         userEntity.setPassword(bCryptPasswordEncoder.encode(changePassword.getNewPassword()));
-        return modelMapper.map(userRepository.save(userEntity),UserDTO.class) ;
+        return modelMapper.map(userRepository.save(userEntity), UserDTO.class);
     }
 
     @Override

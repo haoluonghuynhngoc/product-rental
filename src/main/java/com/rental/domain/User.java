@@ -98,6 +98,9 @@ public class User implements Serializable {
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
     @ToString.Exclude
     private Set<Product> products = new HashSet<>();
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    private Set<Blog> blog = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

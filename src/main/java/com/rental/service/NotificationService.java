@@ -12,8 +12,6 @@ public interface NotificationService {
 
     NotificationDTO createNotification(NotificationDTO notificationDTO);
 
-    //NotificationDTO update(NotificationDTO notificationDTO);
-
     Optional<NotificationDTO> updateNotification(NotificationDTO notificationDTO);
 
     Page<NotificationDTO> findAll(Pageable pageable);
