@@ -1,4 +1,5 @@
 package com.rental.apitestng;
+
 import com.rental.RentalApplication;
 import com.rental.domain.Category;
 import com.rental.repository.CategoryRepository;
@@ -11,8 +12,7 @@ import org.testng.annotations.Test;
 
 @SpringBootTest(classes = RentalApplication.class)
 public class CategoryApiTest extends AbstractTestNGSpringContextTests {
-    @Autowired
-    private CategoryService categoryService;
+
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -25,6 +25,7 @@ public class CategoryApiTest extends AbstractTestNGSpringContextTests {
     public void getCategoryByNameTestNotNull() {
         Assert.assertNotNull(categoryRepository.findByName("Thể Thao"));
     }
+
     @Test
     public void getCategoryByNameTestUpdateNameCategoryEntity() {
         Category category = categoryRepository.findByName("TestNG");
@@ -32,5 +33,13 @@ public class CategoryApiTest extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(categoryRepository.save(category));
     }
 
+    @Test
+    public void getAllCategoryTestSizeCategory() {
+        Assert.assertTrue(categoryRepository.findAll().size() >= 4, "Size Category less than 4 ");
+    }
 
+    @Test
+    public void getCategoryByIdTestNotNull() {
+        Assert.assertNotNull(categoryRepository.findById(1L));
+    }
 }

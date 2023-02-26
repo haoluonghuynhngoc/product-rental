@@ -16,8 +16,6 @@ import java.util.List;
 public class ProductApiTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private ProductService productService;
 
     @Test
     public void getProductByIdTestDepositEqual() {

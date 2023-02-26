@@ -15,8 +15,6 @@ import org.testng.annotations.Test;
 public class VoucherApiTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private VoucherRepository voucherRepository;
-    @Autowired
-    private VoucherService voucherService;
 
     @Test
     public void getVoucherByIdTestEqualStatus() {

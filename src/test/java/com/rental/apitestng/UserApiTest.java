@@ -18,8 +18,6 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserService userService;
-    @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
 
     @DataProvider(name = "useSet")
@@ -32,8 +30,8 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dataProvider = "useSet")
-    public void getUserNameAndPasswordTestEqualLoginUser(String username, String password) {
-        Assert.assertEquals(username, password, "User name or password is not correct");
+    public void getUserNameAndPasswordTestEqualLoginUser(String test1, String test2) {
+        Assert.assertEquals(test1, test2, "User name or password is not correct");
     }
 
     @Test

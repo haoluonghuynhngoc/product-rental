@@ -43,7 +43,7 @@ public class User implements Serializable {
     @Column(name = "address", columnDefinition = "nvarchar(250)")
     private String address;
 
-    @Column(name = "avatar")
+    @Column(name = "avatar", columnDefinition = "nvarchar(max)")
     private String avatar;
 
     @Column(name = "birthday")
@@ -59,7 +59,7 @@ public class User implements Serializable {
     @Column(length = 254)
     private String email;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "nvarchar(max)")
     private String imageUrl;
 
     @Column(name = "created_date")
