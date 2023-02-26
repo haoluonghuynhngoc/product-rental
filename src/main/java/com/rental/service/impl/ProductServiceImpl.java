@@ -54,18 +54,15 @@ public class ProductServiceImpl implements ProductService {
                 .map(existingProduct -> {
                     if (productDTO.getCategory() == null)
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
-//      Tạo list SET để dễ map qua Entity update
+
+                    if (productDTO.getImages()==null||productDTO.getImages().size()==0){
+                    imageRepository.findAllByProduct(existingProduct).forEach(
+                            image -> productDTO.getImages().add(modelMapper.map(image,ImageDTO.class))
+                    );}
+                    imageRepository.deleteAllByProduct(existingProduct);
                     Set<Image> image = new HashSet<>();
                     for (ImageDTO img : productDTO.getImages()) {
-                        image.add(imageRepository.findById(img.getId()).map(
-                                        imageE -> {
-                                            imageE.setName(img.getName());
-                                            imageE.setUrl(img.getUrl());
-                                            return imageE;
-                                        }
-                                ).orElse(
-                        modelMapper.map(img, Image.class) )
-                        );
+                        image.add(modelMapper.map(img,Image.class));
                     }
 // ====
                     image.forEach(i->i.setProduct(existingProduct));

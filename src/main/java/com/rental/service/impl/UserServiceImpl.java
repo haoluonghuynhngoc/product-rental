@@ -57,7 +57,20 @@ public class UserServiceImpl implements UserService {
                     applicationUserDTO.setUsername(userEntity.getUsername());
                     applicationUserDTO.setPassword(userEntity.getPassword());
                     applicationUserDTO.setRole(userEntity.getRole());
+                    applicationUserDTO.setStatus(userEntity.getStatus());
                     modelMapper.map(applicationUserDTO, userEntity);
+                    return userEntity;
+                }
+        ).map(userRepository::save).map(b -> {
+            return modelMapper.map(b, UserDTO.class);
+        });
+    }
+
+    @Override
+    public Optional<UserDTO> updateUserStatus(UserDTO applicationUserDTO) {
+        return userRepository.findById(applicationUserDTO.getId()).map(
+                userEntity -> {
+                    userEntity.setStatus(applicationUserDTO.getStatus());
                     return userEntity;
                 }
         ).map(userRepository::save).map(b -> {
@@ -94,7 +107,7 @@ public class UserServiceImpl implements UserService {
 //        for (User listUser : userRepository.findByFirstNameLike("%" + firstName + "%")) {
 //            listDTO.add(modelMapper.map(listUser, UserDTO.class));
 //        }
-        for (User listUser :  userRepository.findByLastNameLikeOrFirstNameLike("%" + name + "%","%" + name + "%")) {
+        for (User listUser : userRepository.findByLastNameLikeOrFirstNameLike("%" + name + "%", "%" + name + "%")) {
             listDTO.add(modelMapper.map(listUser, UserDTO.class));
         }
         return listDTO;

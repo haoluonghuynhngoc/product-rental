@@ -45,12 +45,20 @@ public class UserResource {
             throw new IllegalArgumentException("Sai tài khoản hoặc mật khẩu");
         return ResponseEntity.status(HttpStatus.OK).body(userService.loginUser(users));
     }
+    @PutMapping("/change/status")
+    public ResponseEntity<UserDTO> updateStatus(@RequestBody UserDTO userDTO){
+        if (!userRepository.findById(userDTO.getId()).isPresent())
+            throw new IllegalArgumentException("Không thể tìm thấy người dùng");
+        return userService.updateUserStatus(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+    }
 
 
     @PutMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail()))
-            throw new IllegalArgumentException("Ten gmail đã tồn tại ");
+            throw new IllegalArgumentException("Tên gmail đã tồn tại ");
         if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
         return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(

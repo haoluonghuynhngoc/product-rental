@@ -19,6 +19,7 @@ public interface UserService {
 
     UserDTO createUser(UserDTO applicationUserDTO);
     Optional<UserDTO> updateUser(UserDTO applicationUserDTO);
+    Optional<UserDTO> updateUserStatus(UserDTO applicationUserDTO);
     UserDTO loginUser(UserDTO applicationUserDTO);
     Page<UserDTO> findAll(Pageable pageable);
     List<UserDTO> searchUserByFirstName(String firstName);

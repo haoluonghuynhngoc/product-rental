@@ -55,7 +55,7 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void checkEmailUserInDataBaseTestEqual() {
-        Assert.assertTrue(userRepository.existsByEmail("haoluonghuynhngoc@gmail.com"));
+        Assert.assertTrue(userRepository.existsByEmail("haoluong@gmail.com"));
     }
 
     @Test

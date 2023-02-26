@@ -28,10 +28,18 @@ public class VoucherApiTest extends AbstractTestNGSpringContextTests {
     public void getVoucherByIdTestDiscountMoreThanFive() {
         Double discount = 5.0;
         Assert.assertTrue(voucherRepository.findById(1L).get().getDiscount() > discount
-                , "The discount in database more than 5");
+                , "The discount in database more low 5");
     }
     @Test(expectedExceptions = Exception.class)
     public void getVoucherByIdTestVoucherNullPointerException(){
         Voucher voucher = voucherRepository.findById(20L).get();
+    }
+    @Test
+    public void getVoucherByIDTestNotNull(){
+        Assert.assertNotNull(voucherRepository.findById(2L));
+    }
+    @Test
+    public void getVoucherByIdTestNameVoucher(){
+        Assert.assertTrue(voucherRepository.findById(2L).get().getName().equals("Free Ship"));
     }
 }

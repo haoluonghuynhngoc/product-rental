@@ -19,6 +19,10 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private ProductService productService;
 
+    @Test
+    public void getProductByIdTestDepositEqual() {
+        Assert.assertTrue(productRepository.findById(3L).get().getDeposit() == 700000, "The result is not correct");
+    }
     @Test(expectedExceptions = Exception.class)
     public void getProductByIdTestNullPointerException() {
         Product product = productRepository.findById(200L).get();
@@ -28,9 +32,8 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
     public void getProductByIdAndUpdateProductTestNotNullPointerException() {
         Product product = productRepository.findById(1L).map(
                 productEntity -> {
-                    productEntity.setPrice(1.0);
                     productEntity.setQuantity(1);
-                    productEntity.setName("Spring Boot");
+                    productEntity.setName("Bông tai ngọc trai hình giọt nước");
                     return productEntity;
                 }
         ).get();
@@ -39,16 +42,21 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getProductByIdAndTestEqualProductName() {
-        String expected = "Spring Boot";
+        String expected = "Bông tai ngọc trai hình giọt nước";
         Product product = productRepository.findById(1L).get();
         Assert.assertEquals(product.getName(), expected, "Two result is not correct");
     }
-//    @Test
-//    public void getListProductByNameTestNotIsEmpty(){
-//        List<Product> list= productRepository.findByNameLike("%Spring Boot%");
-//        for (Product x: list) {
-//            list.toString();
-//        }
-//    }
+
+    @Test
+    public void getListProductByNameTestSizeProductMoreThan2() {
+        List<Product> list = productRepository.findByNameLike("%n%");
+        Assert.assertTrue(list.size() > 2, "List less than 3");
+    }
+
+    @Test
+    public void getProductByIdTestPriceProduct() {
+        Assert.assertTrue(productRepository.findById(1L).get().getPrice() == 100000, "The result is not correct");
+    }
+
 
 }
