@@ -1,5 +1,13 @@
 package com.rental.service.impl;
+
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+
+import com.rental.domain.Product;
+import com.rental.repository.ProductRepository;
+import com.rental.service.dto.CategoryShowDTO;
+import com.rental.service.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +28,8 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
 
     @Override
@@ -51,9 +61,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CategoryDTO> findOne(Long id) {
+    public Optional<CategoryShowDTO> findOne(Long id) {
         return categoryRepository.findById(id).map(c -> {
-            return modelMapper.map(c, CategoryDTO.class);
+            Set<ProductDTO> productDTO = new HashSet<>();
+            for (Product product : c.getProducts()) {
+                productDTO.add(modelMapper.map(product, ProductDTO.class));
+            }
+            return CategoryShowDTO.builder()
+                    .id(c.getId())
+                    .name(c.getName())
+                    .products(productDTO)
+                    .build();
         });
     }
 

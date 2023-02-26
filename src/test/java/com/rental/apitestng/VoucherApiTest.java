@@ -20,6 +20,7 @@ public class VoucherApiTest extends AbstractTestNGSpringContextTests {
     public void getVoucherByIdTestEqualStatus() {
         Voucher voucher = voucherRepository.findById(1L).get();
         Assert.assertEquals(voucher.getStatus(), VorcherStatus.DISCOUNT, "Tow result is not correct ");
+
     }
 
     @Test

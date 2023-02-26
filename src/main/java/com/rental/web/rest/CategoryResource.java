@@ -3,6 +3,7 @@ package com.rental.web.rest;
 import java.util.List;
 import java.util.Optional;
 
+import com.rental.service.dto.CategoryShowDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -71,7 +72,7 @@ public class CategoryResource {
     }
 
     @GetMapping("/getOne/{id}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long id) {
+    public ResponseEntity<CategoryShowDTO> getCategory(@PathVariable Long id) {
       //  Optional<CategoryDTO> categoryDTO = categoryService.findOne(id);
         return categoryService.findOne(id).map(response -> ResponseEntity.ok().body(response))
                 .orElseThrow(() -> new IllegalArgumentException("Can not find the user have Id : " + id + " In the data "));

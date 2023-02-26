@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
             imageClient.setProduct(product);
         }
         //
-        product.setStatus(ProductStatus.PENDING);
+        product.setStatus(ProductStatus.APPROVED);
         product.setUser(userRepository.findByUsername("admin"));
         product = productRepository.save(product);
         return modelMapper.map(product, ProductDTO.class);
