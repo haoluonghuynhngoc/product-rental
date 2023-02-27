@@ -102,6 +102,12 @@ public class User implements Serializable {
     @ToString.Exclude
     private Set<Blog> blog = new HashSet<>();
 
+
+    //=====
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
+    private Set<CartItems> cartItems = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,10 +1,6 @@
 package com.rental.service.dto;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.rental.domain.Product;
 import lombok.Data;
 
 @SuppressWarnings("common-java:DuplicatedBlocks")

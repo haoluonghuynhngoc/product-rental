@@ -66,6 +66,11 @@ public class Product implements Serializable {
     @JsonIgnoreProperties(value = {"orders", "notifications"}, allowSetters = true)
     private User user;
 
+//===
+    @OneToMany(mappedBy = "product")
+    @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
+    @ToString.Exclude
+    private Set<CartItems> cartItems = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
 
