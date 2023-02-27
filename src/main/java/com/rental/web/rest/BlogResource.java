@@ -3,8 +3,6 @@ package com.rental.web.rest;
 import com.rental.repository.BlogRepository;
 import com.rental.service.BlogService;
 import com.rental.service.dto.BlogDTO;
-import com.rental.service.dto.ProductDTO;
-import com.rental.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +35,10 @@ public class BlogResource {
                 blogData -> ResponseEntity.status(HttpStatus.OK).body(blogData)).orElseThrow(
                 () -> new IllegalArgumentException("Cant not update blog")
         );
+    }
+    @GetMapping("/{title}")
+    public ResponseEntity<List<BlogDTO>> getProductByName(@PathVariable(name = "title") String title) {
+        return ResponseEntity.status(HttpStatus.OK).body(blogService.searchByTitle(title));
     }
     @GetMapping("/getOne/{id}")
     public ResponseEntity<BlogDTO> getProduct(@PathVariable Long id) {

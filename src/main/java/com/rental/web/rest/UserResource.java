@@ -47,6 +47,8 @@ public class UserResource {
     }
     @PutMapping("/change/status")
     public ResponseEntity<UserDTO> updateStatus(@RequestBody UserDTO userDTO){
+        if (userRepository.existsByUsername("admin"))
+            throw new IllegalArgumentException("Không thể xóa admin");
         if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
         return userService.updateUserStatus(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
@@ -96,6 +98,8 @@ public class UserResource {
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable(value = "id") Long id) {
+        if (userRepository.existsByUsername("admin"))
+            throw new IllegalArgumentException("Không thể xóa admin");
         if (!userRepository.findById(id).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng có id :" + id);
         userService.delete(id);
