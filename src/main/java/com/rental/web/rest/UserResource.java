@@ -47,7 +47,7 @@ public class UserResource {
     }
     @PutMapping("/change/status")
     public ResponseEntity<UserDTO> updateStatus(@RequestBody UserDTO userDTO){
-        if (userRepository.existsByUsername("admin"))
+        if (userRepository.findById(userDTO.getId()).get().getUsername().equals("admin"))
             throw new IllegalArgumentException("Không thể xóa admin");
         if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
