@@ -4,13 +4,16 @@ import com.rental.RentalApplication;
 import com.rental.domain.Product;
 import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
+import net.bytebuddy.implementation.ExceptionMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @SpringBootTest(classes = RentalApplication.class)
 public class ProductApiTest extends AbstractTestNGSpringContextTests {
@@ -21,9 +24,13 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
     public void getProductByIdTestDepositEqual() {
         Assert.assertTrue(productRepository.findById(3L).get().getDeposit() == 700000, "The result is not correct");
     }
-    @Test(expectedExceptions = Exception.class)
+
+    //    @Test(expectedExceptions = Exception.class)
+    @Test
     public void getProductByIdTestNullPointerException() {
-        Product product = productRepository.findById(200L).get();
+        Assert.assertThrows(NoSuchElementException.class, () -> {
+            productRepository.findById(200L).get();
+        });
     }
 
     @Test
@@ -34,7 +41,7 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
                     productEntity.setName("Bông tai ngọc trai hình giọt nước");
                     return productEntity;
                 }
-        ).get();
+        ).orElse(null);
         Assert.assertNotNull(productRepository.save(product));
     }
 

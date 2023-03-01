@@ -6,9 +6,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class PrimitiveDataTypeTest {
-
-
-
     @Test
     public void towIntegerTestEqual() {
         int expected = 1;

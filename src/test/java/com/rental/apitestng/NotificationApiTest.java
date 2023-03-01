@@ -2,7 +2,6 @@ package com.rental.apitestng;
 
 import com.rental.RentalApplication;
 import com.rental.domain.Notification;
-import com.rental.domain.User;
 import com.rental.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

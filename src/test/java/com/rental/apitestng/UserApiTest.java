@@ -36,14 +36,20 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getUserByIdTestNotNull() {
-        User user = userRepository.findById(1L).get();
+        User user=null;
+        try {
+           user = userRepository.findById(1L).get();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         Assert.assertNotNull(user, "User is null");
+
     }
 
     @Test(expectedExceptions = Exception.class)
     public void saveUserToEntityTestThrowException() {
         User user = User.builder()
-                .username("admin")
+                .username("admin") // quăn lỗi vì trùng useName
                 .firstName("Hảo")
                 .password(bCryptPasswordEncoder.encode("11111"))
                 .address("10, Cao Lỗ, Phường 4, Quận 8, TP.HCM")
@@ -52,7 +58,7 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void checkEmailUserInDataBaseTestEqual() {
+    public void checkEmailUserInDataBaseTestBoolean() {
         Assert.assertTrue(userRepository.existsByEmail("haoluong@gmail.com"));
     }
 
