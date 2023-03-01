@@ -1,23 +1,26 @@
 package com.rental.web.rest;
 
+import com.rental.domain.Attachment;
+import com.rental.repository.CategoryRepository;
+import com.rental.service.AttachmentService;
+import com.rental.service.dto.CategoryDTO;
+import com.rental.service.dto.ImageDTO;
+import com.rental.service.dto.ProductImageDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
 import com.rental.service.dto.ProductDTO;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/products")
@@ -26,25 +29,57 @@ public class ProductResource {
     private ProductService productService;
     @Autowired
     private ProductRepository productRepository;
-    @PostMapping("/create")
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
-        if(productDTO.getCategory()==null)
-            throw new IllegalArgumentException("Danh mục sản phẩm không được để trống ");
-        if (productDTO.getId() != null)
-            throw new IllegalArgumentException("A new product cannot already have an ID : exists  id ");
+    @Autowired
+    private AttachmentService attachmentService;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductDTO> createProduct(@ModelAttribute ProductImageDTO productImageDTO) {
+        ProductDTO productDTO = modelMapper.map(productImageDTO, ProductDTO.class);
+        productDTO.setCategory(modelMapper
+                .map(categoryRepository.findById(productImageDTO.getCategoryId()).orElse(null), CategoryDTO.class));
+
+        productImageDTO.getLocalImage().forEach(i -> {
+            try {
+                Attachment attachment = attachmentService.saveAttachment(i);
+                productDTO.getImages().add(new ImageDTO().builder()
+                        .url(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/").path(attachment.getId()).toUriString())
+                        .name(attachment.getFilename())
+                        .build());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         return ResponseEntity.status(HttpStatus.OK).body(productService.save(productDTO));
     }
-    @PutMapping("/update")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO) {
+
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductDTO> updateProduct(@ModelAttribute ProductImageDTO productImageDTO) throws Exception {
+        ProductDTO productDTO = modelMapper.map(productImageDTO, ProductDTO.class);
         if (productDTO.getId() == null)
-            throw new IllegalArgumentException("ID can not be null");
+            throw new IllegalArgumentException("Không thể để Id trống");
         if (!productRepository.existsById(productDTO.getId()))
-            throw new IllegalArgumentException("Entity not found : Can not find the id in the data ");
+            throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id :" + productDTO.getId());
+        productDTO.setCategory(modelMapper
+                .map(categoryRepository.findById(productImageDTO.getCategoryId()).get(), CategoryDTO.class));
+       // còn chẹck điều kiện
+            for (MultipartFile imageFile : productImageDTO.getLocalImage()) {
+                Attachment attachment = attachmentService.saveAttachment(imageFile);
+                productDTO.getImages().add(new ImageDTO(attachment.getFilename(),
+                        ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/").path(attachment.getId()).toUriString()
+                ));
+            }
+
         return productService.update(productDTO).map(
                 productData -> ResponseEntity.status(HttpStatus.OK).body(productData)).orElseThrow(
                 () -> new IllegalArgumentException("Cant not update product")
         );
     }
+
     @GetMapping("/getOne/{id}")
     public ResponseEntity<ProductDTO> getProduct(@PathVariable Long id) {
         if (!productRepository.existsById(id))
@@ -53,11 +88,13 @@ public class ProductResource {
                         productData -> ResponseEntity.status(HttpStatus.OK).body(productData))
                 .orElseThrow(() -> new IllegalArgumentException("Can not find the product "));
     }
+
     @GetMapping("/{name}")
     public ResponseEntity<List<ProductDTO>> getProductByName(@PathVariable(name = "name") String nameProduct) {
-     //   List<ProductDTO> list = productService.searchByName(nameProduct);
+        //   List<ProductDTO> list = productService.searchByName(nameProduct);
         return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct));
     }
+
     @GetMapping("/getAllProduct")
     public ResponseEntity<List<ProductDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
@@ -66,6 +103,7 @@ public class ProductResource {
             throw new IllegalArgumentException("Cant not find any product in the data ");
         return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
+
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (!productRepository.existsById(id))

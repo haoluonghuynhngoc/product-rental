@@ -32,11 +32,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO save(ProductDTO productDTO) {
         Product product = modelMapper.map(productDTO, Product.class);
+        product.setId(-1L);
         // set image
         for (Image imageClient : product.getImages()) {
             imageClient.setProduct(product);
         }
         //
+        product.setQuantity(1);
         product.setStatus(ProductStatus.APPROVED);
         product.setUser(userRepository.findByUsername("admin"));
         product = productRepository.save(product);
@@ -46,9 +48,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Optional<ProductDTO> update(ProductDTO productDTO) {
-        productDTO.setCategory(modelMapper.map(
-                categoryRepository.findById(productDTO.getCategory().getId()).orElse(null), CategoryDTO.class
-        ));
         return productRepository
                 .findById(productDTO.getId())
                 .map(existingProduct -> {
@@ -60,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
                             image -> productDTO.getImages().add(modelMapper.map(image,ImageDTO.class))
                     );}
                     imageRepository.deleteAllByProduct(existingProduct);
-                    Set<Image> image = new HashSet<>();
+                    List<Image> image = new ArrayList<>();
                     for (ImageDTO img : productDTO.getImages()) {
                         image.add(modelMapper.map(img,Image.class));
                     }

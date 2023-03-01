@@ -1,6 +1,9 @@
 package com.rental.service.impl;
 import java.util.Optional;
+
+import com.rental.domain.Attachment;
 import com.rental.repository.UserRepository;
+import com.rental.service.AttachmentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,13 +23,9 @@ public class ImageServiceImpl implements ImageService {
     private ImageRepository imageRepository;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private UserRepository userRepository;
-
 
     @Override
-    public ImageDTO save(ImageDTO imageDTO) {
-
+    public ImageDTO save(ImageDTO imageDTO)  {
         Image image = modelMapper.map(imageDTO, Image.class);
         image = imageRepository.save(image);
         return modelMapper.map(image, ImageDTO.class);

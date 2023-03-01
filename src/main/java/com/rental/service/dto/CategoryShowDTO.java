@@ -1,15 +1,14 @@
 package com.rental.service.dto;
 
 import com.rental.domain.Product;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @SuppressWarnings("common-java:DuplicatedBlocks")
 @Data

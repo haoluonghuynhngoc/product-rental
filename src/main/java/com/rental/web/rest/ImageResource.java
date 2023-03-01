@@ -4,25 +4,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.rental.domain.Attachment;
+import com.rental.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.rental.repository.ImageRepository;
 import com.rental.service.ImageService;
 import com.rental.service.dto.ImageDTO;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api")
@@ -31,17 +27,18 @@ public class ImageResource {
     private ImageService imageService;
     @Autowired
     private ImageRepository imageRepository;
-
-
-    @PostMapping("/images")
-    public ResponseEntity<ImageDTO> createImage(@RequestBody ImageDTO imageDTO) {
-
+    @Autowired
+    private AttachmentService attachmentService;
+    // vì @requestBody chỉ gửi chuỗi string nên không phù hợp cho gửi file
+    //dowloadURL = ServletUriComponentsBuilder.fromCurrentContextPath()
+    // .path("/dowload/").path(attachment.getId()).toUriString();
+    @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ImageDTO> createImage(@ModelAttribute ImageDTO imageDTO) throws Exception {
         if (imageDTO.getId() != null) {
             throw new IllegalArgumentException("A new image cannot already have an ID  : idexists");
         }
         ImageDTO result = imageService.save(imageDTO);
-        return ResponseEntity.ok(result);
-
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PatchMapping(value = "/images/{id}", consumes = {"application/json", "application/merge-patch+json"})
@@ -69,7 +66,6 @@ public class ImageResource {
     @GetMapping("/images")
     public ResponseEntity<List<ImageDTO>> getAllImages(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-
         Page<ImageDTO> page = imageService.findAll(pageable);
         return ResponseEntity.ok().body(page.getContent());
     }

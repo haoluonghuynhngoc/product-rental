@@ -11,9 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -52,7 +50,7 @@ public class Product implements Serializable {
     @OneToMany( mappedBy = "product",cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnoreProperties(value = {"product"}, allowSetters = true)
     @ToString.Exclude
-    private Set<Image> images = new HashSet<>();
+    private List<Image> images = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties(value = {"products"}, allowSetters = true)
