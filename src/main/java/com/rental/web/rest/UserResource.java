@@ -1,18 +1,24 @@
 package com.rental.web.rest;
 
+import com.rental.domain.Attachment;
 import com.rental.domain.enums.UserStatus;
 import com.rental.repository.UserRepository;
+import com.rental.service.AttachmentService;
 import com.rental.service.UserService;
 import com.rental.service.dto.PasswordChangeDTO;
 import com.rental.service.dto.ProductDTO;
 import com.rental.service.dto.UserDTO;
+import com.rental.service.dto.UserImageDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -24,18 +30,24 @@ public class UserResource {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private AttachmentService attachmentService;
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO users) {
-        if (users.getUsername().trim().length() < 5)
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+        if (userDTO.getUsername().trim().length() < 5)
             throw new IllegalArgumentException("Tên người dùng phải lớn hơn 5 ");
-        if (users.getPassword().trim().length() < 5)
+        if (userDTO.getPassword().trim().length() < 5)
             throw new IllegalArgumentException("Mật khẩu người dùng phải lớn hơn 5 ");
-        if (userRepository.existsByUsername(users.getUsername()))
+        if (userRepository.existsByUsername(userDTO.getUsername()))
             throw new IllegalArgumentException("Tên người dùng đã tồn tại ");
-        if (userRepository.existsByEmail(users.getEmail()))
-            throw new IllegalArgumentException("Email người dùng đã tồn tại ");
-        return ResponseEntity.status(HttpStatus.OK).body(userService.createUser(users));
+        if (userDTO.getEmail() != null) {
+            if (userRepository.existsByEmail(userDTO.getEmail()))
+                throw new IllegalArgumentException("Email người dùng đã tồn tại ");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(userService.createUser(userDTO));
 
     }
 
@@ -45,8 +57,9 @@ public class UserResource {
             throw new IllegalArgumentException("Sai tài khoản hoặc mật khẩu");
         return ResponseEntity.status(HttpStatus.OK).body(userService.loginUser(users));
     }
+
     @PutMapping("/change/status")
-    public ResponseEntity<UserDTO> updateStatus(@RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> updateStatus(@RequestBody UserDTO userDTO) {
         if (userRepository.findById(userDTO.getId()).get().getUsername().equals("admin"))
             throw new IllegalArgumentException("Không thể xóa admin");
         if (!userRepository.findById(userDTO.getId()).isPresent())
@@ -57,12 +70,23 @@ public class UserResource {
     }
 
 
-    @PutMapping("/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail()))
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserDTO> updateUser(@ModelAttribute UserImageDTO userImageDTO) {
+        UserDTO userDTO = modelMapper.map(userImageDTO, UserDTO.class);
+        if (userRepository.existsByEmail(userImageDTO.getEmail()))
             throw new IllegalArgumentException("Tên gmail đã tồn tại ");
-        if (!userRepository.findById(userDTO.getId()).isPresent())
+        if (!userRepository.findById(userImageDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
+        try {
+            Attachment attachmentAvatar = attachmentService.saveAttachment(userImageDTO.getLocalAvatar());
+            userDTO.setImageUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/")
+                    .path(attachmentAvatar.getId()).toUriString());
+            Attachment attachmentImageUrl = attachmentService.saveAttachment(userImageDTO.getLocalImageUrl());
+            userDTO.setAvatar(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/")
+                    .path(attachmentImageUrl.getId()).toUriString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
@@ -84,6 +108,7 @@ public class UserResource {
             throw new IllegalArgumentException("Không thể tìm thấy bất kì người dùng trong dữ liệu");
         return ResponseEntity.status(HttpStatus.OK).body(findAllUser.getContent());
     }
+
     @GetMapping("/{name}")
     public ResponseEntity<List<UserDTO>> getProductByName(@PathVariable(name = "name") String name) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(name));

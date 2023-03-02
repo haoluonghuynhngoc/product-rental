@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> role = new HashSet<>();
         role.add(roleRepository.findByName(RoleName.USERS));
         applicationUserDTO.setNotifications(null);
+        applicationUserDTO.setId(-1L);
         applicationUserDTO.setFirstName(applicationUserDTO.getUsername()); // tên người dùng khi tạo phải trùng với UserName
         applicationUserDTO.setRole(role);
         applicationUserDTO.setStatus(UserStatus.UNLOCKED);
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
                         applicationUserDTO.setEmail(userEntity.getEmail());
                     applicationUserDTO.setUsername(userEntity.getUsername());
                     applicationUserDTO.setPassword(userEntity.getPassword());
-                    applicationUserDTO.setRole(userEntity.getRole());
+//                    applicationUserDTO.setRole(userEntity.getRole());
                     applicationUserDTO.setStatus(userEntity.getStatus());
                     modelMapper.map(applicationUserDTO, userEntity);
                     return userEntity;
