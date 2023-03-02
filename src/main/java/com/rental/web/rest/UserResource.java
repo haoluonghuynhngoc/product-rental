@@ -70,8 +70,10 @@ public class UserResource {
     }
     @PutMapping( "/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail()))
-            throw new IllegalArgumentException("Tên gmail đã tồn tại ");
+        if (userDTO.getEmail() != null) {
+            if (userRepository.existsByEmail(userDTO.getEmail()))
+                throw new IllegalArgumentException("Email người dùng đã tồn tại ");
+        }
         if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
         return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
