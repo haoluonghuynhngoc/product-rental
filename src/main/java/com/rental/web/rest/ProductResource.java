@@ -35,50 +35,65 @@ public class ProductResource {
     private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
-
-    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductDTO> createProduct(@ModelAttribute ProductImageDTO productImageDTO) {
-        ProductDTO productDTO = modelMapper.map(productImageDTO, ProductDTO.class);
-        productDTO.setCategory(modelMapper
-                .map(categoryRepository.findById(productImageDTO.getCategoryId()).orElse(null), CategoryDTO.class));
-
-        productImageDTO.getLocalImage().forEach(i -> {
-            try {
-                Attachment attachment = attachmentService.saveAttachment(i);
-                productDTO.getImages().add(new ImageDTO().builder()
-                        .url(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/").path(attachment.getId()).toUriString())
-                        .name(attachment.getFilename())
-                        .build());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
+    @PostMapping( "/create")
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.save(productDTO));
     }
 
-    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductDTO> updateProduct(@ModelAttribute ProductImageDTO productImageDTO) throws Exception {
-        ProductDTO productDTO = modelMapper.map(productImageDTO, ProductDTO.class);
+//    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<ProductDTO> createProduct(@ModelAttribute ProductImageDTO productImageDTO) {
+//        ProductDTO productDTO = modelMapper.map(productImageDTO, ProductDTO.class);
+//        productDTO.setCategory(modelMapper
+//                .map(categoryRepository.findById(productImageDTO.getCategoryId()).orElse(null), CategoryDTO.class));
+//
+//        productImageDTO.getLocalImage().forEach(i -> {
+//            try {
+//                Attachment attachment = attachmentService.saveAttachment(i);
+//                productDTO.getImages().add(new ImageDTO().builder()
+//                        .url(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/").path(attachment.getId()).toUriString())
+//                        .name(attachment.getFilename())
+//                        .build());
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(productService.save(productDTO));
+//    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO) throws Exception {
         if (productDTO.getId() == null)
             throw new IllegalArgumentException("Không thể để Id trống");
         if (!productRepository.existsById(productDTO.getId()))
             throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id :" + productDTO.getId());
-        productDTO.setCategory(modelMapper
-                .map(categoryRepository.findById(productImageDTO.getCategoryId()).get(), CategoryDTO.class));
-       // còn chẹck điều kiện
-            for (MultipartFile imageFile : productImageDTO.getLocalImage()) {
-                Attachment attachment = attachmentService.saveAttachment(imageFile);
-                productDTO.getImages().add(new ImageDTO(attachment.getFilename(),
-                        ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/").path(attachment.getId()).toUriString()
-                ));
-            }
-
         return productService.update(productDTO).map(
                 productData -> ResponseEntity.status(HttpStatus.OK).body(productData)).orElseThrow(
                 () -> new IllegalArgumentException("Cant not update product")
         );
     }
+//    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<ProductDTO> updateProduct(@ModelAttribute ProductImageDTO productImageDTO) throws Exception {
+//        ProductDTO productDTO = modelMapper.map(productImageDTO, ProductDTO.class);
+//        if (productDTO.getId() == null)
+//            throw new IllegalArgumentException("Không thể để Id trống");
+//        if (!productRepository.existsById(productDTO.getId()))
+//            throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id :" + productDTO.getId());
+//        productDTO.setCategory(modelMapper
+//                .map(categoryRepository.findById(productImageDTO.getCategoryId()).get(), CategoryDTO.class));
+//        // còn chẹck điều kiện
+//        for (MultipartFile imageFile : productImageDTO.getLocalImage()) {
+//            Attachment attachment = attachmentService.saveAttachment(imageFile);
+//            productDTO.getImages().add(new ImageDTO(attachment.getFilename(),
+//                    ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/").path(attachment.getId()).toUriString()
+//            ));
+//        }
+//
+//        return productService.update(productDTO).map(
+//                productData -> ResponseEntity.status(HttpStatus.OK).body(productData)).orElseThrow(
+//                () -> new IllegalArgumentException("Cant not update product")
+//        );
+//    }
 
     @GetMapping("/getOne/{id}")
     public ResponseEntity<ProductDTO> getProduct(@PathVariable Long id) {

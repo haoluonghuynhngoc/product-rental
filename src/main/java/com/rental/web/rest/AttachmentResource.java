@@ -2,6 +2,7 @@ package com.rental.web.rest;
 
 import com.rental.domain.Attachment;
 import com.rental.service.AttachmentService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class AttachmentResource {
     private AttachmentService attachmentService;
 
     @GetMapping("/show/{fileId}")
+    @Operation(deprecated = true)
     public ResponseEntity<?> dowloadFile(@PathVariable("fileId") String fileId)throws Exception{
         Attachment attachment=null;
         attachment=attachmentService.getAttachment(fileId);

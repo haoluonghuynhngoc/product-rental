@@ -68,29 +68,38 @@ public class UserResource {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
     }
-
-
-    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UserDTO> updateUser(@ModelAttribute UserImageDTO userImageDTO) {
-        UserDTO userDTO = modelMapper.map(userImageDTO, UserDTO.class);
-        if (userRepository.existsByEmail(userImageDTO.getEmail()))
+    @PutMapping( "/update")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.getEmail()))
             throw new IllegalArgumentException("Tên gmail đã tồn tại ");
-        if (!userRepository.findById(userImageDTO.getId()).isPresent())
+        if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
-        try {
-            Attachment attachmentAvatar = attachmentService.saveAttachment(userImageDTO.getLocalAvatar());
-            userDTO.setImageUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/")
-                    .path(attachmentAvatar.getId()).toUriString());
-            Attachment attachmentImageUrl = attachmentService.saveAttachment(userImageDTO.getLocalImageUrl());
-            userDTO.setAvatar(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/")
-                    .path(attachmentImageUrl.getId()).toUriString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
     }
+
+//    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<UserDTO> updateUser(@ModelAttribute UserImageDTO userImageDTO) {
+//        UserDTO userDTO = modelMapper.map(userImageDTO, UserDTO.class);
+//        if (userRepository.existsByEmail(userImageDTO.getEmail()))
+//            throw new IllegalArgumentException("Tên gmail đã tồn tại ");
+//        if (!userRepository.findById(userImageDTO.getId()).isPresent())
+//            throw new IllegalArgumentException("Không thể tìm thấy người dùng");
+//        try {
+//            Attachment attachmentAvatar = attachmentService.saveAttachment(userImageDTO.getLocalAvatar());
+//            userDTO.setImageUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/")
+//                    .path(attachmentAvatar.getId()).toUriString());
+//            Attachment attachmentImageUrl = attachmentService.saveAttachment(userImageDTO.getLocalImageUrl());
+//            userDTO.setAvatar(ServletUriComponentsBuilder.fromCurrentContextPath().path("/show/")
+//                    .path(attachmentImageUrl.getId()).toUriString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return userService.updateUser(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
+//                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+//        );
+//    }
 
     @PostMapping("/change/password")
     public ResponseEntity<?> changeUserPassword(@RequestBody PasswordChangeDTO changePassword) {

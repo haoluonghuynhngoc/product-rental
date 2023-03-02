@@ -21,5 +21,5 @@ public class ProductImageDTO {
     private Integer quantity;
     private ProductStatus status;
     private Long categoryId;
-    private List<MultipartFile> localImage;
+   // private List<MultipartFile> localImage;
 }
