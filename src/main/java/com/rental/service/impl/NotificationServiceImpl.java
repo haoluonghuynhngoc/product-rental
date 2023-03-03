@@ -56,6 +56,9 @@ public class NotificationServiceImpl implements NotificationService {
                             notificationEntity.getUsers().remove(user);
                             user.getNotifications().remove(notificationEntity);
                         }
+                    }else{
+                        // moi them
+                        notificationDTO.setStatus(notificationEntity.getStatus());
                     }
                     modelMapper.map(notificationDTO, notificationEntity);
                     return notificationEntity;

@@ -7,10 +7,7 @@ import com.rental.repository.CategoryRepository;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
 import com.rental.service.CartItemsService;
-import com.rental.service.dto.CartItemsDTO;
-import com.rental.service.dto.CategoryDTO;
-import com.rental.service.dto.ProductDTO;
-import com.rental.service.dto.UserDTO;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,14 +46,17 @@ public class CartItemsServiceImpl implements CartItemsService {
         );
     }
     @Override
-    public List<CartItemsDTO> findAll(Long id) {
-        List<CartItemsDTO> list = new ArrayList<>();
+    public CartItemsShowDTO findAll(Long id) {
+        CartItemsShowDTO cartItem = new CartItemsShowDTO();
+        cartItem.setUser(modelMapper.map(userRepository.findById(id).get(),UserDTO.class));
         cartItemsRepository.findAllByUser(userRepository.findById(id).get()).forEach(
-                i -> list.add(modelMapper.map(i, CartItemsDTO.class))
+                i -> {
+                    if (i.getProduct()!=null){
+                        cartItem.getProduct().add(modelMapper.map(i.getProduct(),ProductDTO.class));
+                    }
+                }
         );
-        return list;
-
-
+        return cartItem;
     }
 
     @Override

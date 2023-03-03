@@ -4,6 +4,7 @@ import com.rental.repository.CartItemsRepository;
 import com.rental.repository.UserRepository;
 import com.rental.service.CartItemsService;
 import com.rental.service.dto.CartItemsDTO;
+import com.rental.service.dto.CartItemsShowDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class CartItemsResource {
     }
 
     @GetMapping("/viewCart/{id}") // tìm theo id người dùng
-    public ResponseEntity<List<CartItemsDTO>> getCartByUser(@PathVariable Long id) {
+    public ResponseEntity<CartItemsShowDTO> getCartByUser(@PathVariable Long id) {
         if (!userRepository.existsById(id))
             throw new IllegalArgumentException("Người dùng không tồn tại");
         return ResponseEntity.status(HttpStatus.OK).body(cartItemsService.findAll(id));
