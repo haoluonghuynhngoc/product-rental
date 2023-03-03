@@ -9,6 +9,6 @@ import java.util.List;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CartItemsShowDTO {
     private UserDTO user;
-    private List<ProductDTO> product = new ArrayList<>();
+    private List<ProductCartDTO> product = new ArrayList<>();
 
 }

@@ -52,7 +52,9 @@ public class CartItemsServiceImpl implements CartItemsService {
         cartItemsRepository.findAllByUser(userRepository.findById(id).get()).forEach(
                 i -> {
                     if (i.getProduct()!=null){
-                        cartItem.getProduct().add(modelMapper.map(i.getProduct(),ProductDTO.class));
+                        ProductCartDTO product = modelMapper.map(i.getProduct(),ProductCartDTO.class);
+                        product.setIdCart(i.getId());
+                        cartItem.getProduct().add(product);
                     }
                 }
         );
