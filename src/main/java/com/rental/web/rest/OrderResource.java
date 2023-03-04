@@ -3,6 +3,9 @@ package com.rental.web.rest;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.rental.repository.UserRepository;
+import com.rental.repository.VoucherRepository;
+import com.rental.service.dto.OrderShowDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,11 +32,10 @@ public class OrderResource {
     @Autowired
     private OrderRepository orderRepository;
 
-
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDTO) {
-        if (orderDTO.getId() != null)
-            throw new IllegalArgumentException("Add order cant not hava the id ");
+//        if (orderDTO.getId() != null)
+//            throw new IllegalArgumentException("Add order cant not hava the id ");
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 
@@ -54,28 +56,29 @@ public class OrderResource {
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllOrders(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<OrderDTO> page = orderService.findAll(pageable);
+        Page<OrderShowDTO> page = orderService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("list is over size order");
         return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
 
     @GetMapping("/getOne/{id}")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id) {
+    public ResponseEntity<OrderShowDTO> getOrder(@PathVariable Long id) {
         if (!orderRepository.existsById(id))
-            throw new IllegalArgumentException("Cant not find the order have Id :" + id + " In the data ");
+            throw new IllegalArgumentException("Không thể tìm thấy đơn hàng có Id :" + id + "trong dư liệu ");
         return orderService.findOne(id).map(
-                orderData->ResponseEntity.status(HttpStatus.OK).body(orderData)
+                orderData -> ResponseEntity.status(HttpStatus.OK).body(orderData)
         ).orElseThrow(
-                ()-> new IllegalArgumentException("Cant not find the order")
+                () -> new IllegalArgumentException("Không thể tìm thấy đơn hàng")
         );
     }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!orderRepository.existsById(id))
-            throw new IllegalArgumentException("Cant not find the order have Id :" + id + " In the data ");
+            throw new IllegalArgumentException("Không thể tìm thấy đơn hàng có id là : " + id);
         orderService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
 }

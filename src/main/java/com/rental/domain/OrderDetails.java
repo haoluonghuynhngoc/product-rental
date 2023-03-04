@@ -25,12 +25,14 @@ public class OrderDetails implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name", columnDefinition = "nvarchar(250)")
-    private String name;
+//    @Column(name = "name", columnDefinition = "nvarchar(250)")
+//    private String name;
     @Column(name = "quantity")
     private Integer quantity;
     @Column(name = "price")
     private Double price;
+    @Column(name = "deposit")
+    private Double deposit;
     @Column(name = "order_borrow_date")//
     private Date orderBorrowDate;
     @Column(name = "order_return_date")//

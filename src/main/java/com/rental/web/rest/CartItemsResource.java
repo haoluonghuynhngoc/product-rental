@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/cart-iteam")
 public class CartItemsResource {
@@ -21,7 +19,6 @@ public class CartItemsResource {
     private CartItemsRepository cartItemsRepository;
     @Autowired
     private UserRepository userRepository;
-
     @PostMapping("/create")
     public ResponseEntity<CartItemsDTO> createCategory(@RequestBody CartItemsDTO cartItemsDTO) {
         if (cartItemsDTO.getId() != null)

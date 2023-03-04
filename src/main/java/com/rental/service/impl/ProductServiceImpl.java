@@ -69,7 +69,6 @@ public class ProductServiceImpl implements ProductService {
                             existingProduct.getCategory()));
                     existingProduct.setImages(image);
 // ====
-                    modelMapper.map(productDTO, existingProduct);
                     return existingProduct;
                 })
                 .map(productRepository::save)

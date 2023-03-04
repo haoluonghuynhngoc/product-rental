@@ -41,6 +41,9 @@ public class CategoryServiceImpl implements CategoryService {
     public Optional<CategoryDTO> updateCategory(CategoryDTO categoryDTO) {
         return categoryRepository.findById(categoryDTO.getId()).map(
                 existingCategory -> {
+                    // mới sửa ở đây
+//                    if (categoryDTO.getName().isEmpty()||categoryDTO.getName()==null)
+//                        categoryDTO.setName(existingCategory.getName());
                     modelMapper.map(categoryDTO, existingCategory);
                     return existingCategory;
                 }).map(categoryRepository::save).map(
