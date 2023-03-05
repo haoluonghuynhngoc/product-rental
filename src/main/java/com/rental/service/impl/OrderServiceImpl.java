@@ -1,8 +1,10 @@
 package com.rental.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.rental.domain.*;
 import com.rental.domain.enums.OrderStatus;
@@ -57,7 +59,11 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .id(-1L)
                 .status(OrderStatus.PENDING)
+                .address(orderDTO.getAddress())
+                .phone(orderDTO.getPhone())
+                .name(orderDTO.getName())
                 .totalQuantity(1)
+                .message(orderDTO.getMessage())
                 .totalPrice(orderDTO.getTotalPrice())
                 .user(userRepository.findById(orderDTO.getUserId()).orElse(null))
                 .build();
@@ -118,6 +124,13 @@ public class OrderServiceImpl implements OrderService {
                 modelMapper.map(o, OrderShowDTO.class)
         );
     }
+
+//    @Override
+//    public List<OrderShowDTO> findOrderByUser(Long id) {
+//        return orderRepository.findAllByUser(userRepository.findById(id).get()).stream().
+//                map(i -> modelMapper.map(i, OrderShowDTO.class))
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public void delete(Long id) {

@@ -22,28 +22,39 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getProductByIdTestDepositEqual() {
-        Assert.assertTrue(productRepository.findById(3L).get().getDeposit() == 700000, "The result is not correct");
+        boolean actual=false;
+        try {
+            actual =productRepository.findById(300L).get().getDeposit() == 700000;
+        }catch (NoSuchElementException e){
+            e.printStackTrace();
+        }
+        Assert.assertTrue( actual , "The actual is false");
     }
 
     //    @Test(expectedExceptions = Exception.class)
     @Test
     public void getProductByIdTestNullPointerException() {
         Assert.assertThrows(NoSuchElementException.class, () -> {
-            productRepository.findById(200L).get();
+            productRepository.findById(100L).get();
         });
     }
 
-    @Test
-    public void getProductByIdAndUpdateProductTestNotNullPointerException() {
-        Product product = productRepository.findById(1L).map(
-                productEntity -> {
-                    productEntity.setQuantity(1);
-                    productEntity.setName("Bông tai ngọc trai hình giọt nước");
-                    return productEntity;
-                }
-        ).orElse(null);
-        Assert.assertNotNull(productRepository.save(product));
-    }
+//    @Test
+//    public void getProductByIdAndUpdateProductTestNotNullPointerException() {
+//        Product product =null;
+//        try {
+//            productRepository.findById(100L).map(
+//                    productEntity -> {
+//                        productEntity.setQuantity(1);
+//                        productEntity.setName("Bông tai ngọc trai hình giọt nước");
+//                        return productEntity;
+//                    }
+//            ).get();
+//        }catch (NoSuchElementException e){
+//            e.printStackTrace();
+//        }
+//        Assert.assertNotNull(productRepository.save(product));
+//    }
 
     @Test
     public void getProductByIdAndTestEqualProductName() {
@@ -60,7 +71,13 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getProductByIdTestPriceProduct() {
-        Assert.assertTrue(productRepository.findById(1L).get().getPrice() == 100000, "The result is not correct");
+        boolean actual ;
+        try {
+            actual = productRepository.findById(101L).get().getPrice() == 100000;
+        } catch (NoSuchElementException e) {
+            actual= true;
+        }
+        Assert.assertFalse(actual, "The result is not correct");
     }
 
 

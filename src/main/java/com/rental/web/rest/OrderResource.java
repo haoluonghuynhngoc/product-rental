@@ -1,5 +1,6 @@
 package com.rental.web.rest;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,6 +32,8 @@ public class OrderResource {
     private OrderService orderService;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDTO) {
@@ -39,6 +42,7 @@ public class OrderResource {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 
+    // update chưa xong
     @PutMapping("/update")
     public ResponseEntity<OrderDTO> update(@RequestBody OrderDTO orderDTO) {
         if (orderDTO.getId() == null)
@@ -72,6 +76,13 @@ public class OrderResource {
                 () -> new IllegalArgumentException("Không thể tìm thấy đơn hàng")
         );
     }
+
+//    @GetMapping("/getAllByUser/{id}")
+//    public ResponseEntity<List<OrderShowDTO>> getAllOrderByUser(@PathVariable Long id) {
+//        if (!userRepository.existsById(id))
+//            throw new IllegalArgumentException("Không thể tìm người dùng có Id :" + id + "trong dư liệu ");
+//        return ResponseEntity.status(HttpStatus.OK).body(orderService.findOrderByUser(id));
+//    }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

@@ -21,6 +21,10 @@ public class OrderShowDTO {
     private Integer totalQuantity;
     private Double totalPrice;
     private OrderStatus status;
+    private String message;
+    private String address;
+    private String phone;
+    private String name;
     private VoucherDTO voucher;
     private UserDTO user;
     private Set<OrderDetailShowDTO> orderDetails = new HashSet<>();

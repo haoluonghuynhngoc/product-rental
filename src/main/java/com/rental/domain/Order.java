@@ -34,7 +34,14 @@ public class Order implements Serializable {
     private Integer totalQuantity;
     @Column(name = "total_price")
     private Double totalPrice;
-
+    @Column(name = "message", columnDefinition = "nvarchar(max)")
+    private String message;
+    @Column(name = "address", columnDefinition = "nvarchar(300)")
+    private String address;
+    @Column(name = "phone", columnDefinition = "varchar(200)")
+    private String phone;
+    @Column(name = "name", columnDefinition = "nvarchar(500)")
+    private String name;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus status;

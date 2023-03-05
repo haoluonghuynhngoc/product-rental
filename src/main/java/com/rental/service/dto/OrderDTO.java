@@ -22,6 +22,10 @@ public class OrderDTO implements Serializable {
 
     private Long id;
     private Double totalPrice;
+    private String message;
+    private String address;
+    private String phone;
+    private String name;
     private OrderDetailsDTO orderDetails ;
     private Long voucherId;
     private Long userId;
