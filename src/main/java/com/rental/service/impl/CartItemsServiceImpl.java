@@ -34,6 +34,7 @@ public class CartItemsServiceImpl implements CartItemsService {
 
     @Override
     public CartItemsDTO saveCart(CartItemsDTO cartItemsDTO) {
+        cartItemsDTO.setId(-1L);
         cartItemsDTO.setProduct(modelMapper.map(
                 productRepository.findById(cartItemsDTO.getProduct().getId()), ProductDTO.class
         ));

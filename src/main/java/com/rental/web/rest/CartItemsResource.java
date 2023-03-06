@@ -1,6 +1,7 @@
 package com.rental.web.rest;
 
 import com.rental.repository.CartItemsRepository;
+import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
 import com.rental.service.CartItemsService;
 import com.rental.service.dto.CartItemsDTO;
@@ -19,10 +20,14 @@ public class CartItemsResource {
     private CartItemsRepository cartItemsRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProductRepository productRepository;
+
     @PostMapping("/create")
     public ResponseEntity<CartItemsDTO> createCategory(@RequestBody CartItemsDTO cartItemsDTO) {
-        if (cartItemsDTO.getId() != null)
-            throw new IllegalArgumentException("Thêm vào giỏ hàng không cần ID");
+        if (cartItemsRepository.existsByUserAndProduct(userRepository.findById(cartItemsDTO.getUser().getId()).get()
+                , productRepository.findById(cartItemsDTO.getProduct().getId()).get()))
+            throw new IllegalArgumentException("Sản phẩm này đã có trong giỏ hàng của bạn! ");
         return ResponseEntity.status(HttpStatus.OK).body(cartItemsService.saveCart(cartItemsDTO));
     }
 

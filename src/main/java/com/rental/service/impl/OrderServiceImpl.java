@@ -51,7 +51,10 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
+    private CartItemsRepository cartItemsRepository;
+    @Autowired
     private ModelMapper modelMapper;
+
 
     // tối ưu code hơn hàm dưới
     @Override
@@ -77,6 +80,8 @@ public class OrderServiceImpl implements OrderService {
             if (voucherRepository.findById(orderDTO.getVoucherId()).orElse(null) != null)
                 order.setVoucher(voucherRepository.findById(orderDTO.getVoucherId()).get());
         }
+        cartItemsRepository.removeCartItemsByUserAndProduct(
+                userRepository.findById(orderDTO.getUserId()).orElse(null),product);
         return modelMapper.map(orderRepository.save(order), OrderDTO.class);
     }
 
