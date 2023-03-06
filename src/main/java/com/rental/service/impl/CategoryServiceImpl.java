@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.rental.domain.Product;
+import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.ProductRepository;
 import com.rental.service.dto.CategoryShowDTO;
 import com.rental.service.dto.ProductDTO;
@@ -66,7 +67,11 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id).map(c -> {
             Set<ProductDTO> productDTO = new HashSet<>();
             for (Product product : c.getProducts()) {
-                productDTO.add(modelMapper.map(product, ProductDTO.class));
+                if (product.getStatus() != null) {
+                    if (!product.getStatus().equals(ProductStatus.RENTING)) {
+                        productDTO.add(modelMapper.map(product, ProductDTO.class));
+                    }
+                }
             }
             return CategoryShowDTO.builder()
                     .id(c.getId())
