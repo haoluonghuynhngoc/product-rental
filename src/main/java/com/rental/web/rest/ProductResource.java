@@ -1,6 +1,7 @@
 package com.rental.web.rest;
 
 import com.rental.domain.Attachment;
+import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.CategoryRepository;
 import com.rental.service.AttachmentService;
 import com.rental.service.dto.CategoryDTO;
@@ -19,7 +20,9 @@ import com.rental.service.ProductService;
 import com.rental.service.dto.ProductDTO;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -35,7 +38,8 @@ public class ProductResource {
     private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
-    @PostMapping( "/create")
+
+    @PostMapping("/create")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.save(productDTO));
     }
@@ -116,7 +120,15 @@ public class ProductResource {
         Page<ProductDTO> page = productService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("Cant not find any product in the data ");
-        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
+        System.out.println(page.getContent().size());
+        return ResponseEntity.status(HttpStatus.OK).body(page.getContent().stream()
+                .filter(productDTO -> {
+                            if (productDTO.getStatus() != null)
+                                return productDTO.getStatus().equals(ProductStatus.APPROVED);
+                            else
+                                return false;
+                        }
+                ).collect(Collectors.toList()));
     }
 
     @DeleteMapping("/remove/{id}")

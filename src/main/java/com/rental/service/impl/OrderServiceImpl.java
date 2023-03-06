@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.rental.domain.*;
 import com.rental.domain.enums.OrderStatus;
+import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.*;
 import com.rental.service.dto.OrderShowDTO;
 import com.rental.service.dto.UserDTO;
@@ -52,21 +53,16 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ModelMapper modelMapper;
 
+    // tối ưu code hơn hàm dưới
     @Override
     public OrderDTO save(OrderDTO orderDTO) {
         Set<OrderDetails> orderDetails = new HashSet<>();
         Product product = productRepository.findById(orderDTO.getOrderDetails().getProductId()).get();
-        Order order = Order.builder()
-                .id(-1L)
-                .status(OrderStatus.PENDING)
-                .address(orderDTO.getAddress())
-                .phone(orderDTO.getPhone())
-                .name(orderDTO.getName())
-                .totalQuantity(1)
-                .message(orderDTO.getMessage())
-                .totalPrice(orderDTO.getTotalPrice())
-                .user(userRepository.findById(orderDTO.getUserId()).orElse(null))
-                .build();
+        product.setStatus(ProductStatus.RENTING);
+        Order order = modelMapper.map(orderDTO, Order.class);
+        order.setUser(userRepository.findById(orderDTO.getUserId()).orElse(null));
+        order.setStatus(OrderStatus.PENDING);
+        order.setTotalQuantity(1);
         orderDetails.add(OrderDetails.builder()
                 .deposit(product.getDeposit())
                 .quantity(1)
@@ -83,6 +79,38 @@ public class OrderServiceImpl implements OrderService {
         }
         return modelMapper.map(orderRepository.save(order), OrderDTO.class);
     }
+
+//    @Override
+//    public OrderDTO save(OrderDTO orderDTO) {
+//        Set<OrderDetails> orderDetails = new HashSet<>();
+//        Product product = productRepository.findById(orderDTO.getOrderDetails().getProductId()).get();
+//        Order order = Order.builder()
+//                .id(-1L)
+//                .status(OrderStatus.PENDING)
+//                .address(orderDTO.getAddress())
+//                .phone(orderDTO.getPhone())
+//                .name(orderDTO.getName())
+//                .totalQuantity(1)
+//                .message(orderDTO.getMessage())
+//                .totalPrice(orderDTO.getTotalPrice())
+//                .user(userRepository.findById(orderDTO.getUserId()).orElse(null))
+//                .build();
+//        orderDetails.add(OrderDetails.builder()
+//                .deposit(product.getDeposit())
+//                .quantity(1)
+//                .price(product.getPrice())
+//                .product(product)
+//                .orderBorrowDate(orderDTO.getOrderDetails().getOrderBorrowDate())
+//                .orderReturnDate(orderDTO.getOrderDetails().getOrderReturnDate())
+//                .order(order)
+//                .build());
+//        order.setOrderDetails(orderDetails);
+//        if (orderDTO.getVoucherId() != null) {
+//            if (voucherRepository.findById(orderDTO.getVoucherId()).orElse(null) != null)
+//                order.setVoucher(voucherRepository.findById(orderDTO.getVoucherId()).get());
+//        }
+//        return modelMapper.map(orderRepository.save(order), OrderDTO.class);
+//    }
 
     //    @Override
 //    @Transactional

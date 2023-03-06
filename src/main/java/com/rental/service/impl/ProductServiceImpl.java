@@ -48,27 +48,30 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public Optional<ProductDTO> update(ProductDTO productDTO) {
-        return productRepository
-                .findById(productDTO.getId())
+        return productRepository.findById(productDTO.getId())
                 .map(existingProduct -> {
                     if (productDTO.getCategory() == null)
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
-
-                    if (productDTO.getImages()==null||productDTO.getImages().size()==0){
-                    imageRepository.findAllByProduct(existingProduct).forEach(
-                            image -> productDTO.getImages().add(modelMapper.map(image,ImageDTO.class))
-                    );}
+                    if (productDTO.getImages() == null || productDTO.getImages().size() == 0) {
+                        imageRepository.findAllByProduct(existingProduct).forEach(
+                                image -> productDTO.getImages().add(modelMapper.map(image, ImageDTO.class))
+                        );
+                    }
                     imageRepository.deleteAllByProduct(existingProduct);
                     List<Image> image = new ArrayList<>();
                     for (ImageDTO img : productDTO.getImages()) {
-                        image.add(modelMapper.map(img,Image.class));
+                        image.add(modelMapper.map(img, Image.class));
                     }
 // ====
-                    image.forEach(i->i.setProduct(existingProduct));
+                    image.forEach(i -> i.setProduct(existingProduct));
                     existingProduct.setCategory(categoryRepository.findById(productDTO.getCategory().getId()).orElse(
                             existingProduct.getCategory()));
                     existingProduct.setImages(image);
 // ====
+                    productDTO.setQuantity(1);
+                    productDTO.setStatus(existingProduct.getStatus());
+                    productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
+                    modelMapper.map(productDTO, existingProduct);
                     return existingProduct;
                 })
                 .map(productRepository::save)

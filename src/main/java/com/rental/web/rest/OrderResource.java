@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.rental.domain.enums.ProductStatus;
+import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
 import com.rental.repository.VoucherRepository;
 import com.rental.service.dto.OrderShowDTO;
@@ -34,11 +36,13 @@ public class OrderResource {
     private OrderRepository orderRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDTO) {
-//        if (orderDTO.getId() != null)
-//            throw new IllegalArgumentException("Add order cant not hava the id ");
+        if (productRepository.findById(orderDTO.getOrderDetails().getProductId()).get().getStatus().equals(ProductStatus.RENTING))
+            throw new IllegalArgumentException("Đồ của bạn vừa được người dùng khác thuê ");
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 
