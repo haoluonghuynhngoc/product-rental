@@ -134,7 +134,9 @@ public class ProductResource {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (!productRepository.existsById(id))
-            throw new IllegalArgumentException("Cant not find the Product have id : " + id + " in the data ");
+            throw new IllegalArgumentException("Không thể tìm thấy Id : " + id + " trong data ");
+        if (productRepository.findById(id).get().getStatus().equals(ProductStatus.RENTING))
+            throw new IllegalArgumentException("Sản phẩm đang được người dùng thuê không được xóa");
         productService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
 

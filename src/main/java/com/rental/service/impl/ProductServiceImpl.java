@@ -28,13 +28,17 @@ public class ProductServiceImpl implements ProductService {
     private ImageRepository imageRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CartItemsRepository cartItemsRepository;
 
     @Override
     public ProductDTO save(ProductDTO productDTO) {
         Product product = modelMapper.map(productDTO, Product.class);
         product.setId(-1L);
         // set image
+        int nameImage = 1;
         for (Image imageClient : product.getImages()) {
+            imageClient.setName("" + nameImage++);
             imageClient.setProduct(product);
         }
         //
@@ -59,7 +63,9 @@ public class ProductServiceImpl implements ProductService {
                     }
                     imageRepository.deleteAllByProduct(existingProduct);
                     List<Image> image = new ArrayList<>();
+                    int nameImage = 1;
                     for (ImageDTO img : productDTO.getImages()) {
+                        img.setName("" + nameImage++);
                         image.add(modelMapper.map(img, Image.class));
                     }
 // ====
@@ -105,8 +111,11 @@ public class ProductServiceImpl implements ProductService {
         });
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
+
+        cartItemsRepository.removeByProduct(productRepository.findById(id).get());
         productRepository.deleteById(id);
     }
 }
