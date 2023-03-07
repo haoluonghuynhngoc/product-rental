@@ -1,4 +1,4 @@
-package com.rental.basictestng;
+package com.rental.algorithmtestng;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;

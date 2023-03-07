@@ -1,9 +1,7 @@
-package com.rental.basictestng;
+package com.rental.algorithmtestng;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.util.NoSuchElementException;
 
 public class MathUtils {
     public static long getFactorial(int n) {

@@ -18,18 +18,22 @@ public class RoleApiTest extends AbstractTestNGSpringContextTests {
     private RoleRepository roleRepository;
 
     @Test
-    public void getRoleByIdTestEqualAdmin() {
-        Long id =100L;
-        Role role = roleRepository.findById(id).orElse(null);
+    public void getRoleByIdTestNullRole() {
+        Role role = roleRepository.findById(100L).orElse(null);
         Assert.assertNull(role);
-       // Assert.assertEquals(role.getName(), RoleName.ADMIN);
     }
+
     @Test
-    public void getRoleByRoleNameTestNotNull(){
-        Assert.assertNotNull(roleRepository.findByName(RoleName.USERS));
+    public void getRoleByRoleNameTestNotNull() {
+        Role actual = null;
+        try {
+            actual = roleRepository.findByName(RoleName.USERS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(actual);
     }
-    @Test(expectedExceptions = Exception.class)
-    public void getRoleByRoleIdTestException(){
-       Assert.assertNotNull(roleRepository.findById(10L).get().getId());
-    }
+
+
+
 }

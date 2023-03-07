@@ -12,6 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -31,7 +32,7 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
         Assert.assertTrue( actual , "The actual is false");
     }
 
-    //    @Test(expectedExceptions = Exception.class)
+
     @Test
     public void getProductByIdTestNullPointerException() {
         Assert.assertThrows(NoSuchElementException.class, () -> {
@@ -39,45 +40,40 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
         });
     }
 
-//    @Test
-//    public void getProductByIdAndUpdateProductTestNotNullPointerException() {
-//        Product product =null;
-//        try {
-//            productRepository.findById(100L).map(
-//                    productEntity -> {
-//                        productEntity.setQuantity(1);
-//                        productEntity.setName("Bông tai ngọc trai hình giọt nước");
-//                        return productEntity;
-//                    }
-//            ).get();
-//        }catch (NoSuchElementException e){
-//            e.printStackTrace();
-//        }
-//        Assert.assertNotNull(productRepository.save(product));
-//    }
 
     @Test
     public void getProductByIdAndTestEqualProductName() {
         String expected = "Bông tai ngọc trai hình giọt nước";
-        Product product = productRepository.findById(1L).get();
-        Assert.assertEquals(product.getName(), expected, "Two result is not correct");
+        String actual ="";
+        try {
+            actual = productRepository.findById(1L).get().getName();
+        }catch (NoSuchElementException e){
+            e.printStackTrace();
+        }
+        Assert.assertEquals(actual, expected, "Hai kết quả không giống nhau");
     }
 
     @Test
     public void getListProductByNameTestSizeProductMoreThan2() {
-        List<Product> list = productRepository.findByNameLike("%n%");
-        Assert.assertTrue(list.size() > 2, "List less than 3");
+        List<Product> list = new ArrayList<>();
+        try {
+            list = productRepository.findByNameLike("%n%");
+        }catch (NoSuchElementException e){
+            e.printStackTrace();
+        }
+        boolean actual=list.size() > 2;
+        Assert.assertTrue(actual, "Số lượng phần tử nhỏ hơn 2");
     }
 
     @Test
     public void getProductByIdTestPriceProduct() {
-        boolean actual ;
+        boolean actual =false;
         try {
-            actual = productRepository.findById(101L).get().getPrice() == 100000;
+            actual = productRepository.findById(1L).get().getPrice() == 100000;
         } catch (NoSuchElementException e) {
-            actual= true;
+            e.printStackTrace();
         }
-        Assert.assertFalse(actual, "The result is not correct");
+         Assert.assertTrue(actual, "Kết quả trả ra false");
     }
 
 

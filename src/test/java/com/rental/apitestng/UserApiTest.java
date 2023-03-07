@@ -3,8 +3,6 @@ package com.rental.apitestng;
 import com.rental.RentalApplication;
 import com.rental.domain.User;
 import com.rental.repository.UserRepository;
-import com.rental.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +10,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.NoSuchElementException;
 
 @SpringBootTest(classes = RentalApplication.class)
 public class UserApiTest extends AbstractTestNGSpringContextTests {
@@ -22,28 +22,24 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
 
     @DataProvider(name = "useSet")
     public Object[][] dataSet() {
-        User user = userRepository.findByUsername("admin");
+        User user = userRepository.findByUsername("userone");
         return new Object[][]{
-                {"admin", user.getUsername()},
+                {"userone", user.getUsername()},
                 {"true", "" + bCryptPasswordEncoder.matches("11111", user.getPassword())}
         };
     }
 
-    @Test(dataProvider = "useSet")
+    @Test(dataProvider = "useSet")// vì đã gắn dataProvider = "useSet" nên nó sẽ gọi hàm trên dòng 23
     public void getUserNameAndPasswordTestEqualLoginUser(String test1, String test2) {
         Assert.assertEquals(test1, test2, "User name or password is not correct");
+        // hàm này sẽ test xem dòng 28 và 29 có bằng nhau hay không
+
     }
 
     @Test
     public void getUserByIdTestNotNull() {
-        User user=null;
-        try {
-           user = userRepository.findById(1L).get();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        Assert.assertNotNull(user, "User is null");
-
+        User actual = userRepository.findById(1L).orElse(null);
+        Assert.assertNotNull(actual, "User is null");
     }
 
     @Test(expectedExceptions = Exception.class)
@@ -63,14 +59,21 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void getUserByIdAndUpdatePhoneTestNotNullUser(){
-        User user = userRepository.findById(7L).map(
-                userEntity->{
-                    userEntity.setPhone("09340333");
-                return userEntity;
-                }
-        ).orElse(null);
-        Assert.assertNull(user); //lỗi vì không thể tìm thấy user có ID:7
+    public void getUserByIdAndUpdatePhoneTestNotNullUser() {
+        User user = new User();
+        try {
+            user=  userRepository.findById(2L).map(
+                    userEntity -> {
+                        userEntity.setId(12L);
+                        return userEntity;
+                    }
+            ).get();
+        }catch (NoSuchElementException e){
+            e.printStackTrace();
+        }
+        Long expeted =12L;
+        Long actual =user.getId();
+        Assert.assertSame(actual,expeted,"Two result is not same");
     }
 
 }
