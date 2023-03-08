@@ -34,25 +34,11 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
         return Optional.empty();
     }
 
-    @Override
-    public Page<OrderDetailsDTO> findAll(Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public Optional<OrderDetailsDTO> findOne(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void delete(Long id) {
-
-    }
-//    @Autowired
-//    private OrderDetailsRepository orderDetailsRepository;
-//    @Autowired
-//    private ModelMapper modelMapper;
-//    @Autowired
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+ //   @Autowired
 //    private OrderRepository orderRepository;
 //    @Autowired
 //    private ProductRepository productRepository;
@@ -85,25 +71,24 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
 //                }
 //        );
 //    }
-//
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Page<OrderDetailsDTO> findAll(Pageable pageable) {
-//        return orderDetailsRepository.findAll(pageable).map(o -> {
-//            return modelMapper.map(o, OrderDetailsDTO.class);
-//        });
-//    }
-//
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Optional<OrderDetailsDTO> findOne(Long id) {
-//        return orderDetailsRepository.findById(id).map(o -> {
-//            return modelMapper.map(o, OrderDetailsDTO.class);
-//        });
-//    }
-//
-//    @Override
-//    public void delete(Long id) {
-//        orderDetailsRepository.deleteById(id);
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderDetailsDTO> findAll(Pageable pageable) {
+        return orderDetailsRepository.findAll(pageable).map(o -> {
+            return modelMapper.map(o, OrderDetailsDTO.class);
+        });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<OrderDetailsDTO> findOne(Long id) {
+        return orderDetailsRepository.findById(id).map(o -> {
+            return modelMapper.map(o, OrderDetailsDTO.class);
+        });
+    }
+
+    @Override
+    public void delete(Long id) {
+        orderDetailsRepository.deleteById(id);
+    }
 }

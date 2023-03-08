@@ -5,10 +5,7 @@ import com.rental.domain.enums.UserStatus;
 import com.rental.repository.UserRepository;
 import com.rental.service.AttachmentService;
 import com.rental.service.UserService;
-import com.rental.service.dto.PasswordChangeDTO;
-import com.rental.service.dto.ProductDTO;
-import com.rental.service.dto.UserDTO;
-import com.rental.service.dto.UserImageDTO;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -121,6 +118,21 @@ public class UserResource {
             throw new IllegalArgumentException("Không thể tìm thấy bất kì người dùng trong dữ liệu");
         return ResponseEntity.status(HttpStatus.OK).body(findAllUser.getContent());
     }
+//@GetMapping("/getAll")
+//public ResponseEntity<PagingResponse<UserDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+//    Page<UserDTO> page = userService.findAll(pageable);
+//    if (page.isEmpty())
+//        throw new IllegalArgumentException("Không thể tìm thấy bất kì người dùng trong dữ liệu");
+//    return ResponseEntity.status(HttpStatus.OK).body(
+//            PagingResponse.<UserDTO>builder()
+//                    .page(page.getPageable().getPageNumber() + 1)
+//                    .size(page.getSize())
+//                    .totalPage(page.getTotalPages())
+//                    .totalItem(page.getTotalElements())
+//                    .contends(page.getContent())
+//                    .build()
+//    );
+//}
 
     @GetMapping("/{name}")
     public ResponseEntity<List<UserDTO>> getProductByName(@PathVariable(name = "name") String name) {

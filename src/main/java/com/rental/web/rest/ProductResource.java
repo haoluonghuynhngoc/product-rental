@@ -4,9 +4,7 @@ import com.rental.domain.Attachment;
 import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.CategoryRepository;
 import com.rental.service.AttachmentService;
-import com.rental.service.dto.CategoryDTO;
-import com.rental.service.dto.ImageDTO;
-import com.rental.service.dto.ProductImageDTO;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.rental.repository.ProductRepository;
 import com.rental.service.ProductService;
-import com.rental.service.dto.ProductDTO;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -114,21 +111,42 @@ public class ProductResource {
         return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct));
     }
 
+    //    @GetMapping("/getAllProduct")
+//    public ResponseEntity<List<ProductDTO>> getAllCategories(
+//            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+//        Page<ProductDTO> page = productService.findAll(pageable);
+//        if (page.isEmpty())
+//            throw new IllegalArgumentException("Cant not find any product in the data ");
+//        System.out.println(page.getContent().size());
+//        return ResponseEntity.status(HttpStatus.OK).body(page.getContent().stream()
+//                .filter(productDTO -> {
+//                            if (productDTO.getStatus() != null)
+//                                return productDTO.getStatus().equals(ProductStatus.APPROVED);
+//                            else
+//                                return false;
+//                        }
+//                ).collect(Collectors.toList()));
+//    }
     @GetMapping("/getAllProduct")
-    public ResponseEntity<List<ProductDTO>> getAllCategories(
+    public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<ProductDTO> page = productService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("Cant not find any product in the data ");
-        System.out.println(page.getContent().size());
-        return ResponseEntity.status(HttpStatus.OK).body(page.getContent().stream()
-                .filter(productDTO -> {
-                            if (productDTO.getStatus() != null)
-                                return productDTO.getStatus().equals(ProductStatus.APPROVED);
-                            else
-                                return false;
-                        }
-                ).collect(Collectors.toList()));
+        return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
+                .page(page.getPageable().getPageNumber() + 1)
+                .size(page.getSize())
+                .totalPage(page.getTotalPages())
+                .totalItem(page.getTotalElements())
+                .contends(page.getContent().stream()
+                        .filter(productDTO -> {
+                                    if (productDTO.getStatus() != null)
+                                        return productDTO.getStatus().equals(ProductStatus.APPROVED);
+                                    else
+                                        return false;
+                                }
+                        ).collect(Collectors.toList()))
+                .build());
     }
 
     @DeleteMapping("/remove/{id}")

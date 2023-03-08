@@ -9,6 +9,7 @@ import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
 import com.rental.repository.VoucherRepository;
 import com.rental.service.dto.OrderShowDTO;
+import com.rental.service.dto.PagingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,13 +62,29 @@ public class OrderResource {
     }
 
 
+    //    @GetMapping("/getAll")
+//    public ResponseEntity<?> getAllOrders(
+//            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+//        Page<OrderShowDTO> page = orderService.findAll(pageable);
+//        if (page.isEmpty())
+//            throw new IllegalArgumentException("list is over size order");
+//        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
+//    }
     @GetMapping("/getAll")
-    public ResponseEntity<?> getAllOrders(
+    public ResponseEntity<PagingResponse<OrderShowDTO>> getAllOrders(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<OrderShowDTO> page = orderService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("list is over size order");
-        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PagingResponse.<OrderShowDTO>builder()
+                        .page(page.getPageable().getPageNumber() + 1)
+                        .size(page.getSize())
+                        .totalPage(page.getTotalPages())
+                        .totalItem(page.getTotalElements())
+                        .contends(page.getContent())
+                        .build()
+        );
     }
 
     @GetMapping("/getOne/{id}")
