@@ -98,12 +98,18 @@ public class OrderResource {
         );
     }
 
-//    @GetMapping("/getAllByUser/{id}")
-//    public ResponseEntity<List<OrderShowDTO>> getAllOrderByUser(@PathVariable Long id) {
-//        if (!userRepository.existsById(id))
-//            throw new IllegalArgumentException("Không thể tìm người dùng có Id :" + id + "trong dư liệu ");
-//        return ResponseEntity.status(HttpStatus.OK).body(orderService.findOrderByUser(id));
-//    }
+    @GetMapping("/getAllByUser/{id}")
+    public ResponseEntity<List<OrderShowDTO>> getAllOrderByUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm người dùng có Id :" + id + "trong dữ liệu ");
+        List<OrderShowDTO> list =orderService.findOrderByUser(id);
+        list.forEach(x->
+        {
+            x.getOrderDetails().forEach(orderDetail->orderDetail.setProduct(null));
+            x.setUser(null);
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

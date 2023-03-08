@@ -12,5 +12,5 @@ import java.util.List;
 @SuppressWarnings("unused")
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-   // List<Order> findAllByUser(User user);
+    List<Order> findAllByUser(User user);
 }

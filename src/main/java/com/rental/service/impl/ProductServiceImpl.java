@@ -1,6 +1,7 @@
 package com.rental.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.rental.domain.Image;
 import com.rental.domain.enums.ProductStatus;
@@ -95,12 +96,25 @@ public class ProductServiceImpl implements ProductService {
         return listDTO;
     }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public Page<ProductDTO> findAll(Pageable pageable) {
+//        return productRepository.findAll(pageable).map(p -> {
+//            return modelMapper.map(p, ProductDTO.class);
+//        });
+//    }
+
     @Override
-    @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable).map(p -> {
-            return modelMapper.map(p, ProductDTO.class);
-        });
+    public List<ProductDTO> findAllProduct() {
+        return productRepository.findAll().stream().filter(productDTO -> {
+                    if (productDTO.getStatus() != null)
+                        return productDTO.getStatus().equals(ProductStatus.APPROVED);
+                    else
+                        return false;
+                }
+        ).map(
+                x -> modelMapper.map(x, ProductDTO.class)
+        ).collect(Collectors.toList());
     }
 
     @Override

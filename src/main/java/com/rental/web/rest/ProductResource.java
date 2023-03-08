@@ -8,6 +8,8 @@ import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -111,41 +113,44 @@ public class ProductResource {
         return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct));
     }
 
-    //    @GetMapping("/getAllProduct")
-//    public ResponseEntity<List<ProductDTO>> getAllCategories(
+
+//    @GetMapping("/getAllProduct")
+//    public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
 //            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
 //        Page<ProductDTO> page = productService.findAll(pageable);
 //        if (page.isEmpty())
 //            throw new IllegalArgumentException("Cant not find any product in the data ");
-//        System.out.println(page.getContent().size());
-//        return ResponseEntity.status(HttpStatus.OK).body(page.getContent().stream()
-//                .filter(productDTO -> {
-//                            if (productDTO.getStatus() != null)
-//                                return productDTO.getStatus().equals(ProductStatus.APPROVED);
-//                            else
-//                                return false;
-//                        }
-//                ).collect(Collectors.toList()));
+//        Page<ProductDTO> page1 = new PageImpl<>(page.getContent());
+//        return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
+//                .page(page.getPageable().getPageNumber() + 1)
+//                .size(page.getSize())
+//                .totalPage(page.getTotalPages())
+//                .totalItem(page.getTotalElements())
+//                .contends(page.getContent().stream()
+//                        .filter(productDTO -> {
+//                                    if (productDTO.getStatus() != null)
+//                                        return productDTO.getStatus().equals(ProductStatus.APPROVED);
+//                                    else
+//                                        return false;
+//                                }
+//                        ).collect(Collectors.toList()))
+//                .build());
 //    }
     @GetMapping("/getAllProduct")
     public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<ProductDTO> page = productService.findAll(pageable);
-        if (page.isEmpty())
-            throw new IllegalArgumentException("Cant not find any product in the data ");
+        List<ProductDTO> list =productService.findAllProduct();
+        Page<ProductDTO> newPage = new PageImpl<>(
+                list,pageable,list.size());
         return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
-                .page(page.getPageable().getPageNumber() + 1)
-                .size(page.getSize())
-                .totalPage(page.getTotalPages())
-                .totalItem(page.getTotalElements())
-                .contends(page.getContent().stream()
-                        .filter(productDTO -> {
-                                    if (productDTO.getStatus() != null)
-                                        return productDTO.getStatus().equals(ProductStatus.APPROVED);
-                                    else
-                                        return false;
-                                }
-                        ).collect(Collectors.toList()))
+                .page(newPage.getPageable().getPageNumber() + 1)
+                .size(newPage.getSize())
+                .totalPage(newPage.getTotalPages())
+                .totalItem(newPage.getTotalElements())
+                // thuật toán phân trang
+                .contends(newPage.getContent().subList(newPage.getPageable().getPageNumber()*newPage.getSize(),
+                                Math.min(newPage.getPageable().getPageNumber()*newPage.getSize() + newPage.getSize(), newPage.getContent().size())
+                        ))
                 .build());
     }
 

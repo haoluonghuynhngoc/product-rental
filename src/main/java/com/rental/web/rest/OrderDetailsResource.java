@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ public class OrderDetailsResource {
     private OrderDetailsRepository orderDetailsRepository;
 
     @PostMapping("/create")
+    @Operation(deprecated = true)
     public ResponseEntity<OrderDetailsDTO> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
         if (orderDetailsDTO.getId() != null) {
             throw new IllegalArgumentException("A new orderDetails cannot already have an ID ");
@@ -42,6 +44,7 @@ public class OrderDetailsResource {
     }
 
     @PutMapping("/update")
+    @Operation(deprecated = true)
     public ResponseEntity<OrderDetailsDTO> updateOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
 //        if (!Objects.equals(id, orderDetailsDTO.getId())) {
 //            throw new IllegalArgumentException("Invalid ID : id in valid");

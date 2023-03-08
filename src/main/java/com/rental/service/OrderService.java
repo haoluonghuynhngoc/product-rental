@@ -19,6 +19,6 @@ public interface OrderService {
     Page<OrderShowDTO> findAll(Pageable pageable);
 
     Optional<OrderShowDTO> findOne(Long id);
-   // List<OrderShowDTO> findOrderByUser(Long id);
+    List<OrderShowDTO> findOrderByUser(Long id);
     void delete(Long id);
 }

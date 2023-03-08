@@ -158,12 +158,12 @@ public class OrderServiceImpl implements OrderService {
         );
     }
 
-//    @Override
-//    public List<OrderShowDTO> findOrderByUser(Long id) {
-//        return orderRepository.findAllByUser(userRepository.findById(id).get()).stream().
-//                map(i -> modelMapper.map(i, OrderShowDTO.class))
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public List<OrderShowDTO> findOrderByUser(Long id) {
+        return orderRepository.findAllByUser(userRepository.findById(id).get()).stream().
+                map(i ->modelMapper.map(i, OrderShowDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void delete(Long id) {
