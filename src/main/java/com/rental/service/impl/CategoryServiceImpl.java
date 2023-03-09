@@ -88,8 +88,10 @@ public class CategoryServiceImpl implements CategoryService {
                     }
                 }
             }
-            Page<ProductDTO> pageProduct = new PageImpl<>(
-                    productDTO, pageable, productDTO.size());
+            // thuật toán phân trang
+            final int start = (int) pageable.getOffset();
+            final int end = Math.min((start + pageable.getPageSize()), productDTO.size());
+            Page<ProductDTO> pageProduct = new PageImpl<>(productDTO.subList(start, end), pageable, productDTO.size());
             return CategoryShowDTO.builder()
                     .id(c.getId())
                     .name(c.getName())
@@ -99,10 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
                                     .size(pageProduct.getSize())
                                     .totalPage(pageProduct.getTotalPages())
                                     .totalItem(pageProduct.getTotalElements())
-                                    // thuật toán phân trang
-                                    .contends(pageProduct.getContent().subList(pageProduct.getPageable().getPageNumber() * pageProduct.getSize(),
-                                            Math.min(pageProduct.getPageable().getPageNumber() * pageProduct.getSize() + pageProduct.getSize(), pageProduct.getContent().size())
-                                    ))
+                                    .contends(pageProduct.getContent())
                                     .build()
                     )
                     .build();

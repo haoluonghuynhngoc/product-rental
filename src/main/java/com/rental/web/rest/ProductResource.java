@@ -114,7 +114,7 @@ public class ProductResource {
     }
 
 
-//    @GetMapping("/getAllProduct")
+    //    @GetMapping("/getAllProduct")
 //    public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
 //            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
 //        Page<ProductDTO> page = productService.findAll(pageable);
@@ -139,18 +139,17 @@ public class ProductResource {
     @GetMapping("/getAllProduct")
     public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        List<ProductDTO> list =productService.findAllProduct();
-        Page<ProductDTO> newPage = new PageImpl<>(
-                list,pageable,list.size());
+        List<ProductDTO> list = productService.findAllProduct();
+        // thuật toán xắp xếp, phân trang
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        Page<ProductDTO> newPage = new PageImpl<>(list.subList(start, end), pageable, list.size());
         return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
                 .page(newPage.getPageable().getPageNumber() + 1)
                 .size(newPage.getSize())
                 .totalPage(newPage.getTotalPages())
                 .totalItem(newPage.getTotalElements())
-                // thuật toán phân trang
-                .contends(newPage.getContent().subList(newPage.getPageable().getPageNumber()*newPage.getSize(),
-                                Math.min(newPage.getPageable().getPageNumber()*newPage.getSize() + newPage.getSize(), newPage.getContent().size())
-                        ))
+                .contends(newPage.getContent())
                 .build());
     }
 
