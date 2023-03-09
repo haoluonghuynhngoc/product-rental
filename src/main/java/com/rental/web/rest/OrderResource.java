@@ -92,7 +92,7 @@ public class OrderResource {
         List<OrderShowDTO> list =orderService.findOrderByUser(id);
         list.forEach(x->
         {
-            x.getOrderDetails().forEach(orderDetail->orderDetail.setProduct(null));
+            //x.getOrderDetails().forEach(orderDetail->orderDetail.setProduct(null));
             x.setUser(null);
         });
         return ResponseEntity.status(HttpStatus.OK).body(list);
