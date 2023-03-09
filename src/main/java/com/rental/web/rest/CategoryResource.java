@@ -1,7 +1,6 @@
 package com.rental.web.rest;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.rental.service.dto.CategoryShowDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import com.rental.repository.CategoryRepository;
 import com.rental.service.CategoryService;
 import com.rental.service.dto.CategoryDTO;
@@ -72,10 +70,10 @@ public class CategoryResource {
     }
 
     @GetMapping("/getOne/{id}")
-    public ResponseEntity<CategoryShowDTO> getCategory(@PathVariable Long id) {
-      //  Optional<CategoryDTO> categoryDTO = categoryService.findOne(id);
-        return categoryService.findOne(id).map(response -> ResponseEntity.ok().body(response))
-                .orElseThrow(() -> new IllegalArgumentException("Can not find the user have Id : " + id + " In the data "));
+    public ResponseEntity<CategoryShowDTO> getCategory(@PathVariable Long id,
+                                                       @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        return categoryService.findOne(id, pageable).map(response -> ResponseEntity.ok().body(response))
+                .orElseThrow(() -> new IllegalArgumentException("Không thể tìm thấy thư mục có id : " + id + " trong dữ liệu "));
     }
 
     @DeleteMapping("/delete/{id}")

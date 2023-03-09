@@ -1,24 +1,20 @@
 package com.rental.service.impl;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.rental.domain.Product;
 import com.rental.domain.enums.ProductStatus;
-import com.rental.repository.ProductRepository;
-import com.rental.service.dto.CategoryShowDTO;
-import com.rental.service.dto.ProductDTO;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.rental.domain.Category;
 import com.rental.repository.CategoryRepository;
 import com.rental.service.CategoryService;
-import com.rental.service.dto.CategoryDTO;
 
 
 @Service
@@ -61,25 +57,58 @@ public class CategoryServiceImpl implements CategoryService {
         });
     }
 
+    //    @Override
+//    @Transactional(readOnly = true)
+//    public Optional<CategoryShowDTO> findOne(Long id) {
+//        return categoryRepository.findById(id).map(c -> {
+//            Set<ProductDTO> productDTO = new HashSet<>();
+//            for (Product product : c.getProducts()) {
+//                if (product.getStatus() != null) {
+//                    if (!product.getStatus().equals(ProductStatus.RENTING)) {
+//                        productDTO.add(modelMapper.map(product, ProductDTO.class));
+//                    }
+//                }
+//            }
+//            return CategoryShowDTO.builder()
+//                    .id(c.getId())
+//                    .name(c.getName())
+//                    .products(productDTO)
+//                    .build();
+//        });
+//    }
     @Override
     @Transactional(readOnly = true)
-    public Optional<CategoryShowDTO> findOne(Long id) {
+    public Optional<CategoryShowDTO> findOne(Long id, Pageable pageable) {
         return categoryRepository.findById(id).map(c -> {
-            Set<ProductDTO> productDTO = new HashSet<>();
+            List<ProductDTO> productDTO = new ArrayList<>();
             for (Product product : c.getProducts()) {
                 if (product.getStatus() != null) {
-                    if (!product.getStatus().equals(ProductStatus.RENTING)) {
+                    if (product.getStatus().equals(ProductStatus.APPROVED)) {
                         productDTO.add(modelMapper.map(product, ProductDTO.class));
                     }
                 }
             }
+            Page<ProductDTO> pageProduct = new PageImpl<>(
+                    productDTO, pageable, productDTO.size());
             return CategoryShowDTO.builder()
                     .id(c.getId())
                     .name(c.getName())
-                    .products(productDTO)
+                    .PageProducts(
+                            PagingResponse.<ProductDTO>builder()
+                                    .page(pageProduct.getPageable().getPageNumber() + 1)
+                                    .size(pageProduct.getSize())
+                                    .totalPage(pageProduct.getTotalPages())
+                                    .totalItem(pageProduct.getTotalElements())
+                                    // thuật toán phân trang
+                                    .contends(pageProduct.getContent().subList(pageProduct.getPageable().getPageNumber() * pageProduct.getSize(),
+                                            Math.min(pageProduct.getPageable().getPageNumber() * pageProduct.getSize() + pageProduct.getSize(), pageProduct.getContent().size())
+                                    ))
+                                    .build()
+                    )
                     .build();
         });
     }
+
 
     @Override
     public void delete(Long id) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.rental.domain.User;
+import com.rental.domain.enums.OrderStatus;
 import com.rental.service.dto.OrderShowDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ public interface OrderService {
 
     OrderDTO save(OrderDTO orderDTO);
 
-    Optional<OrderDTO> update(OrderDTO orderDTO);
+    Optional<OrderShowDTO> update(OrderStatus status,Long id);
 
     Page<OrderShowDTO> findAll(Pageable pageable);
 

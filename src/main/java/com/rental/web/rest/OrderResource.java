@@ -1,13 +1,10 @@
 package com.rental.web.rest;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
-import com.rental.repository.VoucherRepository;
 import com.rental.service.dto.OrderShowDTO;
 import com.rental.service.dto.PagingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 import com.rental.repository.OrderRepository;
 import com.rental.service.OrderService;
 import com.rental.service.dto.OrderDTO;
@@ -47,14 +36,12 @@ public class OrderResource {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 
-    // update chưa xong
-    @PutMapping("/update")
-    public ResponseEntity<OrderDTO> update(@RequestBody OrderDTO orderDTO) {
-        if (orderDTO.getId() == null)
-            throw new IllegalArgumentException("Id is null ");
-        if (!orderRepository.existsById(orderDTO.getId()))
-            throw new IllegalArgumentException("Cant not find order have id : " + orderDTO.getId());
-        return orderService.update(orderDTO).map(
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<OrderShowDTO> update(@PathVariable(name = "id") Long id, @RequestParam OrderStatus status) {
+        if (!orderRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm thây id : " + id +" trong dữ liệu");
+        return orderService.update(status,id).map(
                 orderData -> ResponseEntity.status(HttpStatus.OK).body(orderData)
         ).orElseThrow(
                 () -> new IllegalArgumentException("Cant not update order")

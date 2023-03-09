@@ -30,12 +30,6 @@ import com.rental.service.dto.OrderDTO;
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
-    @Override
-    public Optional<OrderDTO> update(OrderDTO orderDTO) {
-        return Optional.empty();
-    }
-
-
     //    private final OrderRepository orderRepository;
 //    public OrderServiceImpl(OrderRepository orderRepository) {
 //        this.orderRepository = orderRepository;
@@ -81,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
                 order.setVoucher(voucherRepository.findById(orderDTO.getVoucherId()).get());
         }
         cartItemsRepository.removeCartItemsByUserAndProduct(
-                userRepository.findById(orderDTO.getUserId()).orElse(null),product);
+                userRepository.findById(orderDTO.getUserId()).orElse(null), product);
         return modelMapper.map(orderRepository.save(order), OrderDTO.class);
     }
 
@@ -161,8 +155,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderShowDTO> findOrderByUser(Long id) {
         return orderRepository.findAllByUser(userRepository.findById(id).get()).stream().
-                map(i ->modelMapper.map(i, OrderShowDTO.class))
+                map(i -> modelMapper.map(i, OrderShowDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<OrderShowDTO> update(OrderStatus status, Long id) {
+        return orderRepository.findById(id).map(
+                i -> {
+                    i.setStatus(status);
+                    return modelMapper.map(orderRepository.save(i), OrderShowDTO.class);
+                }
+        );
     }
 
     @Override

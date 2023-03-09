@@ -12,6 +12,6 @@ public interface CategoryService {
     CategoryDTO save(CategoryDTO categoryDTO);
     Optional<CategoryDTO> updateCategory(CategoryDTO categoryDTO);
     Page<CategoryDTO> findAll(Pageable pageable);
-    Optional<CategoryShowDTO> findOne(Long id);
+    Optional<CategoryShowDTO> findOne(Long id, Pageable pageable);
     void delete(Long id);
 }
