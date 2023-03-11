@@ -1,6 +1,7 @@
 package com.rental.web.rest;
 
 import com.rental.domain.Attachment;
+import com.rental.domain.Product;
 import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.CategoryRepository;
 import com.rental.service.AttachmentService;
@@ -136,20 +137,32 @@ public class ProductResource {
 //                        ).collect(Collectors.toList()))
 //                .build());
 //    }
+//    @GetMapping("/getAllProduct")
+//    public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
+//            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+//        List<ProductDTO> list = productService.findAllProduct();
+//        // thuật toán xắp xếp, phân trang
+//        final int start = (int) pageable.getOffset();
+//        final int end = Math.min((start + pageable.getPageSize()), list.size());
+//        Page<ProductDTO> newPage = new PageImpl<>(list.subList(start, end), pageable, list.size());
+//        return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
+//                .page(newPage.getPageable().getPageNumber() + 1)
+//                .size(newPage.getSize())
+//                .totalPage(newPage.getTotalPages())
+//                .totalItem(newPage.getTotalElements())
+//                .contends(newPage.getContent())
+//                .build());
+//    }
     @GetMapping("/getAllProduct")
     public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        List<ProductDTO> list = productService.findAllProduct();
-        // thuật toán xắp xếp, phân trang
-        final int start = (int) pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), list.size());
-        Page<ProductDTO> newPage = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        Page<ProductDTO> findAllProduct = productService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
-                .page(newPage.getPageable().getPageNumber() + 1)
-                .size(newPage.getSize())
-                .totalPage(newPage.getTotalPages())
-                .totalItem(newPage.getTotalElements())
-                .contends(newPage.getContent())
+                .page(findAllProduct.getPageable().getPageNumber() + 1)
+                .size(findAllProduct.getSize())
+                .totalPage(findAllProduct.getTotalPages())
+                .totalItem(findAllProduct.getTotalElements())
+                .contends(findAllProduct.getContent())
                 .build());
     }
 

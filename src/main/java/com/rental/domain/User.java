@@ -11,10 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -107,6 +104,10 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
     private Set<CartItems> cartItems = new HashSet<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
+    private List<Information> information = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

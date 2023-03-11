@@ -1,10 +1,13 @@
 package com.rental.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.rental.repository.OrderRepository;
 import com.rental.repository.ProductRepository;
 import com.rental.service.dto.OrderDTO;
+import com.rental.service.dto.OrderDetailShowDTO;
 import com.rental.service.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +38,13 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
     }
 
     @Autowired
+    private ProductRepository productRepository;
+    @Autowired
     private OrderDetailsRepository orderDetailsRepository;
     @Autowired
     private ModelMapper modelMapper;
- //   @Autowired
+
+    //   @Autowired
 //    private OrderRepository orderRepository;
 //    @Autowired
 //    private ProductRepository productRepository;
@@ -73,19 +79,29 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
 //    }
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderDetailsDTO> findAll(Pageable pageable) {
+    public Page<OrderDetailShowDTO> findAll(Pageable pageable) {
         return orderDetailsRepository.findAll(pageable).map(o -> {
-            return modelMapper.map(o, OrderDetailsDTO.class);
+            return modelMapper.map(o, OrderDetailShowDTO.class);
         });
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrderDetailsDTO> findOne(Long id) {
+    public Optional<OrderDetailShowDTO> findOne(Long id) {
         return orderDetailsRepository.findById(id).map(o -> {
-            return modelMapper.map(o, OrderDetailsDTO.class);
+            return modelMapper.map(o, OrderDetailShowDTO.class);
         });
     }
+
+    @Override
+    public List<OrderDetailsDTO> findAllByProduct(Long id) {
+        return orderDetailsRepository.findAllByProduct(productRepository.findById(id).get()).stream().map(
+                orderDetails -> {
+                    return modelMapper.map(orderDetails,OrderDetailsDTO.class);
+                }
+        ).collect(Collectors.toList());
+    }
+
 
     @Override
     public void delete(Long id) {

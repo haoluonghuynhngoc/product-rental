@@ -10,5 +10,5 @@ import java.util.List;
 @SuppressWarnings("unused")
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
-   List<Product> findByNameLike(String name);
+   List<Product> findByNameLikeOrId(String name,Long id);
 }

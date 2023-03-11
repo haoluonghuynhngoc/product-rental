@@ -31,8 +31,8 @@ public class OrderResource {
 
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDTO) {
-        if (productRepository.findById(orderDTO.getOrderDetails().getProductId()).get().getStatus().equals(ProductStatus.RENTING))
-            throw new IllegalArgumentException("Đồ của bạn vừa được người dùng khác thuê ");
+//        if (productRepository.findById(orderDTO.getOrderDetails().getProductId()).get().getStatus().equals(ProductStatus.RENTING))
+//            throw new IllegalArgumentException("Đồ của bạn vừa được người dùng khác thuê ");
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 

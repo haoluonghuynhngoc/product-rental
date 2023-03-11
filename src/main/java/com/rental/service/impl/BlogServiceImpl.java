@@ -6,13 +6,11 @@ import com.rental.domain.enums.BlogStatus;
 import com.rental.repository.BlogRepository;
 import com.rental.repository.UserRepository;
 import com.rental.service.BlogService;
-import com.rental.service.dto.BlogDTO;
-import com.rental.service.dto.NotificationDTO;
-import com.rental.service.dto.ProductDTO;
-import com.rental.service.dto.UserDTO;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -53,12 +51,21 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogDTO> searchByTitle(String title) {
-        List<BlogDTO> listDTO = new ArrayList<>();
+    public PagingResponse<BlogDTO> searchByTitle(String title, Pageable pageable) {
+        List<BlogDTO> list = new ArrayList<>();
         for (Blog listBlog : blogRepository.findByTitleLike("%" + title + "%")) {
-            listDTO.add(modelMapper.map(listBlog, BlogDTO.class));
+            list.add(modelMapper.map(listBlog, BlogDTO.class));
         }
-        return listDTO;
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        Page<BlogDTO> pageBlog = new PageImpl<>(list.subList(start, end), pageable, list.size());
+        return PagingResponse.<BlogDTO>builder()
+                .page(pageBlog.getPageable().getPageNumber() + 1)
+                .size(pageBlog.getSize())
+                .totalPage(pageBlog.getTotalPages())
+                .totalItem(pageBlog.getTotalElements())
+                .contends(pageBlog.getContent())
+                .build();
     }
     @Override
     public Page<BlogDTO> findAll(Pageable pageable) {

@@ -11,9 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -63,6 +61,10 @@ public class Order implements Serializable {
     @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
     @ToString.Exclude
     private Set<OrderDetails> orderDetails = new HashSet<>();
+    @OneToMany(mappedBy = "order")
+    @JsonIgnoreProperties(value = {"order", "product"}, allowSetters = true)
+    @ToString.Exclude
+    private List<Information> information = new ArrayList<>();
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

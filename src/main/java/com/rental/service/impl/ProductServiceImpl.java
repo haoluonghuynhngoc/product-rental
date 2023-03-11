@@ -90,32 +90,38 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> searchByName(String nameProduct) {
         List<ProductDTO> listDTO = new ArrayList<>();
-        for (Product listProduct : productRepository.findByNameLike("%" + nameProduct + "%")) {
+        long id =0L;
+        try {
+            id= Long.parseLong(nameProduct);
+        }catch (NumberFormatException ex){
+            ex.printStackTrace();
+        }
+        for (Product listProduct : productRepository.findByNameLikeOrId("%" + nameProduct + "%",id)) {
             listDTO.add(modelMapper.map(listProduct, ProductDTO.class));
         }
         return listDTO;
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Page<ProductDTO> findAll(Pageable pageable) {
-//        return productRepository.findAll(pageable).map(p -> {
-//            return modelMapper.map(p, ProductDTO.class);
-//        });
-//    }
-
     @Override
-    public List<ProductDTO> findAllProduct() {
-        return productRepository.findAll().stream().filter(productDTO -> {
-                    if (productDTO.getStatus() != null)
-                        return productDTO.getStatus().equals(ProductStatus.APPROVED);
-                    else
-                        return false;
-                }
-        ).map(
-                x -> modelMapper.map(x, ProductDTO.class)
-        ).collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable).map(p -> {
+            return modelMapper.map(p, ProductDTO.class);
+        });
     }
+
+//    @Override  // xắp xếp và loc theo fiter
+//    public List<ProductDTO> findAllProduct() {
+//        return productRepository.findAll().stream().filter(productDTO -> {
+//                    if (productDTO.getStatus() != null)
+//                        return productDTO.getStatus().equals(ProductStatus.APPROVED);
+//                    else
+//                        return false;
+//                }
+//        ).map(
+//                x -> modelMapper.map(x, ProductDTO.class)
+//        ).collect(Collectors.toList());
+//    }
 
     @Override
     @Transactional(readOnly = true)

@@ -1,5 +1,8 @@
 package com.rental.service;
+import java.util.List;
 import java.util.Optional;
+
+import com.rental.service.dto.OrderDetailShowDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.rental.service.dto.OrderDetailsDTO;
@@ -9,9 +12,9 @@ public interface OrderDetailsService {
 
     Optional<OrderDetailsDTO> update(OrderDetailsDTO orderDetailsDTO);
 
-    Page<OrderDetailsDTO> findAll(Pageable pageable);
+    Page<OrderDetailShowDTO> findAll(Pageable pageable);
 
-    Optional<OrderDetailsDTO> findOne(Long id);
-
+    Optional<OrderDetailShowDTO> findOne(Long id);
+    List<OrderDetailsDTO> findAllByProduct(Long id);
     void delete(Long id);
 }

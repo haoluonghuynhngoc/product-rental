@@ -16,9 +16,9 @@ public interface ProductService {
 
     List<ProductDTO> searchByName(String nameProduct);
 
-//    Page<ProductDTO> findAll(Pageable pageable);
+    Page<ProductDTO> findAll(Pageable pageable);
 
-    List<ProductDTO> findAllProduct();
+  //  List<ProductDTO> findAllProduct();
     Optional<ProductDTO> findOne(Long id);
 
     void delete(Long id);

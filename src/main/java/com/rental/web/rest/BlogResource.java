@@ -3,8 +3,11 @@ package com.rental.web.rest;
 import com.rental.repository.BlogRepository;
 import com.rental.service.BlogService;
 import com.rental.service.dto.BlogDTO;
+import com.rental.service.dto.PagingResponse;
+import com.rental.service.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +39,13 @@ public class BlogResource {
                 () -> new IllegalArgumentException("Cant not update blog")
         );
     }
+
     @GetMapping("/{title}")
-    public ResponseEntity<List<BlogDTO>> getProductByName(@PathVariable(name = "title") String title) {
-        return ResponseEntity.status(HttpStatus.OK).body(blogService.searchByTitle(title));
+    public ResponseEntity<PagingResponse<BlogDTO>> getProductByName(@PathVariable(name = "title") String title,
+                                                                    @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(blogService.searchByTitle(title,pageable));
     }
+
     @GetMapping("/getOne/{id}")
     public ResponseEntity<BlogDTO> getProduct(@PathVariable Long id) {
         if (!blogRepository.existsById(id))
@@ -48,6 +54,7 @@ public class BlogResource {
                         blogData -> ResponseEntity.status(HttpStatus.OK).body(blogData))
                 .orElseThrow(() -> new IllegalArgumentException("Can not find the blog "));
     }
+
     @GetMapping("/getAllBlog")
     public ResponseEntity<List<BlogDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
@@ -56,6 +63,7 @@ public class BlogResource {
             throw new IllegalArgumentException("Cant not find any blog in the data ");
         return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
+
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (!blogRepository.existsById(id))

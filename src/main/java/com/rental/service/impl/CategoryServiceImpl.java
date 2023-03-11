@@ -57,56 +57,64 @@ public class CategoryServiceImpl implements CategoryService {
         });
     }
 
-    //    @Override
+//    @Override
 //    @Transactional(readOnly = true)
-//    public Optional<CategoryShowDTO> findOne(Long id) {
+//    public Optional<CategoryShowDTO> findOne(Long id, Pageable pageable) {
 //        return categoryRepository.findById(id).map(c -> {
-//            Set<ProductDTO> productDTO = new HashSet<>();
+//            List<ProductDTO> productDTO = new ArrayList<>();
 //            for (Product product : c.getProducts()) {
 //                if (product.getStatus() != null) {
-//                    if (!product.getStatus().equals(ProductStatus.RENTING)) {
+//                    if (product.getStatus().equals(ProductStatus.APPROVED)) {
 //                        productDTO.add(modelMapper.map(product, ProductDTO.class));
 //                    }
 //                }
 //            }
+//            // thuật toán phân trang
+//            final int start = (int) pageable.getOffset();
+//            final int end = Math.min((start + pageable.getPageSize()), productDTO.size());
+//            Page<ProductDTO> pageProduct = new PageImpl<>(productDTO.subList(start, end), pageable, productDTO.size());
 //            return CategoryShowDTO.builder()
 //                    .id(c.getId())
 //                    .name(c.getName())
-//                    .products(productDTO)
+//                    .PageProducts(
+//                            PagingResponse.<ProductDTO>builder()
+//                                    .page(pageProduct.getPageable().getPageNumber() + 1)
+//                                    .size(pageProduct.getSize())
+//                                    .totalPage(pageProduct.getTotalPages())
+//                                    .totalItem(pageProduct.getTotalElements())
+//                                    .contends(pageProduct.getContent())
+//                                    .build()
+//                    )
 //                    .build();
 //        });
 //    }
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<CategoryShowDTO> findOne(Long id, Pageable pageable) {
-        return categoryRepository.findById(id).map(c -> {
-            List<ProductDTO> productDTO = new ArrayList<>();
-            for (Product product : c.getProducts()) {
-                if (product.getStatus() != null) {
-                    if (product.getStatus().equals(ProductStatus.APPROVED)) {
-                        productDTO.add(modelMapper.map(product, ProductDTO.class));
-                    }
-                }
-            }
-            // thuật toán phân trang
-            final int start = (int) pageable.getOffset();
-            final int end = Math.min((start + pageable.getPageSize()), productDTO.size());
-            Page<ProductDTO> pageProduct = new PageImpl<>(productDTO.subList(start, end), pageable, productDTO.size());
-            return CategoryShowDTO.builder()
-                    .id(c.getId())
-                    .name(c.getName())
-                    .PageProducts(
-                            PagingResponse.<ProductDTO>builder()
-                                    .page(pageProduct.getPageable().getPageNumber() + 1)
-                                    .size(pageProduct.getSize())
-                                    .totalPage(pageProduct.getTotalPages())
-                                    .totalItem(pageProduct.getTotalElements())
-                                    .contends(pageProduct.getContent())
-                                    .build()
-                    )
-                    .build();
-        });
-    }
+@Override
+@Transactional(readOnly = true)
+public Optional<CategoryShowDTO> findOne(Long id, Pageable pageable) {
+    return categoryRepository.findById(id).map(c -> {
+        List<ProductDTO> productDTO = new ArrayList<>();
+        for (Product product : c.getProducts()) {
+                    productDTO.add(modelMapper.map(product, ProductDTO.class));
+        }
+        // thuật toán phân trang
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), productDTO.size());
+        Page<ProductDTO> pageProduct = new PageImpl<>(productDTO.subList(start, end), pageable, productDTO.size());
+        return CategoryShowDTO.builder()
+                .id(c.getId())
+                .name(c.getName())
+                .PageProducts(
+                        PagingResponse.<ProductDTO>builder()
+                                .page(pageProduct.getPageable().getPageNumber() + 1)
+                                .size(pageProduct.getSize())
+                                .totalPage(pageProduct.getTotalPages())
+                                .totalItem(pageProduct.getTotalElements())
+                                .contends(pageProduct.getContent())
+                                .build()
+                )
+                .build();
+    });
+}
 
 
     @Override

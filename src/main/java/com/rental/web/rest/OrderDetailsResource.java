@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.rental.repository.ProductRepository;
+import com.rental.service.dto.OrderDetailShowDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,8 @@ public class OrderDetailsResource {
     private OrderDetailsService orderDetailsService;
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @PostMapping("/create")
     @Operation(deprecated = true)
@@ -40,7 +44,6 @@ public class OrderDetailsResource {
             throw new IllegalArgumentException("A new orderDetails cannot already have an ID ");
         }
         return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.save(orderDetailsDTO));
-
     }
 
     @PutMapping("/update")
@@ -65,25 +68,33 @@ public class OrderDetailsResource {
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<OrderDetailsDTO>> getAllOrderDetails(
+    public ResponseEntity<List<OrderDetailShowDTO>> getAllOrderDetails(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<OrderDetailsDTO> page = orderDetailsService.findAll(pageable);
+        Page<OrderDetailShowDTO> page = orderDetailsService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("Page in over size ");
         return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
 
     @GetMapping("/getOne/{id}")
-    public ResponseEntity<OrderDetailsDTO> getOrderDetail(@PathVariable Long id) {
+    public ResponseEntity<OrderDetailShowDTO> getOrderDetail(@PathVariable Long id) {
         return orderDetailsService.findOne(id).map(
                 orderDetailData -> ResponseEntity.status(HttpStatus.OK).body(orderDetailData)).orElseThrow(
                 () -> new IllegalArgumentException("Cant not find Order Detail have Id :" + id + " in the data "));
     }
+
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteOrderDetails(@PathVariable Long id) {
         if (!orderDetailsRepository.existsById(id))
-            throw new IllegalArgumentException("Cant not find Order Detail have Id :" + id + " in the data ");
+            throw new IllegalArgumentException("không thể tìm thấy đơn hàng chi tiết có Id :" + id + " trong dữ liệu ");
         orderDetailsService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/getAllByProduct/{id}")
+    public ResponseEntity<List<OrderDetailsDTO>> getOrderDetailByProduct(@PathVariable Long id) {
+        if (!productRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm thấy bất kỳ sản phầm nào có id :" + id + " trong dữ liệu");
+        return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.findAllByProduct(id));
     }
 }
