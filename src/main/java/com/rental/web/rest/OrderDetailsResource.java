@@ -93,8 +93,8 @@ public class OrderDetailsResource {
 
     @GetMapping("/getAllByProduct/{id}")
     public ResponseEntity<List<OrderDetailsDTO>> getOrderDetailByProduct(@PathVariable Long id) {
-        if (!productRepository.existsById(id))
-            throw new IllegalArgumentException("Không thể tìm thấy bất kỳ sản phầm nào có id :" + id + " trong dữ liệu");
+//        if (!productRepository.existsById(id))
+//            throw new IllegalArgumentException("Không thể tìm thấy bất kỳ sản phầm nào có id :" + id + " trong dữ liệu");
         return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.findAllByProduct(id));
     }
 }

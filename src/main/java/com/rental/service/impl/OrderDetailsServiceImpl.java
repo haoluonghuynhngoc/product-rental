@@ -95,7 +95,7 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
 
     @Override
     public List<OrderDetailsDTO> findAllByProduct(Long id) {
-        return orderDetailsRepository.findAllByProduct(productRepository.findById(id).get()).stream().map(
+        return orderDetailsRepository.findAllByProduct(productRepository.findById(id).orElse(null)).stream().map(
                 orderDetails -> {
                     return modelMapper.map(orderDetails,OrderDetailsDTO.class);
                 }
