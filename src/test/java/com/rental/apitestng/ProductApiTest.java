@@ -23,13 +23,13 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getProductByIdTestDepositEqual() {
-        boolean actual=false;
+        boolean actual = false;
         try {
-            actual =productRepository.findById(300L).get().getDeposit() == 700000;
-        }catch (NoSuchElementException e){
+            actual = productRepository.findById(300L).get().getDeposit() == 700000;
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
-        Assert.assertTrue( actual , "The actual is false");
+        Assert.assertTrue(actual, "The actual is false");
     }
 
 
@@ -43,11 +43,11 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getProductByIdAndTestEqualProductName() {
-        String expected = "Bông tai ngọc trai hình giọt nước";
-        String actual ="";
+        String expected = "Váy 1";
+        String actual = "";
         try {
-            actual = productRepository.findById(1L).get().getName();
-        }catch (NoSuchElementException e){
+            actual = productRepository.findById(98L).get().getName();
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
         Assert.assertEquals(actual, expected, "Hai kết quả không giống nhau");
@@ -57,23 +57,27 @@ public class ProductApiTest extends AbstractTestNGSpringContextTests {
     public void getListProductByNameTestSizeProductMoreThan2() {
         List<Product> list = new ArrayList<>();
         try {
-            list = productRepository.findByNameLike("%n%");
-        }catch (NoSuchElementException e){
+            list = productRepository.findByNameLikeOrId("%Bông%",1L);
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
-        boolean actual=list.size() > 2;
-        Assert.assertTrue(actual, "Số lượng phần tử nhỏ hơn 2");
+        boolean actual = list.size() >= 2;
+        Assert.assertTrue(actual, "Số lượng phần tử có tên váy nhỏ hơn 2");
+        if (actual){
+            list.forEach(x-> System.out.println(x.getId() +" || "+ x.getDescription()));
+        }
     }
 
     @Test
     public void getProductByIdTestPriceProduct() {
-        boolean actual =false;
+        boolean actual = false;
         try {
-            actual = productRepository.findById(1L).get().getPrice() == 100000;
+            actual = productRepository.findById(98L).get().getPrice() == 200000;
+            System.out.println("Giá tiền của sản phảm có ID = 98 là " + productRepository.findById(98L).get().getPrice());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
-         Assert.assertTrue(actual, "Kết quả trả ra false");
+        Assert.assertTrue(actual, "Kết quả trả ra false");
     }
 
 

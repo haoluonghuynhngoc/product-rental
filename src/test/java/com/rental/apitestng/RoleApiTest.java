@@ -32,6 +32,10 @@ public class RoleApiTest extends AbstractTestNGSpringContextTests {
             e.printStackTrace();
         }
         Assert.assertNotNull(actual);
+        if (actual!=null){
+            System.out.println("Giá trị khi lấy ra trong dữ liệu ");
+            System.out.println(actual.toString());
+        }
     }
 
 

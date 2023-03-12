@@ -29,11 +29,9 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
         };
     }
 
-    @Test(dataProvider = "useSet")// vì đã gắn dataProvider = "useSet" nên nó sẽ gọi hàm trên dòng 23
+    @Test(dataProvider = "useSet")
     public void getUserNameAndPasswordTestEqualLoginUser(String test1, String test2) {
         Assert.assertEquals(test1, test2, "User name or password is not correct");
-        // hàm này sẽ test xem dòng 28 và 29 có bằng nhau hay không
-
     }
 
     @Test
@@ -51,6 +49,7 @@ public class UserApiTest extends AbstractTestNGSpringContextTests {
                 .address("10, Cao Lỗ, Phường 4, Quận 8, TP.HCM")
                 .build();
         userRepository.save(user);
+
     }
 
     @Test

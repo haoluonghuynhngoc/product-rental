@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @SpringBootTest(classes = RentalApplication.class)
@@ -25,17 +27,24 @@ public class CategoryApiTest extends AbstractTestNGSpringContextTests {
     public void getCategoryByNameTestUpdateNameCategoryEntity() {
         Category actual = null;
         try {
-            actual = categoryRepository.findByName("Spring Boot");
+            actual = categoryRepository.findByName("Bóng Chuyền");
         }catch (NoSuchElementException e){
             e.printStackTrace();
         }
-        Assert.assertNotNull(actual,"Không Có tên Spring Boot trong bảng Category");
+        Assert.assertNotNull(actual,"Không Có tên Bóng Chuyền trong bảng thư mục");
+        if (actual!=null){
+            System.out.println(actual.toString());
+        }
     }
 
     @Test
     public void getAllCategoryTestSizeCategory() {
-        boolean Actual = categoryRepository.findAll().size() >= 6;
-        Assert.assertTrue(Actual, "Số lượng phần tử nhỏ hơn 6 ");
+        boolean actual = categoryRepository.findAll().size() > 3;
+        Assert.assertTrue(actual, "Số lượng phần tử nhỏ hơn 3 ");
+        if (actual==true){
+            List<Category> list = categoryRepository.findAll();
+            list.forEach(x-> System.out.println(x.toString()));
+        }
     }
 
     @Test

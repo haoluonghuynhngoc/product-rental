@@ -22,14 +22,15 @@ public class DataConvertTest {
     @DataProvider(name = "convertSet")
     public Object[][] dataSet() {
         return new Object[][]{
-                {"1111100111", convertBinary(999)},
+                {"1111100111", convertBinary(9998)},
                 {"101101",convertBinary(45)},
  //               {"101101",convertBinary(-1)},
-                {"1000",convertBinary(8)}
+                {"1010",convertBinary(10)}
         };
     }
+    // asas
     @Test(dataProvider = "convertSet")
     public void binaryConvertTests(String testOne ,String testTow) {
-        Assert.assertEquals(testOne,testTow);
+        Assert.assertEquals(testTow,testOne);
     }
 }

@@ -33,14 +33,14 @@ public class DataBinarySearchTest {
     public Object[][] dataSet() {
         DataBinarySearchTest bs = new DataBinarySearchTest();
         return new Object[][]{
-                {5+"",""+ bs.binarySearch(new int[]{14, 10, 19, 26, 27, 31, 33, 35, 42, 44}, 31)},
+                {5+"",""+ bs.binarySearch(new int[]{14, 10, 19, 26, 27, 31, 33, 35, 42, 44}, 8)},
                 {1+"",""+ bs.binarySearch(new int[]{10, 14, 19, 26, 27, 31, 33, 35, 42, 44}, 14)},
                 {9+"",""+ bs.binarySearch(new int[]{10, 14, 19, 26, 27, 31, 33, 35, 42, 44}, 44)}
         };
     }
     @Test(dataProvider = "binarySearch")
     public void binaryConvertTests(String testOne ,String testTow) {
-        Assert.assertEquals(testOne,testTow);
+        Assert.assertEquals(testTow,testOne);
     }
 
 }

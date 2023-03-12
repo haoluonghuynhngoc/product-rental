@@ -28,13 +28,13 @@ public class NotificationApiTest extends AbstractTestNGSpringContextTests {
            notification.setDescription("");
         }
         return new Object[][]{
-                {"Spring Boot", notification.getTitle()},
+                {"Spring Boo1t", notification.getTitle()},
                 {"TestNG", notification.getDescription()}
         };
     }
     @Test(dataProvider = "testEqual")
     public void getNotificationByIdTestEqualTitleAndDescription(String test1, String test2) {
-        Assert.assertEquals(test1, test2, "Test1 And test2 is not Equal");
+        Assert.assertEquals(test1, test2, "Test1 và test2 không giống nhau");
     }
 
 
