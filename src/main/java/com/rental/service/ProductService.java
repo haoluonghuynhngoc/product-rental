@@ -3,6 +3,7 @@ package com.rental.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.rental.service.dto.PagingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,12 +15,12 @@ public interface ProductService {
 
     Optional<ProductDTO> update(ProductDTO productDTO);
 
-    List<ProductDTO> searchByName(String nameProduct);
+    PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable);
 
     Page<ProductDTO> findAll(Pageable pageable);
 
   //  List<ProductDTO> findAllProduct();
     Optional<ProductDTO> findOne(Long id);
-
+    List<ProductDTO> searchByNameId(String nameProduct);
     void delete(Long id);
 }

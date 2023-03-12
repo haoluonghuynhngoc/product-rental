@@ -43,7 +43,7 @@ public class BlogResource {
     @GetMapping("/{title}")
     public ResponseEntity<PagingResponse<BlogDTO>> getProductByName(@PathVariable(name = "title") String title,
                                                                     @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(blogService.searchByTitle(title,pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(blogService.searchByTitle(title, pageable));
     }
 
     @GetMapping("/getOne/{id}")
@@ -56,12 +56,19 @@ public class BlogResource {
     }
 
     @GetMapping("/getAllBlog")
-    public ResponseEntity<List<BlogDTO>> getAllCategories(
+    public ResponseEntity<PagingResponse<BlogDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<BlogDTO> page = blogService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("Cant not find any blog in the data ");
-        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PagingResponse.<BlogDTO>builder()
+                        .page(page.getPageable().getPageNumber() + 1)
+                        .size(page.getSize())
+                        .totalPage(page.getTotalPages())
+                        .totalItem(page.getTotalElements())
+                        .contends(page.getContent())
+                        .build());
     }
 
     @DeleteMapping("/remove/{id}")

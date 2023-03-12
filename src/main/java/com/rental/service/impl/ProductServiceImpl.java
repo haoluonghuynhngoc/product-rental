@@ -10,6 +10,7 @@ import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +38,9 @@ public class ProductServiceImpl implements ProductService {
         Product product = modelMapper.map(productDTO, Product.class);
         product.setId(-1L);
         // set image
-      //  int nameImage = 1;
+        //  int nameImage = 1;
         for (Image imageClient : product.getImages()) {
-       //     imageClient.setName("" + nameImage++);
+            //     imageClient.setName("" + nameImage++);
             imageClient.setProduct(product);
         }
         //
@@ -64,9 +65,9 @@ public class ProductServiceImpl implements ProductService {
                     }
                     imageRepository.deleteAllByProduct(existingProduct);
                     List<Image> image = new ArrayList<>();
-              //      int nameImage = 1;
+                    //      int nameImage = 1;
                     for (ImageDTO img : productDTO.getImages()) {
-              //      img.setName("" + nameImage++);
+                        //      img.setName("" + nameImage++);
                         image.add(modelMapper.map(img, Image.class));
                     }
 // ====
@@ -88,18 +89,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> searchByName(String nameProduct) {
+    public PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable) {
         List<ProductDTO> listDTO = new ArrayList<>();
-        long id =0L;
+        long id = 0L;
         try {
-            id= Long.parseLong(nameProduct);
-        }catch (NumberFormatException ex){
+            id = Long.parseLong(nameProduct);
+        } catch (NumberFormatException ex) {
             ex.printStackTrace();
         }
-        for (Product listProduct : productRepository.findByNameLikeOrId("%" + nameProduct + "%",id)) {
+        for (Product listProduct : productRepository.findByNameLikeOrId("%" + nameProduct + "%", id)) {
             listDTO.add(modelMapper.map(listProduct, ProductDTO.class));
         }
-        return listDTO;
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), listDTO.size());
+        Page<ProductDTO> pageProduct = new PageImpl<>(listDTO.subList(start, end), pageable, listDTO.size());
+        return PagingResponse.<ProductDTO>builder()
+                .page(pageProduct.getPageable().getPageNumber() + 1)
+                .size(pageProduct.getSize())
+                .totalPage(pageProduct.getTotalPages())
+                .totalItem(pageProduct.getTotalElements())
+                .contends(pageProduct.getContent())
+                .build();
     }
 
     @Override
@@ -129,6 +139,21 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(id).map(p -> {
             return modelMapper.map(p, ProductDTO.class);
         });
+    }
+
+    @Override
+    public List<ProductDTO> searchByNameId(String nameProduct) {
+        Long id = 0L;
+        try {
+            id = Long.parseLong(nameProduct);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+        return productRepository.findByNameLikeOrId("%" + nameProduct + "%", id).stream().map(
+                product -> {
+                    return modelMapper.map(product, ProductDTO.class);
+                }
+        ).collect(Collectors.toList());
     }
 
     @Transactional

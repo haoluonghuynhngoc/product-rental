@@ -1,8 +1,17 @@
 package com.rental.web.rest;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import com.rental.domain.OrderDetails;
+import com.rental.domain.Product;
 import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
+import com.rental.repository.OrderDetailsRepository;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
 import com.rental.service.dto.OrderShowDTO;
@@ -28,11 +37,53 @@ public class OrderResource {
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
 
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDTO) {
 //        if (productRepository.findById(orderDTO.getOrderDetails().getProductId()).get().getStatus().equals(ProductStatus.RENTING))
 //            throw new IllegalArgumentException("Đồ của bạn vừa được người dùng khác thuê ");
+        if (productRepository.existsById(orderDTO.getOrderDetails().getProductId())) {
+            List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
+                    orderDTO.getOrderDetails().getProductId()).orElse(null));
+            if (listOrderDetails != null) {
+                listOrderDetails.forEach(orderDetails -> {
+                    Calendar borrowDateClient = Calendar.getInstance();
+                    borrowDateClient.setTime(orderDTO.getOrderDetails().getOrderBorrowDate());
+                    Calendar returnDateClient = Calendar.getInstance();
+                    returnDateClient.setTime(orderDTO.getOrderDetails().getOrderReturnDate());
+                    Calendar startDateDataBase = Calendar.getInstance();
+                    startDateDataBase.setTime(orderDetails.getOrderBorrowDate());
+                    Calendar endDateDataBase = Calendar.getInstance();
+                    endDateDataBase.setTime(orderDetails.getOrderReturnDate());
+                    if (borrowDateClient.compareTo(returnDateClient) > 0) {
+                        throw new IllegalArgumentException("Ngày đặt hàng lớn hơn ngày trả hàng xin thử lại ");
+                    }
+                    endDateDataBase.add(Calendar.DATE, 2);// thêm vào để check điều kiện (đã kiểm tra)
+                    Calendar currentDate = borrowDateClient;
+                    startDateDataBase.add(Calendar.DATE, -1);// chưa kiểm tra kỹ
+                    while (currentDate.before(returnDateClient) || currentDate.equals(returnDateClient)) {
+                        if (currentDate.after(startDateDataBase) && currentDate.before(endDateDataBase)) {
+                            startDateDataBase.add(Calendar.DATE, 2); // thêm 2 ngày để check điều kiện
+                            if (borrowDateClient.equals(startDateDataBase)) {
+                                throw new IllegalArgumentException("Xin lỗi chúng tôi cần 1 ngày để bảo dưỡng sản phầm," +
+                                        " xin vui lòng chọn ngày đặt hơn 1 ngày ");
+                            } else {
+                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                startDateDataBase.add(Calendar.DATE, -2);// thêm 1 ngày để trả đúng số ngày
+                                startDateDataBase.add(Calendar.DATE, 1); // cộng 1 ngày lên để in ra đúng
+                                endDateDataBase.add(Calendar.DATE, -2);//  trừ  để in ra thông báo
+                                throw new IllegalArgumentException(
+                                        "Ngày thuê " + formatter.format(currentDate.getTime()) + " của bạn đã bị trùng với ngày thuê của người dùng khác " +
+                                                formatter.format(startDateDataBase.getTime()) + " đến " + formatter.format(endDateDataBase.getTime()));
+                            }
+                        }
+                        currentDate.add(Calendar.DATE, 1);
+                    }
+                });
+            }
+        }
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 
@@ -40,8 +91,8 @@ public class OrderResource {
     @PutMapping("/update/{id}")
     public ResponseEntity<OrderShowDTO> update(@PathVariable(name = "id") Long id, @RequestParam OrderStatus status) {
         if (!orderRepository.existsById(id))
-            throw new IllegalArgumentException("Không thể tìm thây id : " + id +" trong dữ liệu");
-        return orderService.update(status,id).map(
+            throw new IllegalArgumentException("Không thể tìm thây id : " + id + " trong dữ liệu");
+        return orderService.update(status, id).map(
                 orderData -> ResponseEntity.status(HttpStatus.OK).body(orderData)
         ).orElseThrow(
                 () -> new IllegalArgumentException("Cant not update order")
@@ -89,8 +140,8 @@ public class OrderResource {
     public ResponseEntity<List<OrderShowDTO>> getAllOrderByUser(@PathVariable Long id) {
         if (!userRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm người dùng có Id :" + id + "trong dữ liệu ");
-        List<OrderShowDTO> list =orderService.findOrderByUser(id);
-        list.forEach(x->
+        List<OrderShowDTO> list = orderService.findOrderByUser(id);
+        list.forEach(x ->
         {
             //x.getOrderDetails().forEach(orderDetail->orderDetail.setProduct(null));
             x.setUser(null);
