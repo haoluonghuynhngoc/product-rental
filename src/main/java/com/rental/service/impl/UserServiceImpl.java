@@ -10,11 +10,13 @@ import com.rental.domain.enums.UserStatus;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.RoleRepository;
 import com.rental.repository.UserRepository;
+import com.rental.service.dto.PagingResponse;
 import com.rental.service.dto.PasswordChangeDTO;
 import com.rental.service.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -103,15 +105,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> searchUserByFirstName(String name) {
+    public PagingResponse<UserDTO> searchUserByFirstName(String name, Pageable pageable) {
+        long id = -1L;
+        try {
+            id = Long.parseLong(name);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
         List<UserDTO> listDTO = new ArrayList<>();
-//        for (User listUser : userRepository.findByFirstNameLike("%" + firstName + "%")) {
+//        for (User listUser : userRepository.findByLastNameLikeOrFirstNameLikeOrId("%" + name + "%", "%" + name + "%", id)) {
 //            listDTO.add(modelMapper.map(listUser, UserDTO.class));
 //        }
-        for (User listUser : userRepository.findByLastNameLikeOrFirstNameLike("%" + name + "%", "%" + name + "%")) {
-            listDTO.add(modelMapper.map(listUser, UserDTO.class));
-        }
-        return listDTO;
+        userRepository.findByLastNameLikeOrFirstNameLikeOrId("%" + name + "%", "%" + name + "%", id).forEach(
+                user -> listDTO.add(modelMapper.map(user, UserDTO.class))
+        );
+        final int startPage = (int) pageable.getOffset();
+        final int endPage = Math.min((startPage + pageable.getPageSize()), listDTO.size());
+        Page<UserDTO> pageProduct = new PageImpl<>(listDTO.subList(startPage, endPage), pageable, listDTO.size());
+        return PagingResponse.<UserDTO>builder()
+                .page(pageProduct.getPageable().getPageNumber() + 1)
+                .size(pageProduct.getSize())
+                .totalPage(pageProduct.getTotalPages())
+                .totalItem(pageProduct.getTotalElements())
+                .contends(pageProduct.getContent())
+                .build();
     }
 
     @Override

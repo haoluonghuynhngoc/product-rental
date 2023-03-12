@@ -112,11 +112,18 @@ public class UserResource {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<UserDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<PagingResponse<UserDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<UserDTO> findAllUser = userService.findAll(pageable);
         if (findAllUser.isEmpty())
             throw new IllegalArgumentException("Không thể tìm thấy bất kì người dùng trong dữ liệu");
-        return ResponseEntity.status(HttpStatus.OK).body(findAllUser.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PagingResponse.<UserDTO>builder()
+                        .page(findAllUser.getPageable().getPageNumber() + 1)
+                        .size(findAllUser.getSize())
+                        .totalPage(findAllUser.getTotalPages())
+                        .totalItem(findAllUser.getTotalElements())
+                        .contends(findAllUser.getContent())
+                        .build());
     }
 //@GetMapping("/getAll")
 //public ResponseEntity<PagingResponse<UserDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
@@ -135,8 +142,9 @@ public class UserResource {
 //}
 
     @GetMapping("/{name}")
-    public ResponseEntity<List<UserDTO>> getProductByName(@PathVariable(name = "name") String name) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(name));
+    public ResponseEntity<PagingResponse<UserDTO>> getProductByName(@PathVariable(name = "name") String name,
+                                                          @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(name,pageable));
     }
 
     @GetMapping("/getOne/{id}")

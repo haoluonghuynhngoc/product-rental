@@ -89,14 +89,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable) {
+    public PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable,Long id) {
         List<ProductDTO> listDTO = new ArrayList<>();
-        long id = 0L;
-        try {
-            id = Long.parseLong(nameProduct);
-        } catch (NumberFormatException ex) {
-            ex.printStackTrace();
-        }
+
         for (Product listProduct : productRepository.findByNameLikeOrId("%" + nameProduct + "%", id)) {
             listDTO.add(modelMapper.map(listProduct, ProductDTO.class));
         }
@@ -143,12 +138,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> searchByNameId(String nameProduct) {
-        Long id = 0L;
-        try {
-            id = Long.parseLong(nameProduct);
-        } catch (NumberFormatException ex) {
-            ex.printStackTrace();
-        }
+        Long id = -1L;
         return productRepository.findByNameLikeOrId("%" + nameProduct + "%", id).stream().map(
                 product -> {
                     return modelMapper.map(product, ProductDTO.class);

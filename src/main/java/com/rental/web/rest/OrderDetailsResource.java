@@ -1,5 +1,6 @@
 package com.rental.web.rest;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -95,6 +96,18 @@ public class OrderDetailsResource {
     public ResponseEntity<List<OrderDetailsDTO>> getOrderDetailByProduct(@PathVariable Long id) {
 //        if (!productRepository.existsById(id))
 //            throw new IllegalArgumentException("Không thể tìm thấy bất kỳ sản phầm nào có id :" + id + " trong dữ liệu");
-        return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.findAllByProduct(id));
+        List<OrderDetailsDTO> list = orderDetailsService.findAllByProduct(id);
+        list.forEach(orderDetailsDTO -> {
+            Calendar calendarBorrow = Calendar.getInstance();
+            calendarBorrow.setTime(orderDetailsDTO.getOrderBorrowDate());
+            calendarBorrow.add(Calendar.DATE, -1);
+            orderDetailsDTO.setOrderBorrowDate(calendarBorrow.getTime());
+
+            Calendar calendarReturn = Calendar.getInstance();
+            calendarReturn.setTime(orderDetailsDTO.getOrderReturnDate());
+            calendarReturn.add(Calendar.DATE, 1);
+            orderDetailsDTO.setOrderReturnDate(calendarReturn.getTime());
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 }

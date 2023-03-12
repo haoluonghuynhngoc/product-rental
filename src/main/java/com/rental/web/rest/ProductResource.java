@@ -107,14 +107,29 @@ public class ProductResource {
                         productData -> ResponseEntity.status(HttpStatus.OK).body(productData))
                 .orElseThrow(() -> new IllegalArgumentException("Can not find the product "));
     }
-    @GetMapping("/search/{nameId}")
-    public ResponseEntity<List<ProductDTO>> getProduct(@PathVariable(name = "nameId") String nameProduct) {
+
+    @GetMapping("/{name}")
+    public ResponseEntity<List<ProductDTO>> getProduct(@PathVariable(name = "name") String nameProduct) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.searchByNameId(nameProduct));
     }
-    @GetMapping("/{name}")
-    public ResponseEntity<PagingResponse<ProductDTO>> getProductByName(@PathVariable(name = "name") String nameProduct,
-                                                             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct,pageable));
+
+    @GetMapping("/page/{nameId}")
+    public ResponseEntity<PagingResponse<ProductDTO>> getProductByName(@PathVariable(name = "nameId") String nameProduct,
+                                                                       @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        long id = 0L;
+        try {
+            id = Long.parseLong(nameProduct);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct, pageable, id));
+    }
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<PagingResponse<ProductDTO>> getProductsByName(@PathVariable(name = "name") String nameProduct,
+                                                                        @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        long id = -1L;
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchByName(nameProduct, pageable,id));
     }
 
 

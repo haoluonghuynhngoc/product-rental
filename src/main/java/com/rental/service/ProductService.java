@@ -15,7 +15,7 @@ public interface ProductService {
 
     Optional<ProductDTO> update(ProductDTO productDTO);
 
-    PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable);
+    PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable,Long id);
 
     Page<ProductDTO> findAll(Pageable pageable);
 
