@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
         role.add(roleRepository.findByName(RoleName.USERS));
         applicationUserDTO.setNotifications(null);
         applicationUserDTO.setId(-1L);
+        applicationUserDTO.setOrders(null);
         applicationUserDTO.setFirstName(applicationUserDTO.getUsername()); // tên người dùng khi tạo phải trùng với UserName
         applicationUserDTO.setRole(role);
         applicationUserDTO.setStatus(UserStatus.UNLOCKED);
@@ -58,6 +59,8 @@ public class UserServiceImpl implements UserService {
                     if (applicationUserDTO.getEmail() == null)
                         applicationUserDTO.setEmail(userEntity.getEmail());
                     applicationUserDTO.setUsername(userEntity.getUsername());
+                    applicationUserDTO.setOrders(null);
+                    applicationUserDTO.setNotifications(null);
                     applicationUserDTO.setPassword(userEntity.getPassword());
                     applicationUserDTO.setRole(userEntity.getRole());
                     applicationUserDTO.setStatus(userEntity.getStatus());
@@ -113,9 +116,6 @@ public class UserServiceImpl implements UserService {
             ex.printStackTrace();
         }
         List<UserDTO> listDTO = new ArrayList<>();
-//        for (User listUser : userRepository.findByLastNameLikeOrFirstNameLikeOrId("%" + name + "%", "%" + name + "%", id)) {
-//            listDTO.add(modelMapper.map(listUser, UserDTO.class));
-//        }
         userRepository.findByLastNameLikeOrFirstNameLikeOrId("%" + name + "%", "%" + name + "%", id).forEach(
                 user -> listDTO.add(modelMapper.map(user, UserDTO.class))
         );

@@ -29,6 +29,6 @@ public class UserDTO implements Serializable {
     private String imageUrl;
     private Set<Role> role = new HashSet<>();
     private Set<NotificationDTO> notifications = new HashSet<>();
-
+    private Set<OrderDTO> orders = new HashSet<>();
 
 }

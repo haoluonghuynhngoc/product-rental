@@ -85,6 +85,7 @@ public class OrderDetailsResource {
     }
 
     @DeleteMapping("/remove/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<Void> deleteOrderDetails(@PathVariable Long id) {
         if (!orderDetailsRepository.existsById(id))
             throw new IllegalArgumentException("không thể tìm thấy đơn hàng chi tiết có Id :" + id + " trong dữ liệu ");

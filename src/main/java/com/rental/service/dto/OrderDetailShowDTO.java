@@ -15,5 +15,5 @@ public class OrderDetailShowDTO {
     private Double price;
     private Double deposit;
     private String imageReturn;
-   // private ProductDTO product;
+    private ProductDTO product;
 }
