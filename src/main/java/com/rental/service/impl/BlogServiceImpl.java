@@ -38,8 +38,8 @@ public class BlogServiceImpl implements BlogService {
     public Optional<BlogDTO> updateBlog(BlogDTO blogDTO) {
         return blogRepository.findById(blogDTO.getId()).map(
                 blogEntity -> {
+                    blogDTO.setUser(modelMapper.map(blogEntity.getUser(),UserDTO.class));
                     blogDTO.setCreatedDate(blogEntity.getCreatedDate());
-                    blogDTO.setUser(modelMapper.map(blogEntity.getUser(), UserDTO.class));
                     modelMapper.map(blogDTO, blogEntity);
                     return blogEntity;
                 }

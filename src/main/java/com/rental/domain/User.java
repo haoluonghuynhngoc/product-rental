@@ -70,8 +70,8 @@ public class User implements Serializable {
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
-
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+//,orphanRemoval = true
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = { "voucher", "user", "orderDetails" }, allowSetters = true)
     private Set<Order> orders = new HashSet<>();
 
