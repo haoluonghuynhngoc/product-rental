@@ -57,10 +57,10 @@ public class UserResource {
 
     @PutMapping("/change/status")
     public ResponseEntity<UserDTO> updateStatus(@RequestBody UserDTO userDTO) {
-        if (userRepository.findById(userDTO.getId()).get().getUsername().equals("admin"))
-            throw new IllegalArgumentException("Không thể xóa admin");
         if (!userRepository.findById(userDTO.getId()).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng");
+        if (userRepository.findById(userDTO.getId()).get().getUsername().equals("admin"))
+            throw new IllegalArgumentException("Không thể xóa admin");
         return userService.updateUserStatus(userDTO).map(userData -> ResponseEntity.status(HttpStatus.OK).body(userData)).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
@@ -112,12 +112,12 @@ public class UserResource {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<PagingResponse<UserDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<UserDTO> findAllUser = userService.findAll(pageable);
+    public ResponseEntity<PagingResponse<UserShowDTO>> getAllUser(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        Page<UserShowDTO> findAllUser = userService.findAll(pageable);
         if (findAllUser.isEmpty())
             throw new IllegalArgumentException("Không thể tìm thấy bất kì người dùng trong dữ liệu");
         return ResponseEntity.status(HttpStatus.OK).body(
-                PagingResponse.<UserDTO>builder()
+                PagingResponse.<UserShowDTO>builder()
                         .page(findAllUser.getPageable().getPageNumber() + 1)
                         .size(findAllUser.getSize())
                         .totalPage(findAllUser.getTotalPages())
@@ -142,13 +142,13 @@ public class UserResource {
 //}
 
     @GetMapping("/{name}")
-    public ResponseEntity<PagingResponse<UserDTO>> getProductByName(@PathVariable(name = "name") String name,
+    public ResponseEntity<PagingResponse<UserShowDTO>> getProductByName(@PathVariable(name = "name") String name,
                                                           @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.searchUserByFirstName(name,pageable));
     }
 
     @GetMapping("/getOne/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<UserShowDTO> getUserById(@PathVariable(value = "id") Long id) {
         return userService.findOne(id).map(user -> ResponseEntity.status(HttpStatus.OK).body(user)).orElseThrow(
                 () -> new IllegalArgumentException("Không thể tìm thấy người dùng có id : " + id)
         );
@@ -156,10 +156,10 @@ public class UserResource {
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable(value = "id") Long id) {
-        if (userRepository.existsByUsername("admin"))
-            throw new IllegalArgumentException("Không thể xóa admin");
         if (!userRepository.findById(id).isPresent())
             throw new IllegalArgumentException("Không thể tìm thấy người dùng có id :" + id);
+        if (userRepository.findById(id).get().getUsername().equals("admin"))
+            throw new IllegalArgumentException("Không thể xóa admin");
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

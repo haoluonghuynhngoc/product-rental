@@ -4,13 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.rental.domain.User;
-import com.rental.service.dto.PagingResponse;
-import com.rental.service.dto.PasswordChangeDTO;
-import com.rental.service.dto.ProductDTO;
+import com.rental.service.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import com.rental.service.dto.UserDTO;
 
 /**
  * Service class for managing users.
@@ -22,9 +18,9 @@ public interface UserService {
     Optional<UserDTO> updateUser(UserDTO applicationUserDTO);
     Optional<UserDTO> updateUserStatus(UserDTO applicationUserDTO);
     UserDTO loginUser(UserDTO applicationUserDTO);
-    Page<UserDTO> findAll(Pageable pageable);
-    PagingResponse<UserDTO> searchUserByFirstName(String firstName, Pageable pageable);
+    Page<UserShowDTO> findAll(Pageable pageable);
+    PagingResponse<UserShowDTO> searchUserByFirstName(String firstName, Pageable pageable);
     UserDTO changePassword(PasswordChangeDTO changePassword) ;
-    Optional<UserDTO> findOne(Long id);
+    Optional<UserShowDTO> findOne(Long id);
     void delete(Long id);
 }

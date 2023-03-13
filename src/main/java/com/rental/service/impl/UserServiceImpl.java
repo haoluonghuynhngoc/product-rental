@@ -10,9 +10,7 @@ import com.rental.domain.enums.UserStatus;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.RoleRepository;
 import com.rental.repository.UserRepository;
-import com.rental.service.dto.PagingResponse;
-import com.rental.service.dto.PasswordChangeDTO;
-import com.rental.service.dto.ProductDTO;
+import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.rental.service.UserService;
-import com.rental.service.dto.UserDTO;
 
 @Service
 @Transactional
@@ -42,9 +39,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserDTO applicationUserDTO) {
         Set<Role> role = new HashSet<>();
         role.add(roleRepository.findByName(RoleName.USERS));
-        applicationUserDTO.setNotifications(null);
         applicationUserDTO.setId(-1L);
-        applicationUserDTO.setOrders(null);
         applicationUserDTO.setFirstName(applicationUserDTO.getUsername()); // tên người dùng khi tạo phải trùng với UserName
         applicationUserDTO.setRole(role);
         applicationUserDTO.setStatus(UserStatus.UNLOCKED);
@@ -59,8 +54,6 @@ public class UserServiceImpl implements UserService {
                     if (applicationUserDTO.getEmail() == null)
                         applicationUserDTO.setEmail(userEntity.getEmail());
                     applicationUserDTO.setUsername(userEntity.getUsername());
-                    applicationUserDTO.setOrders(null);
-                    applicationUserDTO.setNotifications(null);
                     applicationUserDTO.setPassword(userEntity.getPassword());
                     applicationUserDTO.setRole(userEntity.getRole());
                     applicationUserDTO.setStatus(userEntity.getStatus());
@@ -101,28 +94,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> findAll(Pageable pageable) {
+    public Page<UserShowDTO> findAll(Pageable pageable) {
         return userRepository.findAll(pageable).map(p -> {
-            return modelMapper.map(p, UserDTO.class);
+            return modelMapper.map(p, UserShowDTO.class);
         });
     }
 
     @Override
-    public PagingResponse<UserDTO> searchUserByFirstName(String name, Pageable pageable) {
+    public PagingResponse<UserShowDTO> searchUserByFirstName(String name, Pageable pageable) {
         long id = -1L;
         try {
             id = Long.parseLong(name);
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
         }
-        List<UserDTO> listDTO = new ArrayList<>();
+        List<UserShowDTO> listDTO = new ArrayList<>();
         userRepository.findByLastNameLikeOrFirstNameLikeOrId("%" + name + "%", "%" + name + "%", id).forEach(
-                user -> listDTO.add(modelMapper.map(user, UserDTO.class))
+                user -> listDTO.add(modelMapper.map(user, UserShowDTO.class))
         );
         final int startPage = (int) pageable.getOffset();
         final int endPage = Math.min((startPage + pageable.getPageSize()), listDTO.size());
-        Page<UserDTO> pageProduct = new PageImpl<>(listDTO.subList(startPage, endPage), pageable, listDTO.size());
-        return PagingResponse.<UserDTO>builder()
+        Page<UserShowDTO> pageProduct = new PageImpl<>(listDTO.subList(startPage, endPage), pageable, listDTO.size());
+        return PagingResponse.<UserShowDTO>builder()
                 .page(pageProduct.getPageable().getPageNumber() + 1)
                 .size(pageProduct.getSize())
                 .totalPage(pageProduct.getTotalPages())
@@ -142,9 +135,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> findOne(Long id) {
+    public Optional<UserShowDTO> findOne(Long id) {
         return userRepository.findById(id).map(
-                user -> modelMapper.map(user, UserDTO.class)
+                user -> modelMapper.map(user, UserShowDTO.class)
         );
     }
 
