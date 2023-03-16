@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.rental.service.dto.InformationDTO;
+import com.rental.service.dto.PagingResponse;
 import com.rental.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,8 +38,6 @@ public class NotificationResource {
 
     @PostMapping("/create")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
-        if (notificationDTO.getId() != null)
-            throw new IllegalArgumentException("A new notification cannot already have an ID ");
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.createNotification(notificationDTO));
 
     }
@@ -46,23 +46,27 @@ public class NotificationResource {
     public ResponseEntity<NotificationDTO> updateNotification(
             @RequestBody NotificationDTO notificationDTO) {
         if (notificationDTO.getId() == null)
-            throw new IllegalArgumentException("Invalid id : id is null");
+            throw new IllegalArgumentException("Cập nhật thông báo cần có ID");
         if (!notificationRepository.existsById(notificationDTO.getId()))
-            throw new IllegalArgumentException("Entity not found : id is not found");
+            throw new IllegalArgumentException("Không thể tìm thấy thông báo có Id :"+notificationDTO.getId());
         return notificationService.updateNotification(notificationDTO).map(
                 notificationData -> ResponseEntity.status(HttpStatus.OK).body(notificationData)).orElseThrow(
-                () -> new IllegalArgumentException("Cant not update notification")
+                () -> new IllegalArgumentException("Không thể cập nhật thông báo")
         );
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<NotificationDTO>> getAllNotifications(
+    public ResponseEntity<PagingResponse<NotificationDTO>> getAllNotifications(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<NotificationDTO> notifications = notificationService.findAll(pageable);
-        if (notifications.isEmpty())
-            throw new IllegalArgumentException("Page in over size notification ");
-        return ResponseEntity.status(HttpStatus.OK).body(notifications.getContent());
-
+        Page<NotificationDTO> pageNotification = notificationService.findAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PagingResponse.<NotificationDTO>builder()
+                        .page(pageNotification.getPageable().getPageNumber() + 1)
+                        .size(pageNotification.getSize())
+                        .totalPage(pageNotification.getTotalPages())
+                        .totalItem(pageNotification.getTotalElements())
+                        .contends(pageNotification.getContent())
+                        .build());
     }
 
     @GetMapping("/getOne/{id}")

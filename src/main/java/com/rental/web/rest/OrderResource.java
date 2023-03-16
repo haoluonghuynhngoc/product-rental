@@ -44,7 +44,11 @@ public class OrderResource {
     public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDTO) {
 //        if (productRepository.findById(orderDTO.getOrderDetails().getProductId()).get().getStatus().equals(ProductStatus.RENTING))
 //            throw new IllegalArgumentException("Đồ của bạn vừa được người dùng khác thuê ");
-        if (productRepository.existsById(orderDTO.getOrderDetails().getProductId())) {
+        if (!userRepository.existsById(orderDTO.getUserId()))
+            throw new IllegalArgumentException("Không thể tìm thấy người dùng có Id : " + orderDTO.getUserId() + " trong dữ liệu ");
+        if (!productRepository.existsById(orderDTO.getOrderDetails().getProductId())) {
+            throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id : "+orderDTO.getOrderDetails().getProductId()+" trong dữ liệu");
+        }
             List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
                     orderDTO.getOrderDetails().getProductId()).orElse(null));
             if (listOrderDetails != null) {
@@ -83,12 +87,12 @@ public class OrderResource {
                     }
                 });
             }
-        }
+
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
 
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/updateStatus/{id}")
     public ResponseEntity<OrderShowDTO> update(@PathVariable(name = "id") Long id, @RequestParam OrderStatus status) {
         if (!orderRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm thây id : " + id + " trong dữ liệu");
@@ -99,21 +103,10 @@ public class OrderResource {
         );
     }
 
-
-    //    @GetMapping("/getAll")
-//    public ResponseEntity<?> getAllOrders(
-//            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-//        Page<OrderShowDTO> page = orderService.findAll(pageable);
-//        if (page.isEmpty())
-//            throw new IllegalArgumentException("list is over size order");
-//        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
-//    }
     @GetMapping("/getAll")
     public ResponseEntity<PagingResponse<OrderShowDTO>> getAllOrders(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<OrderShowDTO> page = orderService.findAll(pageable);
-        if (page.isEmpty())
-            throw new IllegalArgumentException("list is over size order");
         return ResponseEntity.status(HttpStatus.OK).body(
                 PagingResponse.<OrderShowDTO>builder()
                         .page(page.getPageable().getPageNumber() + 1)
@@ -143,7 +136,6 @@ public class OrderResource {
         List<OrderShowDTO> list = orderService.findOrderByUser(id);
         list.forEach(x ->
         {
-            //x.getOrderDetails().forEach(orderDetail->orderDetail.setProduct(null));
             x.setUser(null);
         });
         return ResponseEntity.status(HttpStatus.OK).body(list);

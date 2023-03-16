@@ -29,18 +29,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
-        Category category = modelMapper.map(categoryDTO, Category.class);
-        category = categoryRepository.save(category);
-        return modelMapper.map(category, CategoryDTO.class);
+        categoryDTO.setId(-1L);
+        return modelMapper.map(categoryRepository.save(
+                modelMapper.map(categoryDTO, Category.class)
+        ), CategoryDTO.class);
     }
 
     @Override
     public Optional<CategoryDTO> updateCategory(CategoryDTO categoryDTO) {
         return categoryRepository.findById(categoryDTO.getId()).map(
                 existingCategory -> {
-                    // mới sửa ở đây
-//                    if (categoryDTO.getName().isEmpty()||categoryDTO.getName()==null)
-//                        categoryDTO.setName(existingCategory.getName());
+                    if (categoryDTO.getName().isEmpty()||categoryDTO.getName()==null)
+                        categoryDTO.setName(existingCategory.getName());
                     modelMapper.map(categoryDTO, existingCategory);
                     return existingCategory;
                 }).map(categoryRepository::save).map(

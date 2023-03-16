@@ -28,10 +28,6 @@ import com.rental.service.dto.OrderDetailsDTO;
 @Service
 @Transactional
 public class OrderDetailsServiceImpl implements OrderDetailsService {
-    @Override
-    public OrderDetailsDTO save(OrderDetailsDTO orderDetailsDTO) {
-        return null;
-    }
 
     @Override
     public Optional<OrderDetailsDTO> update(OrderDetailsDTO orderDetailsDTO) {

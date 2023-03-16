@@ -31,16 +31,10 @@ public class CategoryResource {
 
     @PostMapping("/create")
     public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-// xóa id
-        if (categoryDTO.getId() != null) {
-            throw new IllegalArgumentException("A new category cannot already have an ID  : exists the id ");
-        }
         if (categoryRepository.findByName(categoryDTO.getName()) != null) {
-            throw new IllegalArgumentException("A name category is exist");
+            throw new IllegalArgumentException("Tên của chuyên mục "+categoryDTO.getName()+" đã tồn tại");
         }
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.save(categoryDTO));
-
-
     }
 
 
@@ -51,13 +45,12 @@ public class CategoryResource {
             throw new IllegalArgumentException("Invalid id : id null");
         }
         if (!categoryRepository.existsById(categoryDTO.getId())) {
-            throw new IllegalArgumentException("Can not find the id : " + categoryDTO.getId() + " in the date ");
+            throw new IllegalArgumentException("Không thể tìm thấy chuyên mục có id là " + categoryDTO.getId() + " trong dữ liệu ");
         }
         return categoryService.updateCategory(categoryDTO).map(
                 categoryData -> ResponseEntity.status(HttpStatus.OK).body(categoryData)).orElseThrow(
-                () -> new IllegalArgumentException("Cant not update Category ")
+                () -> new IllegalArgumentException("Không thể cập nhật chuyên mục")
         );
-
     }
 
     @GetMapping("/getAll")
@@ -65,7 +58,7 @@ public class CategoryResource {
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<CategoryDTO> page = categoryService.findAll(pageable);
         if (page.isEmpty())
-            throw new IllegalArgumentException("Cant not find any category in the data ");
+            throw new IllegalArgumentException("Không thể tìm thấy bất kỳ chuyên mục trong dữ liệu ");
         return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
     }
 
@@ -79,7 +72,7 @@ public class CategoryResource {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
         if (!categoryRepository.existsById(id))
-            throw new IllegalArgumentException("Can not find the user have Id : " + id + " In the data ");
+            throw new IllegalArgumentException("Không thể tìm thấy chuyên mục có Id là : " + id + " trong dữ liệu ");
         categoryService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

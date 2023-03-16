@@ -15,7 +15,6 @@ public class InformationDTO {
     private String description;
     private Boolean isRead;
     private Instant createdDate;
-    private Instant modifiedDate;
     private UserDTO user;
     private OrderDTO order;
 }

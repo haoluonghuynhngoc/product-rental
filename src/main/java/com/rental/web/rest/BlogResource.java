@@ -59,8 +59,8 @@ public class BlogResource {
     public ResponseEntity<PagingResponse<BlogDTO>> getAllCategories(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<BlogDTO> page = blogService.findAll(pageable);
-        if (page.isEmpty())
-            throw new IllegalArgumentException("Cant not find any blog in the data ");
+//        if (page.isEmpty())
+//            throw new IllegalArgumentException("Cant not find any blog in the data ");
         return ResponseEntity.status(HttpStatus.OK).body(
                 PagingResponse.<BlogDTO>builder()
                         .page(page.getPageable().getPageNumber() + 1)

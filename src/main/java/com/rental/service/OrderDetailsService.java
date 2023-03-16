@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.rental.service.dto.OrderDetailsDTO;
 public interface OrderDetailsService {
 
-    OrderDetailsDTO save(OrderDetailsDTO orderDetailsDTO);
+//    OrderDetailsDTO save(OrderDetailsDTO orderDetailsDTO);
 
     Optional<OrderDetailsDTO> update(OrderDetailsDTO orderDetailsDTO);
 

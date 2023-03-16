@@ -6,7 +6,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.rental.repository.ProductRepository;
+import com.rental.service.dto.NotificationDTO;
 import com.rental.service.dto.OrderDetailShowDTO;
+import com.rental.service.dto.PagingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,21 +40,19 @@ public class OrderDetailsResource {
     @Autowired
     private ProductRepository productRepository;
 
-    @PostMapping("/create")
-    @Operation(deprecated = true)
-    public ResponseEntity<OrderDetailsDTO> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
-        if (orderDetailsDTO.getId() != null) {
-            throw new IllegalArgumentException("A new orderDetails cannot already have an ID ");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.save(orderDetailsDTO));
-    }
+//    @PostMapping("/create")
+//    @Operation(deprecated = true)
+//    public ResponseEntity<OrderDetailsDTO> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
+//        if (orderDetailsDTO.getId() != null) {
+//            throw new IllegalArgumentException("A new orderDetails cannot already have an ID ");
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.save(orderDetailsDTO));
+//    }
 
     @PutMapping("/update")
     @Operation(deprecated = true)
     public ResponseEntity<OrderDetailsDTO> updateOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
-//        if (!Objects.equals(id, orderDetailsDTO.getId())) {
-//            throw new IllegalArgumentException("Invalid ID : id in valid");
-//        }
+
         if (orderDetailsDTO.getId() == null) {
             throw new IllegalArgumentException("Invalid id : id is null");
         }
@@ -69,12 +69,20 @@ public class OrderDetailsResource {
 
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<OrderDetailShowDTO>> getAllOrderDetails(
+    @Operation(deprecated = true)
+    public ResponseEntity<PagingResponse<OrderDetailShowDTO>> getAllOrderDetails(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<OrderDetailShowDTO> page = orderDetailsService.findAll(pageable);
         if (page.isEmpty())
             throw new IllegalArgumentException("Page in over size ");
-        return ResponseEntity.status(HttpStatus.OK).body(page.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PagingResponse.<OrderDetailShowDTO>builder()
+                        .page(page.getPageable().getPageNumber() + 1)
+                        .size(page.getSize())
+                        .totalPage(page.getTotalPages())
+                        .totalItem(page.getTotalElements())
+                        .contends(page.getContent())
+                        .build());
     }
 
     @GetMapping("/getOne/{id}")

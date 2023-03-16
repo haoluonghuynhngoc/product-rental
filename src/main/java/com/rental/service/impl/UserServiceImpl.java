@@ -51,6 +51,20 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDTO> updateUser(UserDTO applicationUserDTO) {
         return userRepository.findById(applicationUserDTO.getId()).map(
                 userEntity -> {
+                    if (applicationUserDTO.getFirstName()==null)
+                        applicationUserDTO.setFirstName(userEntity.getFirstName());
+                    if (applicationUserDTO.getAddress()==null)
+                        applicationUserDTO.setAddress(userEntity.getAddress());
+                    if (applicationUserDTO.getAvatar()==null)
+                        applicationUserDTO.setAvatar(userEntity.getAvatar());
+                    if (applicationUserDTO.getBirthday()==null)
+                        applicationUserDTO.setBirthday(userEntity.getBirthday());
+                    if (applicationUserDTO.getPhone()==null)
+                        applicationUserDTO.setPhone(userEntity.getPhone());
+                    if (applicationUserDTO.getLastName()==null)
+                        applicationUserDTO.setLastName(userEntity.getLastName());
+                    if (applicationUserDTO.getImageUrl()==null)
+                        applicationUserDTO.setImageUrl(userEntity.getImageUrl());
                     if (applicationUserDTO.getEmail() == null)
                         applicationUserDTO.setEmail(userEntity.getEmail());
                     applicationUserDTO.setUsername(userEntity.getUsername());
