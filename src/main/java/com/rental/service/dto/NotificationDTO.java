@@ -24,9 +24,5 @@ public class NotificationDTO implements Serializable {
     private Boolean isRead;
 
     private NotificationStatus status;
-//    private String createdBy;
-//    private String modifiedBy;
-   // private Set<UserDTO> users = new HashSet<>();
-
 
 }

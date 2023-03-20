@@ -4,7 +4,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.rental.domain.Image;
+import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
+import com.rental.domain.enums.UserStatus;
 import com.rental.repository.*;
 import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
@@ -56,6 +58,16 @@ public class ProductServiceImpl implements ProductService {
     public Optional<ProductDTO> update(ProductDTO productDTO) {
         return productRepository.findById(productDTO.getId())
                 .map(existingProduct -> {
+                    //==================================
+                    if (productDTO.getName()==null)
+                        productDTO.setName(existingProduct.getName());
+                    if (productDTO.getPrice()==null)
+                        productDTO.setPrice(existingProduct.getPrice());
+                    if (productDTO.getDeposit()==null)
+                        productDTO.setDeposit(existingProduct.getDeposit());
+                    if (productDTO.getDescription()==null)
+                        productDTO.setDescription(existingProduct.getDescription());
+                    //==================================
                     if (productDTO.getCategory() == null)
                         productDTO.setCategory(modelMapper.map(existingProduct.getCategory(), CategoryDTO.class));
                     if (productDTO.getImages() == null || productDTO.getImages().size() == 0) {
@@ -89,7 +101,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable,Long id) {
+    public PagingResponse<ProductDTO> searchByName(String nameProduct, Pageable pageable, Long id) {
         List<ProductDTO> listDTO = new ArrayList<>();
 
         for (Product listProduct : productRepository.findByNameLikeOrId("%" + nameProduct + "%", id)) {
@@ -113,6 +125,16 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(pageable).map(p -> {
             return modelMapper.map(p, ProductDTO.class);
         });
+    }
+
+    @Override
+    public Optional<ProductDTO> updateStatus(ProductStatus status, Long id) {
+        return productRepository.findById(id).map(
+                i -> {
+                    i.setStatus(status);
+                    return modelMapper.map(productRepository.save(i), ProductDTO.class);
+                }
+        );
     }
 
 //    @Override  // xắp xếp và loc theo fiter
@@ -149,7 +171,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void delete(Long id) {
-
         cartItemsRepository.removeByProduct(productRepository.findById(id).get());
         productRepository.deleteById(id);
     }

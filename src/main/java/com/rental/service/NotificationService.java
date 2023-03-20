@@ -1,6 +1,8 @@
 package com.rental.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.rental.domain.Notification;
 import org.springframework.data.domain.Page;
@@ -19,4 +21,6 @@ public interface NotificationService {
     Optional<NotificationDTO> findOne(Long id);
 
     void delete(Long id);
+    List<NotificationDTO> getAllNotificationByUser(Long id);
+    public Integer findALLOrderIsRead(Long id);
 }

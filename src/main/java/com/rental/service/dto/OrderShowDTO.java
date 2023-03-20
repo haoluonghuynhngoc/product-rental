@@ -22,6 +22,7 @@ public class OrderShowDTO {
     private Double totalPrice;
     private OrderStatus status;
     private String message;
+    private Boolean isRead;
     private String address;
     private String phone;
     private String name;

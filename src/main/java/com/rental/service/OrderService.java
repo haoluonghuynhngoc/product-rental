@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.rental.domain.User;
 import com.rental.domain.enums.OrderStatus;
 import com.rental.service.dto.OrderShowDTO;
+import com.rental.service.dto.OrderStatisticsDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,4 +23,6 @@ public interface OrderService {
     Optional<OrderShowDTO> findOne(Long id);
     List<OrderShowDTO> findOrderByUser(Long id);
     void delete(Long id);
+    public Integer findALLOrderIsRead();
+    public  List<OrderStatisticsDTO> statisticOrderByYear(int year);
 }

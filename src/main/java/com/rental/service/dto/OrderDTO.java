@@ -27,6 +27,7 @@ public class OrderDTO implements Serializable {
     private Double totalPrice;
     private String message;
     private String address;
+    private Boolean isRead;
     private String phone;
     private String name;
     private OrderDetailsDTO orderDetails ;

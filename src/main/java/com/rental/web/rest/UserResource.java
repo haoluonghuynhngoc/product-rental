@@ -163,6 +163,9 @@ public class UserResource {
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-
+    @GetMapping("/getStatic/{year}")
+    public ResponseEntity<?> getOrderStatistics(@PathVariable(name = "year") int year) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.statisticUserByYear(year));
+    }
 
 }

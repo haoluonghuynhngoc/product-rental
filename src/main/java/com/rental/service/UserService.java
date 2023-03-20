@@ -23,4 +23,5 @@ public interface UserService {
     UserDTO changePassword(PasswordChangeDTO changePassword) ;
     Optional<UserShowDTO> findOne(Long id);
     void delete(Long id);
+    public  List<UserStatisticsDTO> statisticUserByYear(int year);
 }

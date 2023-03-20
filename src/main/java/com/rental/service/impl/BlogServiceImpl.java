@@ -33,11 +33,31 @@ public class BlogServiceImpl implements BlogService {
         blogDTO.setUser(modelMapper.map(userRepository.findByUsername("admin"),UserDTO.class));
         return modelMapper.map(blogRepository.save(modelMapper.map(blogDTO, Blog.class)), BlogDTO.class);
     }
-
+//private Long id;
+//    private String imageTitle;
+//    private String imageCover;
+//    private String title;
+//    private String author;
+//    private String description;
+//    private Instant createdDate;
+//    private BlogStatus status;
+//    private UserDTO user;
     @Override
     public Optional<BlogDTO> updateBlog(BlogDTO blogDTO) {
         return blogRepository.findById(blogDTO.getId()).map(
                 blogEntity -> {
+                    if (blogDTO.getImageTitle()==null)
+                        blogDTO.setTitle(blogEntity.getTitle());
+                    if (blogDTO.getImageCover()==null)
+                        blogDTO.setImageCover(blogEntity.getImageCover());
+                    if (blogDTO.getTitle()==null)
+                        blogDTO.setTitle(blogEntity.getTitle());
+                    if (blogDTO.getAuthor()==null)
+                        blogDTO.setAuthor(blogEntity.getAuthor());
+                    if (blogDTO.getDescription()==null)
+                        blogDTO.setDescription(blogEntity.getDescription());
+                    if (blogDTO.getStatus()==null)
+                        blogDTO.setStatus(blogEntity.getStatus());
                     blogDTO.setUser(modelMapper.map(blogEntity.getUser(),UserDTO.class));
                     blogDTO.setCreatedDate(blogEntity.getCreatedDate());
                     modelMapper.map(blogDTO, blogEntity);

@@ -3,7 +3,11 @@ package com.rental.web.rest;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.rental.domain.Notification;
+import com.rental.repository.UserRepository;
 import com.rental.service.dto.InformationDTO;
 import com.rental.service.dto.PagingResponse;
 import com.rental.service.dto.UserDTO;
@@ -34,7 +38,8 @@ public class NotificationResource {
     private NotificationService notificationService;
     @Autowired
     private NotificationRepository notificationRepository;
-
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/create")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
@@ -48,7 +53,7 @@ public class NotificationResource {
         if (notificationDTO.getId() == null)
             throw new IllegalArgumentException("Cập nhật thông báo cần có ID");
         if (!notificationRepository.existsById(notificationDTO.getId()))
-            throw new IllegalArgumentException("Không thể tìm thấy thông báo có Id :"+notificationDTO.getId());
+            throw new IllegalArgumentException("Không thể tìm thấy thông báo có Id :" + notificationDTO.getId());
         return notificationService.updateNotification(notificationDTO).map(
                 notificationData -> ResponseEntity.status(HttpStatus.OK).body(notificationData)).orElseThrow(
                 () -> new IllegalArgumentException("Không thể cập nhật thông báo")
@@ -85,6 +90,16 @@ public class NotificationResource {
             throw new IllegalArgumentException("Cant not find the Id :" + id + "In the data ");
         notificationService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+    @GetMapping("/getAllByUser/{id}")
+    public ResponseEntity<List<NotificationDTO>> getAllNotificationByUser(@PathVariable(name = "id") Long id) {
+        if (!userRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm thấy người dùng có id :"+id);
+        return ResponseEntity.status(HttpStatus.OK).body(notificationService.getAllNotificationByUser(id) );
+    }
 
+    @GetMapping("/getCountIsRead/{id}") //id user
+    public ResponseEntity<Integer> getCountRead(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(notificationService.findALLOrderIsRead(id));
     }
 }

@@ -3,10 +3,10 @@ package com.rental.web.rest;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.rental.domain.Order;
 import com.rental.domain.OrderDetails;
 import com.rental.domain.Product;
 import com.rental.domain.enums.OrderStatus;
@@ -15,6 +15,7 @@ import com.rental.repository.OrderDetailsRepository;
 import com.rental.repository.ProductRepository;
 import com.rental.repository.UserRepository;
 import com.rental.service.dto.OrderShowDTO;
+import com.rental.service.dto.OrderStatisticsDTO;
 import com.rental.service.dto.PagingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,46 +48,46 @@ public class OrderResource {
         if (!userRepository.existsById(orderDTO.getUserId()))
             throw new IllegalArgumentException("Không thể tìm thấy người dùng có Id : " + orderDTO.getUserId() + " trong dữ liệu ");
         if (!productRepository.existsById(orderDTO.getOrderDetails().getProductId())) {
-            throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id : "+orderDTO.getOrderDetails().getProductId()+" trong dữ liệu");
+            throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id : " + orderDTO.getOrderDetails().getProductId() + " trong dữ liệu");
         }
-            List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
-                    orderDTO.getOrderDetails().getProductId()).orElse(null));
-            if (listOrderDetails != null) {
-                listOrderDetails.forEach(orderDetails -> {
-                    Calendar borrowDateClient = Calendar.getInstance();
-                    borrowDateClient.setTime(orderDTO.getOrderDetails().getOrderBorrowDate());
-                    Calendar returnDateClient = Calendar.getInstance();
-                    returnDateClient.setTime(orderDTO.getOrderDetails().getOrderReturnDate());
-                    Calendar startDateDataBase = Calendar.getInstance();
-                    startDateDataBase.setTime(orderDetails.getOrderBorrowDate());
-                    Calendar endDateDataBase = Calendar.getInstance();
-                    endDateDataBase.setTime(orderDetails.getOrderReturnDate());
-                    if (borrowDateClient.compareTo(returnDateClient) > 0) {
-                        throw new IllegalArgumentException("Ngày đặt hàng lớn hơn ngày trả hàng xin thử lại ");
-                    }
-                    endDateDataBase.add(Calendar.DATE, 2);// thêm vào để check điều kiện (đã kiểm tra)
-                    Calendar currentDate = borrowDateClient;
-                    startDateDataBase.add(Calendar.DATE, -1);// chưa kiểm tra kỹ
-                    while (currentDate.before(returnDateClient) || currentDate.equals(returnDateClient)) {
-                        if (currentDate.after(startDateDataBase) && currentDate.before(endDateDataBase)) {
-                            startDateDataBase.add(Calendar.DATE, 2); // thêm 2 ngày để check điều kiện
-                            if (borrowDateClient.equals(startDateDataBase)) {
-                                throw new IllegalArgumentException("Xin lỗi chúng tôi cần 1 ngày để bảo dưỡng sản phầm," +
-                                        " xin vui lòng chọn ngày đặt hơn 1 ngày ");
-                            } else {
-                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                                startDateDataBase.add(Calendar.DATE, -2);// thêm 1 ngày để trả đúng số ngày
-                                startDateDataBase.add(Calendar.DATE, 1); // cộng 1 ngày lên để in ra đúng
-                                endDateDataBase.add(Calendar.DATE, -2);//  trừ  để in ra thông báo
-                                throw new IllegalArgumentException(
-                                        "Ngày thuê " + formatter.format(currentDate.getTime()) + " của bạn đã bị trùng với ngày thuê của người dùng khác " +
-                                                formatter.format(startDateDataBase.getTime()) + " đến " + formatter.format(endDateDataBase.getTime()));
-                            }
+        List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
+                orderDTO.getOrderDetails().getProductId()).orElse(null));
+        if (listOrderDetails != null) {
+            listOrderDetails.forEach(orderDetails -> {
+                Calendar borrowDateClient = Calendar.getInstance();
+                borrowDateClient.setTime(orderDTO.getOrderDetails().getOrderBorrowDate());
+                Calendar returnDateClient = Calendar.getInstance();
+                returnDateClient.setTime(orderDTO.getOrderDetails().getOrderReturnDate());
+                Calendar startDateDataBase = Calendar.getInstance();
+                startDateDataBase.setTime(orderDetails.getOrderBorrowDate());
+                Calendar endDateDataBase = Calendar.getInstance();
+                endDateDataBase.setTime(orderDetails.getOrderReturnDate());
+                if (borrowDateClient.compareTo(returnDateClient) > 0) {
+                    throw new IllegalArgumentException("Ngày đặt hàng lớn hơn ngày trả hàng xin thử lại ");
+                }
+                endDateDataBase.add(Calendar.DATE, 2);// thêm vào để check điều kiện (đã kiểm tra)
+                Calendar currentDate = borrowDateClient;
+                startDateDataBase.add(Calendar.DATE, -1);// chưa kiểm tra kỹ
+                while (currentDate.before(returnDateClient) || currentDate.equals(returnDateClient)) {
+                    if (currentDate.after(startDateDataBase) && currentDate.before(endDateDataBase)) {
+                        startDateDataBase.add(Calendar.DATE, 2); // thêm 2 ngày để check điều kiện
+                        if (borrowDateClient.equals(startDateDataBase)) {
+                            throw new IllegalArgumentException("Xin lỗi chúng tôi cần 1 ngày để bảo dưỡng sản phầm," +
+                                    " xin vui lòng chọn ngày đặt hơn 1 ngày ");
+                        } else {
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                            startDateDataBase.add(Calendar.DATE, -2);// thêm 1 ngày để trả đúng số ngày
+                            startDateDataBase.add(Calendar.DATE, 1); // cộng 1 ngày lên để in ra đúng
+                            endDateDataBase.add(Calendar.DATE, -2);//  trừ  để in ra thông báo
+                            throw new IllegalArgumentException(
+                                    "Ngày thuê " + formatter.format(currentDate.getTime()) + " của bạn đã bị trùng với ngày thuê của người dùng khác " +
+                                            formatter.format(startDateDataBase.getTime()) + " đến " + formatter.format(endDateDataBase.getTime()));
                         }
-                        currentDate.add(Calendar.DATE, 1);
                     }
-                });
-            }
+                    currentDate.add(Calendar.DATE, 1);
+                }
+            });
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(orderService.save(orderDTO));
     }
@@ -149,4 +150,13 @@ public class OrderResource {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @GetMapping("/getCountIsRead")
+    public ResponseEntity<Integer> getCountRead() {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.findALLOrderIsRead());
+    }
+
+    @GetMapping("/getStatic/{year}")
+    public ResponseEntity<?> getOrderStatistics(@PathVariable(name = "year") int year) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.statisticOrderByYear(year));
+    }
 }

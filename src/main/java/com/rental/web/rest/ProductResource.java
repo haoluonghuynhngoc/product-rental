@@ -2,6 +2,7 @@ package com.rental.web.rest;
 
 import com.rental.domain.Attachment;
 import com.rental.domain.Product;
+import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
 import com.rental.repository.CategoryRepository;
 import com.rental.service.AttachmentService;
@@ -183,7 +184,16 @@ public class ProductResource {
                 .contends(findAllProduct.getContent())
                 .build());
     }
-
+    @PutMapping("/updateStatus/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable(name = "id") Long id, @RequestParam ProductStatus status) {
+        if (!productRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id là " + id + " trong dữ liệu");
+        return productService.updateStatus(status, id).map(
+                productData -> ResponseEntity.status(HttpStatus.OK).body(productData)
+        ).orElseThrow(
+                () -> new IllegalArgumentException("Không thể update sản phẩm")
+        );
+    }
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (!productRepository.existsById(id))
@@ -192,7 +202,6 @@ public class ProductResource {
             throw new IllegalArgumentException("Sản phẩm đang được người dùng thuê không được xóa");
         productService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
-
     }
 
 }

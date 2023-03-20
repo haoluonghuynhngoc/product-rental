@@ -1,6 +1,7 @@
 package com.rental.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.rental.domain.Product;
 import com.rental.domain.Role;
@@ -158,5 +159,49 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public List<UserStatisticsDTO> statisticUserByYear(int year) {
+        List<UserStatisticsDTO> listUserStatistics = new ArrayList<>();
+        Map<Integer, List<User>> monthUser = new HashMap<>();
+        for (int i = 1; i <= 12; i++) {
+            monthUser.put(i, new ArrayList<>());
+        }
+        List<User> listUserYear = userRepository.findAll().stream().filter(u ->
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Date.from(u.getCreatedDate()));
+            return calendar.get(Calendar.YEAR) == year; // đúng năm thì nó lấy k đúng năm thì không lấy
+        }).collect(Collectors.toList());
+
+        listUserYear.forEach(user -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Date.from(user.getCreatedDate()));
+            int month =calendar.get(Calendar.MONTH) + 1;
+            for (int i = 1; i <= 12; i++) {
+                if (month == i) {
+                    monthUser.get(i).add(user);
+                }
+            }
+        });
+
+        monthUser.forEach((k, v) -> {
+            int totalAccountLocked = 0;
+            int totalAccountUnLocked = 0;
+            for (User user : v) {
+                if (user.getStatus().equals(UserStatus.LOCKED))
+                    totalAccountLocked++;
+                else if (user.getStatus().equals(UserStatus.UNLOCKED))
+                    totalAccountUnLocked++;
+            }
+            listUserStatistics.add(UserStatisticsDTO.builder()
+                    .month(k)
+                    .totalUser(v.size())
+                    .totalAccountLocked(totalAccountLocked)
+                    .totalAccountUnLocked(totalAccountUnLocked)
+                    .build());
+        });
+        return listUserStatistics;
     }
 }

@@ -46,6 +46,8 @@ public class Order implements Serializable {
     @Column(name = "created_date")
     @CreatedDate
     private Instant createdDate;
+    @Column(name = "is_read")
+    private Boolean isRead;
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;

@@ -1,6 +1,10 @@
 package com.rental.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.rental.domain.User;
 import com.rental.domain.enums.NotificationStatus;
@@ -91,5 +95,25 @@ public class NotificationServiceImpl implements NotificationService {
     public void delete(Long id) {
 // delete chưa xong
         notificationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<NotificationDTO> getAllNotificationByUser(Long id) {
+        return notificationRepository.findByUsers(userRepository.findById(id).get())
+                .map(n -> modelMapper.map(n, NotificationDTO.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer findALLOrderIsRead(Long id) {
+        return  (int)notificationRepository.findByUsers(userRepository.findById(id).get())
+                .map(n -> modelMapper.map(n, NotificationDTO.class))
+                .filter(n -> {
+                            if (n.getIsRead() != null)
+                                return !n.getIsRead();
+                            else
+                                return false;
+                        }
+                )
+                .count();
     }
 }
