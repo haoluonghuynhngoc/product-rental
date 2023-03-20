@@ -47,7 +47,7 @@ public class BlogServiceImpl implements BlogService {
         return blogRepository.findById(blogDTO.getId()).map(
                 blogEntity -> {
                     if (blogDTO.getImageTitle()==null)
-                        blogDTO.setTitle(blogEntity.getTitle());
+                        blogDTO.setImageTitle(blogEntity.getImageTitle());
                     if (blogDTO.getImageCover()==null)
                         blogDTO.setImageCover(blogEntity.getImageCover());
                     if (blogDTO.getTitle()==null)
