@@ -52,21 +52,21 @@ public class UserServiceImpl implements UserService {
     public Optional<UserDTO> updateUser(UserDTO applicationUserDTO) {
         return userRepository.findById(applicationUserDTO.getId()).map(
                 userEntity -> {
-                    if (applicationUserDTO.getFirstName()==null)
+                    if (applicationUserDTO.getFirstName()==null||applicationUserDTO.getFirstName().isEmpty())
                         applicationUserDTO.setFirstName(userEntity.getFirstName());
-                    if (applicationUserDTO.getAddress()==null)
+                    if (applicationUserDTO.getAddress()==null||applicationUserDTO.getAddress().isEmpty())
                         applicationUserDTO.setAddress(userEntity.getAddress());
-                    if (applicationUserDTO.getAvatar()==null)
+                    if (applicationUserDTO.getAvatar()==null||applicationUserDTO.getAvatar().isEmpty())
                         applicationUserDTO.setAvatar(userEntity.getAvatar());
                     if (applicationUserDTO.getBirthday()==null)
                         applicationUserDTO.setBirthday(userEntity.getBirthday());
-                    if (applicationUserDTO.getPhone()==null)
+                    if (applicationUserDTO.getPhone()==null||applicationUserDTO.getPhone().isEmpty())
                         applicationUserDTO.setPhone(userEntity.getPhone());
-                    if (applicationUserDTO.getLastName()==null)
+                    if (applicationUserDTO.getLastName()==null||applicationUserDTO.getLastName().isEmpty())
                         applicationUserDTO.setLastName(userEntity.getLastName());
-                    if (applicationUserDTO.getImageUrl()==null)
+                    if (applicationUserDTO.getImageUrl()==null||applicationUserDTO.getImageUrl().isEmpty())
                         applicationUserDTO.setImageUrl(userEntity.getImageUrl());
-                    if (applicationUserDTO.getEmail() == null)
+                    if (applicationUserDTO.getEmail() == null||applicationUserDTO.getEmail().isEmpty())
                         applicationUserDTO.setEmail(userEntity.getEmail());
                     applicationUserDTO.setUsername(userEntity.getUsername());
                     applicationUserDTO.setPassword(userEntity.getPassword());

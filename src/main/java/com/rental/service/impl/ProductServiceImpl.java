@@ -59,13 +59,13 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productDTO.getId())
                 .map(existingProduct -> {
                     //==================================
-                    if (productDTO.getName()==null)
+                    if (productDTO.getName()==null||productDTO.getName().isEmpty())
                         productDTO.setName(existingProduct.getName());
                     if (productDTO.getPrice()==null)
                         productDTO.setPrice(existingProduct.getPrice());
                     if (productDTO.getDeposit()==null)
                         productDTO.setDeposit(existingProduct.getDeposit());
-                    if (productDTO.getDescription()==null)
+                    if (productDTO.getDescription()==null||productDTO.getDescription().isEmpty())
                         productDTO.setDescription(existingProduct.getDescription());
                     //==================================
                     if (productDTO.getCategory() == null)

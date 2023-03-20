@@ -46,17 +46,17 @@ public class BlogServiceImpl implements BlogService {
     public Optional<BlogDTO> updateBlog(BlogDTO blogDTO) {
         return blogRepository.findById(blogDTO.getId()).map(
                 blogEntity -> {
-                    if (blogDTO.getImageTitle()==null)
+                    if (blogDTO.getImageTitle()==null||blogDTO.getImageTitle().isEmpty())
                         blogDTO.setImageTitle(blogEntity.getImageTitle());
-                    if (blogDTO.getImageCover()==null)
+                    if (blogDTO.getImageCover()==null||blogDTO.getImageCover().isEmpty())
                         blogDTO.setImageCover(blogEntity.getImageCover());
-                    if (blogDTO.getTitle()==null)
+                    if (blogDTO.getTitle()==null||blogDTO.getTitle().isEmpty())
                         blogDTO.setTitle(blogEntity.getTitle());
-                    if (blogDTO.getAuthor()==null)
+                    if (blogDTO.getAuthor()==null||blogDTO.getAuthor().isEmpty())
                         blogDTO.setAuthor(blogEntity.getAuthor());
-                    if (blogDTO.getDescription()==null)
+                    if (blogDTO.getDescription()==null||blogDTO.getDescription().isEmpty())
                         blogDTO.setDescription(blogEntity.getDescription());
-                    if (blogDTO.getStatus()==null)
+                    if (blogDTO.getStatus()==null||blogDTO.getDescription().isEmpty())
                         blogDTO.setStatus(blogEntity.getStatus());
                     blogDTO.setUser(modelMapper.map(blogEntity.getUser(),UserDTO.class));
                     blogDTO.setCreatedDate(blogEntity.getCreatedDate());
