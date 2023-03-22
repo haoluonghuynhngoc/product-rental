@@ -34,6 +34,8 @@ public class ProductServiceImpl implements ProductService {
     private UserRepository userRepository;
     @Autowired
     private CartItemsRepository cartItemsRepository;
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
 
     @Override
     public ProductDTO save(ProductDTO productDTO) {
@@ -172,6 +174,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Long id) {
         cartItemsRepository.removeByProduct(productRepository.findById(id).get());
+        orderDetailsRepository.deleteAllByProduct(productRepository.findById(id).get());
         productRepository.deleteById(id);
     }
 }

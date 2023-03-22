@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class UserStatisticsDTO {
     private int month;
     private int totalUser;
-    private int totalAccountLocked;
-    private int totalAccountUnLocked;
+  //  private int totalAccountLocked;
+   // private int totalAccountUnLocked;
 }

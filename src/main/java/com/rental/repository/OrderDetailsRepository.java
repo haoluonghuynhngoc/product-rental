@@ -16,4 +16,5 @@ import java.util.Optional;
 public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Long> {
     List<OrderDetails> findAllByProduct(Product product);
     List<OrderDetails>  findAllByOrder(Order order);
+   void deleteAllByProduct(Product product);
 }

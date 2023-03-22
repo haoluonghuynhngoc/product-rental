@@ -198,8 +198,8 @@ public class UserServiceImpl implements UserService {
             listUserStatistics.add(UserStatisticsDTO.builder()
                     .month(k)
                     .totalUser(v.size())
-                    .totalAccountLocked(totalAccountLocked)
-                    .totalAccountUnLocked(totalAccountUnLocked)
+                    //.totalAccountLocked(totalAccountLocked)
+                    //.totalAccountUnLocked(totalAccountUnLocked)
                     .build());
         });
         return listUserStatistics;

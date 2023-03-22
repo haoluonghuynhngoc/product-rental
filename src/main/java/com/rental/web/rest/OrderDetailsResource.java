@@ -40,15 +40,6 @@ public class OrderDetailsResource {
     @Autowired
     private ProductRepository productRepository;
 
-//    @PostMapping("/create")
-//    @Operation(deprecated = true)
-//    public ResponseEntity<OrderDetailsDTO> createOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {
-//        if (orderDetailsDTO.getId() != null) {
-//            throw new IllegalArgumentException("A new orderDetails cannot already have an ID ");
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(orderDetailsService.save(orderDetailsDTO));
-//    }
-
     @PutMapping("/update")
     @Operation(deprecated = true)
     public ResponseEntity<OrderDetailsDTO> updateOrderDetails(@RequestBody OrderDetailsDTO orderDetailsDTO) {

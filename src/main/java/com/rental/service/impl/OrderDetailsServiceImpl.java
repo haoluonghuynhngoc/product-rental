@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.rental.domain.enums.OrderStatus;
+import com.rental.domain.enums.UserStatus;
 import com.rental.repository.OrderRepository;
 import com.rental.repository.ProductRepository;
 import com.rental.service.dto.OrderDTO;
@@ -89,15 +91,27 @@ public class OrderDetailsServiceImpl implements OrderDetailsService {
             return modelMapper.map(o, OrderDetailShowDTO.class);
         });
     }
-
-    @Override
+    @Override // moi sua
     public List<OrderDetailsDTO> findAllByProduct(Long id) {
-        return orderDetailsRepository.findAllByProduct(productRepository.findById(id).orElse(null)).stream().map(
+        return orderDetailsRepository.findAllByProduct(productRepository.findById(id).orElse(null)).stream()
+                .filter(orderDetails -> {
+                    return !orderDetails.getOrder().getStatus().equals(OrderStatus.CANCELLED);
+                })
+                .map(
                 orderDetails -> {
                     return modelMapper.map(orderDetails,OrderDetailsDTO.class);
                 }
         ).collect(Collectors.toList());
     }
+
+//    @Override
+//    public List<OrderDetailsDTO> findAllByProduct(Long id) {
+//        return orderDetailsRepository.findAllByProduct(productRepository.findById(id).orElse(null)).stream().map(
+//                orderDetails -> {
+//                    return modelMapper.map(orderDetails,OrderDetailsDTO.class);
+//                }
+//        ).collect(Collectors.toList());
+//    }
 
 
     @Override

@@ -1,5 +1,6 @@
 package com.rental.repository;
 
+import com.rental.domain.Product;
 import com.rental.domain.User;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;

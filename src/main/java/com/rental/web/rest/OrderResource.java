@@ -17,6 +17,7 @@ import com.rental.repository.UserRepository;
 import com.rental.service.dto.OrderShowDTO;
 import com.rental.service.dto.OrderStatisticsDTO;
 import com.rental.service.dto.PagingResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,8 +52,15 @@ public class OrderResource {
             throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id : " + orderDTO.getOrderDetails().getProductId() + " trong dữ liệu");
         }
         List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
-                orderDTO.getOrderDetails().getProductId()).orElse(null));
-        if (listOrderDetails != null) {
+                orderDTO.getOrderDetails().getProductId()).orElse(null)).stream()
+                .filter(orderDetails -> {
+                    return !orderDetails.getOrder().getStatus().equals(OrderStatus.CANCELLED);
+                })
+                .collect(Collectors.toList());
+
+//        List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
+//                orderDTO.getOrderDetails().getProductId()).orElse(null));
+        if (!listOrderDetails.isEmpty()) {
             listOrderDetails.forEach(orderDetails -> {
                 Calendar borrowDateClient = Calendar.getInstance();
                 borrowDateClient.setTime(orderDTO.getOrderDetails().getOrderBorrowDate());
@@ -143,6 +151,7 @@ public class OrderResource {
     }
 
     @DeleteMapping("/remove/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!orderRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm thấy đơn hàng có id là : " + id);

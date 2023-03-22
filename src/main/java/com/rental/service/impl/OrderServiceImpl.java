@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.rental.domain.*;
 import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
+import com.rental.domain.enums.UserStatus;
 import com.rental.repository.*;
 import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
@@ -106,12 +107,13 @@ public class OrderServiceImpl implements OrderService {
         cartItemsRepository.removeCartItemsByUserAndProduct(
                 userRepository.findById(orderDTO.getUserId()).orElse(null), product);
         Order order = orderRepository.save(orderConvert); // save to database
-        informationRepository.save(Information.builder()
+        informationRepository.save(Information.builder() // nếu login bằng gmail thì kiểm tra lại
                 .order(order)
-                .title("Đơn Hàng chờ kiểm duyệt")
-                .user(userData)
+                .title("Đơn Hàng có Id : " + order.getId() + " chờ kiểm duyệt")
+                .user(userRepository.findByUsername("admin"))
                 .isRead(false)
-                .description("Đã có đơn hàng từ sản phẩm " + product.getName() + " từ người dùng " + userData.getUsername() + " vui lòng kiểm tra thông tin")
+                .description("Đã có đơn hàng từ sản phẩm " + product.getName() + " từ người dùng "
+                        + userData.getUsername() + " vui lòng kiểm duyệt sản phẩm ")
                 .build());
         return modelMapper.map(order, OrderDTO.class);
     }
@@ -146,19 +148,34 @@ public class OrderServiceImpl implements OrderService {
                 i -> {
                     i.setStatus(status);
                     i.setIsRead(true);
-                    // đổi thành thông bao information
-//                    if (i.getStatus().equals(OrderStatus.DELIVERING)) {
-//                        Set<User> user = new HashSet<>();
-//                        user.add(i.getUser());
-//                        Set<Notification> notifications = notificationRepository.findByUsers(i.getUser()).collect(Collectors.toSet());
-//                        notifications.add(Notification.builder()
-//                                .title("Xác nhận đơn hàng")
-//                                .description("Đơn hàng của bạn đang được giao đến địa chỉ " + i.getAddress())
-//                                .isRead(false)
-//                                .users(user)
-//                                .build());
-//                        i.getUser().setNotifications(notifications);
-//                    }
+//                    informationRepository.findByUserAndOrder(i.getUser(), i).map(
+//                            x -> {
+//                                x.setIsRead(true);
+//                                return x;
+//                            });
+                    if (i.getStatus().equals(OrderStatus.DELIVERING)) {
+                        informationRepository.save(Information.builder()
+                                .order(i)
+                                .title("Đơn Hàng Của Bạn Đã Được Chấp Nhận")
+                                .user(i.getUser())
+                                .isRead(false)
+                                .description("Đơn hàng của bạn đang được giao đến địa chỉ " + i.getAddress() +
+                                        " vui lòng kiểm tra thông tin")
+                                .build());
+                        i.getOrderDetails().forEach(
+                                p -> p.getProduct().setStatus(ProductStatus.RENTING));
+                    } else if (i.getStatus().equals(OrderStatus.CANCELLED)) {
+                        informationRepository.save(Information.builder()
+                                .order(i)
+                                .title("Đơn Hàng Của Bạn Đã Đã Bị Hủy")
+                                .user(i.getUser())
+                                .isRead(false)
+                                .description("Đơn hàng của bạn đã bị quản trị viên hủy bỏ vui lòng kiểm tra thông tin")
+                                .build());
+                        i.getOrderDetails().forEach(
+                                p -> p.getProduct().setStatus(ProductStatus.APPROVED)
+                        );
+                    }
                     return modelMapper.map(orderRepository.save(i), OrderShowDTO.class);
                 }
         );
@@ -166,8 +183,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void delete(Long id) {
-        // khi người dùng hủy đơn hàng thì thông báo cho người dùng dùng thông báo information
-
         orderRepository.deleteById(id);
     }
 
@@ -184,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public  List<OrderStatisticsDTO> statisticOrderByYear(int year) {
+    public List<OrderStatisticsDTO> statisticOrderByYear(int year) {
         List<OrderStatisticsDTO> listOrderStatistics = new ArrayList<>();
 
         List<Order> listOrderYear = orderRepository.findAll().stream().filter(o ->

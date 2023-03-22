@@ -24,30 +24,21 @@ public class InformationResource {
     private InformationService informationService;
 
     @GetMapping("/getAll")
-    public ResponseEntity<PagingResponse<InformationDTO>> getAllNotifications(
+    public ResponseEntity<PagingResponse<InformationDTO>> getAllInfoAdmin(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        Page<InformationDTO> pageInfo = informationService.findAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                PagingResponse.<InformationDTO>builder()
-                        .page(pageInfo.getPageable().getPageNumber() + 1)
-                        .size(pageInfo.getSize())
-                        .totalPage(pageInfo.getTotalPages())
-                        .totalItem(pageInfo.getTotalElements())
-                        .contends(pageInfo.getContent())
-                        .build()
-        );
+        return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoAdmin(pageable));
     }
 
-    @GetMapping("/getOne/{id}")
-    public ResponseEntity<InformationDTO> getNotification(@PathVariable Long id) {
+    @GetMapping("/getCountIsReadByUser/{id}")
+    public ResponseEntity<Integer> getCountRead(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoIsReadByUser(id));
+    }
+
+    @GetMapping("/getDetailInfo/{id}")
+    public ResponseEntity<InformationDTO> getInfoById(@PathVariable Long id) {
         if (!informationRepository.existsById(id))
-            throw new IllegalArgumentException("Không thể tìm thấy thông báo có id là " + id + " trong dữ liệu ");
-        return informationService.getOneInfo(id).map(response -> ResponseEntity.status(HttpStatus.OK).body(response))
-                .orElseThrow(() -> new IllegalArgumentException("Không thể tìm thấy bất kỳ thông báo đơn hàng trong dữ liệu"));
-    }
-
-    @GetMapping("/getCountIsRead")
-    public ResponseEntity<Integer> getCountRead() {
-        return ResponseEntity.status(HttpStatus.OK).body(informationService.findALLInfoIsRead());
+            throw new IllegalArgumentException("Không thể tìm thấy thông báo đơn hàng có id : " + id);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                informationService.findDetailInfo(id).orElse(null));
     }
 }
