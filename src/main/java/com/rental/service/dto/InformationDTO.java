@@ -1,4 +1,5 @@
 package com.rental.service.dto;
+import com.rental.domain.enums.InformationStatus;
 import lombok.*;
 
 import java.time.Instant;
@@ -14,6 +15,7 @@ public class InformationDTO {
     private String title;
     private String description;
     private Boolean isRead;
+    private InformationStatus status;
     private Instant createdDate;
     private UserDTO user;
     private OrderDTO order;

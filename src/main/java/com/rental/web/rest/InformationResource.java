@@ -1,5 +1,6 @@
 package com.rental.web.rest;
 
+import com.rental.domain.enums.InformationStatus;
 import com.rental.repository.InformationRepository;
 import com.rental.service.InformationService;
 import com.rental.service.dto.InformationDTO;
@@ -28,16 +29,28 @@ public class InformationResource {
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoAdmin(pageable));
     }
-
-    @GetMapping("/getCountIsReadByUser/{id}")
-    public ResponseEntity<Integer> getCountRead(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoIsReadByUser(id));
+    @GetMapping("/getAllUser/{id}")
+    public ResponseEntity<PagingResponse<InformationDTO>> getAllInfoUser(
+            @org.springdoc.api.annotations.ParameterObject Pageable pageable,@PathVariable  Long id) {
+        if (!informationRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm thấy thông báo đơn hàng có id :" + id);
+        return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoUser(pageable,id));
     }
 
+    @GetMapping("/getCountIsReadByUser/{id}")
+    public ResponseEntity<Integer> getCountUserRead(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                informationService.findAllInfoIsReadByUser(id, InformationStatus.CUSTOMER));
+    }
+    @GetMapping("/getCountIsReadByAdmin")
+    public ResponseEntity<Integer> getCountAdminRead() {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                informationService.findAllInfoIsReadByUser(1L,InformationStatus.CENSORSHIP));
+    }
     @GetMapping("/getDetailInfo/{id}")
     public ResponseEntity<InformationDTO> getInfoById(@PathVariable Long id) {
         if (!informationRepository.existsById(id))
-            throw new IllegalArgumentException("Không thể tìm thấy thông báo đơn hàng có id : " + id);
+            throw new IllegalArgumentException("Không thể tìm thấy thông báo đơn hàng có id :" + id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 informationService.findDetailInfo(id).orElse(null));
     }

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.rental.domain.*;
+import com.rental.domain.enums.InformationStatus;
 import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
 import com.rental.domain.enums.UserStatus;
@@ -109,6 +110,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.save(orderConvert); // save to database
         informationRepository.save(Information.builder() // nếu login bằng gmail thì kiểm tra lại
                 .order(order)
+                .status(InformationStatus.CENSORSHIP)
                 .title("Đơn Hàng có Id : " + order.getId() + " chờ kiểm duyệt")
                 .user(userRepository.findByUsername("admin"))
                 .isRead(false)
@@ -156,6 +158,7 @@ public class OrderServiceImpl implements OrderService {
                     if (i.getStatus().equals(OrderStatus.DELIVERING)) {
                         informationRepository.save(Information.builder()
                                 .order(i)
+                                .status(InformationStatus.CUSTOMER)
                                 .title("Đơn Hàng Của Bạn Đã Được Chấp Nhận")
                                 .user(i.getUser())
                                 .isRead(false)
@@ -167,6 +170,7 @@ public class OrderServiceImpl implements OrderService {
                     } else if (i.getStatus().equals(OrderStatus.CANCELLED)) {
                         informationRepository.save(Information.builder()
                                 .order(i)
+                                .status(InformationStatus.CUSTOMER)
                                 .title("Đơn Hàng Của Bạn Đã Đã Bị Hủy")
                                 .user(i.getUser())
                                 .isRead(false)

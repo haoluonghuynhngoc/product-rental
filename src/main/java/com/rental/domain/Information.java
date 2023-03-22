@@ -3,6 +3,7 @@ package com.rental.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rental.domain.enums.InformationStatus;
 import com.rental.domain.enums.NotificationStatus;
+import com.rental.domain.enums.RoleName;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -37,6 +38,9 @@ public class Information {
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private InformationStatus status;
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties(value = { "images", "brand", "category", "orderDetails" }, allowSetters = true)

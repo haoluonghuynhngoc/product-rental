@@ -21,6 +21,7 @@ public class OrderShowDTO {
     private Integer totalQuantity;
     private Double totalPrice;
     private OrderStatus status;
+    private Instant createdDate;
     private String message;
     private Boolean isRead;
     private String address;
