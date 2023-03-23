@@ -2,6 +2,7 @@ package com.rental.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.rental.domain.enums.OrderStatus;
 import com.rental.domain.enums.ProductStatus;
@@ -26,5 +27,6 @@ public interface ProductService {
   //  List<ProductDTO> findAllProduct();
     Optional<ProductDTO> findOne(Long id);
     List<ProductDTO> searchByNameId(String nameProduct);
+    PagingResponse<ProductDTO> randomProduct(Pageable pageable);
     void delete(Long id);
 }

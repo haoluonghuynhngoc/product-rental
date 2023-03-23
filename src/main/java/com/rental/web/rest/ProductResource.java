@@ -173,7 +173,7 @@ public class ProductResource {
 //                .build());
 //    }
     @GetMapping("/getAllProduct")
-    public ResponseEntity<PagingResponse<ProductDTO>> getAllCategories(
+    public ResponseEntity<PagingResponse<ProductDTO>> getAllProduct(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<ProductDTO> findAllProduct = productService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(PagingResponse.<ProductDTO>builder()
@@ -183,6 +183,11 @@ public class ProductResource {
                 .totalItem(findAllProduct.getTotalElements())
                 .contends(findAllProduct.getContent())
                 .build());
+    }
+    @GetMapping("/getRandomProduct")
+    public ResponseEntity<PagingResponse<ProductDTO>> getRandomProduct(
+            @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.randomProduct(pageable));
     }
     @PutMapping("/updateStatus/{id}")
     public ResponseEntity<ProductDTO> update(@PathVariable(name = "id") Long id, @RequestParam ProductStatus status) {

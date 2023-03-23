@@ -61,13 +61,13 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productDTO.getId())
                 .map(existingProduct -> {
                     //==================================
-                    if (productDTO.getName()==null||productDTO.getName().isEmpty())
+                    if (productDTO.getName() == null || productDTO.getName().isEmpty())
                         productDTO.setName(existingProduct.getName());
-                    if (productDTO.getPrice()==null)
+                    if (productDTO.getPrice() == null)
                         productDTO.setPrice(existingProduct.getPrice());
-                    if (productDTO.getDeposit()==null)
+                    if (productDTO.getDeposit() == null)
                         productDTO.setDeposit(existingProduct.getDeposit());
-                    if (productDTO.getDescription()==null||productDTO.getDescription().isEmpty())
+                    if (productDTO.getDescription() == null || productDTO.getDescription().isEmpty())
                         productDTO.setDescription(existingProduct.getDescription());
                     //==================================
                     if (productDTO.getCategory() == null)
@@ -168,6 +168,23 @@ public class ProductServiceImpl implements ProductService {
                     return modelMapper.map(product, ProductDTO.class);
                 }
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public PagingResponse<ProductDTO> randomProduct(Pageable pageable) {
+        List<ProductDTO> listProduct = productRepository.findAll().stream().map(
+               p->modelMapper.map(p,ProductDTO.class)).collect(Collectors.toList());
+        Collections.shuffle(listProduct,new Random()); // trộn nó một cách ngẫu nhiên không xắp xếp
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), listProduct.size());
+        Page<ProductDTO> pageProduct = new PageImpl<>(listProduct.subList(start, end), pageable, listProduct.size());
+        return PagingResponse.<ProductDTO>builder()
+                .page(pageProduct.getPageable().getPageNumber() + 1)
+                .size(pageProduct.getSize())
+                .totalPage(pageProduct.getTotalPages())
+                .totalItem(pageProduct.getTotalElements())
+                .contends(pageProduct.getContent())
+                .build();
     }
 
     @Transactional
