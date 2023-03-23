@@ -3,6 +3,7 @@ package com.rental.web.rest;
 import java.util.List;
 import com.rental.repository.UserRepository;
 import com.rental.service.dto.PagingResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,12 +32,14 @@ public class NotificationResource {
     private UserRepository userRepository;
 
     @PostMapping("/create")
+    @Operation(deprecated = true)
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.createNotification(notificationDTO));
 
     }
 
     @PutMapping("/update/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<NotificationDTO> updateNotification(
             @RequestBody NotificationDTO notificationDTO) {
         if (notificationDTO.getId() == null)
@@ -50,6 +53,7 @@ public class NotificationResource {
     }
 
     @GetMapping("/getAll")
+    @Operation(deprecated = true)
     public ResponseEntity<PagingResponse<NotificationDTO>> getAllNotifications(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<NotificationDTO> pageNotification = notificationService.findAll(pageable);
@@ -64,6 +68,7 @@ public class NotificationResource {
     }
 
     @GetMapping("/getOne/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<NotificationDTO> getNotification(@PathVariable Long id) {
         if (!notificationRepository.existsById(id))
             throw new IllegalArgumentException("Cant not find the notification have id " + id + " in the data ");
@@ -74,6 +79,7 @@ public class NotificationResource {
 
     // chua sua
     @DeleteMapping("/remove/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
         if (!notificationRepository.existsById(id))
             throw new IllegalArgumentException("Cant not find the Id :" + id + "In the data ");
@@ -81,6 +87,7 @@ public class NotificationResource {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
     @GetMapping("/getAllByUser/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<List<NotificationDTO>> getAllNotificationByUser(@PathVariable(name = "id") Long id) {
         if (!userRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm thấy người dùng có id :"+id);
@@ -88,6 +95,7 @@ public class NotificationResource {
     }
 
     @GetMapping("/getCountIsRead/{id}")
+    @Operation(deprecated = true)
     public ResponseEntity<Integer> getCountRead(@PathVariable(name = "id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(notificationService.findALLOrderIsRead(id));
     }
