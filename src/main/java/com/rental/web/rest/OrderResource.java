@@ -102,10 +102,14 @@ public class OrderResource {
 
 
     @PutMapping("/updateStatus/{id}")
-    public ResponseEntity<OrderShowDTO> update(@PathVariable(name = "id") Long id, @RequestParam OrderStatus status) {
+    public ResponseEntity<OrderShowDTO> update(@PathVariable(name = "id") Long id,
+                                               @RequestParam(name = "status") OrderStatus status,
+                                               @RequestParam(name = "contend") String contend) {
         if (!orderRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm thây id : " + id + " trong dữ liệu");
-        return orderService.update(status, id).map(
+        if (contend == null ||  contend.equals("")) // câu này coi xem bên client có truyền về được k
+            contend = "Đơn hàng của bạn đã bị hủy bỏ vì sản phẩm bị hỏng !!!";
+        return orderService.update(status, id,contend).map(
                 orderData -> ResponseEntity.status(HttpStatus.OK).body(orderData)
         ).orElseThrow(
                 () -> new IllegalArgumentException("Cant not update order")

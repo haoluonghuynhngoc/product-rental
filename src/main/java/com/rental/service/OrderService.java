@@ -16,7 +16,7 @@ public interface OrderService {
 
     OrderDTO save(OrderDTO orderDTO);
 
-    Optional<OrderShowDTO> update(OrderStatus status,Long id);
+    Optional<OrderShowDTO> update(OrderStatus status,Long id,String contend);
 
     Page<OrderShowDTO> findAll(Pageable pageable);
 

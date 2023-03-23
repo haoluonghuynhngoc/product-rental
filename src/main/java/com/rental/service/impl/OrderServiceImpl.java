@@ -145,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<OrderShowDTO> update(OrderStatus status, Long id) {
+    public Optional<OrderShowDTO> update(OrderStatus status, Long id, String contend) {
         return orderRepository.findById(id).map(
                 i -> {
                     i.setStatus(status);
@@ -174,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
                                 .title("Đơn Hàng Của Bạn Đã Đã Bị Hủy")
                                 .user(i.getUser())
                                 .isRead(false)
-                                .description("Đơn hàng của bạn đã bị quản trị viên hủy bỏ vui lòng kiểm tra thông tin")
+                                .description(contend)
                                 .build());
                         i.getOrderDetails().forEach(
                                 p -> p.getProduct().setStatus(ProductStatus.APPROVED)
