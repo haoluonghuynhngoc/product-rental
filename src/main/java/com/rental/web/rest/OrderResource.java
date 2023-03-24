@@ -52,7 +52,7 @@ public class OrderResource {
             throw new IllegalArgumentException("Không thể tìm thấy sản phẩm có Id : " + orderDTO.getOrderDetails().getProductId() + " trong dữ liệu");
         }
         List<OrderDetails> listOrderDetails = orderDetailsRepository.findAllByProduct(productRepository.findById(
-                orderDTO.getOrderDetails().getProductId()).orElse(null)).stream()
+                        orderDTO.getOrderDetails().getProductId()).orElse(null)).stream()
                 .filter(orderDetails -> {
                     return !orderDetails.getOrder().getStatus().equals(OrderStatus.CANCELLED);
                 })
@@ -106,14 +106,23 @@ public class OrderResource {
                                                @RequestParam(name = "status") OrderStatus status,
                                                @RequestParam(name = "contend") String contend) {
         if (!orderRepository.existsById(id))
-            throw new IllegalArgumentException("Không thể tìm thây id : " + id + " trong dữ liệu");
-        if (contend == null ||  contend.equals("")) // câu này coi xem bên client có truyền về được k
+            throw new IllegalArgumentException("Không thể tìm thấy đơn hàng có id : " + id + " trong dữ liệu");
+        if(orderDetailsRepository.findAllByOrder(orderRepository.findById(id).orElse(null)).isEmpty())
+            throw new IllegalArgumentException("Đơn hàng chi tiết đã bị hủy bỏ nên không thể cập nhật trạng thái đơn hàng");
+        if (contend == null || contend.equals("")) // câu này coi xem bên client có truyền về được k
             contend = "Đơn hàng của bạn đã bị hủy bỏ vì sản phẩm bị hỏng !!!";
-        return orderService.update(status, id,contend).map(
+
+        return orderService.update(status, id, contend).map(
                 orderData -> ResponseEntity.status(HttpStatus.OK).body(orderData)
         ).orElseThrow(
-                () -> new IllegalArgumentException("Cant not update order")
+                () -> new IllegalArgumentException("Không thể cập nhật đơn hàng")
         );
+    }
+    @GetMapping("/getAllStatus")
+    public ResponseEntity<PagingResponse<OrderShowDTO>> getAllOrderHistory(
+            @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+            @RequestParam(name = "status") OrderStatus status ) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.findAllHistory(pageable,status));
     }
 
     @GetMapping("/getAll")

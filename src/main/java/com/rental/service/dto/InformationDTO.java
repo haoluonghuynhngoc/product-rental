@@ -13,6 +13,7 @@ import java.time.Instant;
 public class InformationDTO {
     private Long id;
     private String title;
+    private String image;
     private String description;
     private Boolean isRead;
     private InformationStatus status;

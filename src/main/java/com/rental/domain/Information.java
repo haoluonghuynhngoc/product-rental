@@ -38,6 +38,8 @@ public class Information {
     @Column(name = "modified_date")
     @LastModifiedDate
     private Instant modifiedDate;
+    @Column(name = "image", columnDefinition = "nvarchar(max)")
+    private String image;
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     private InformationStatus status;

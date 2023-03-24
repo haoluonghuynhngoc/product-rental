@@ -1,5 +1,6 @@
 package com.rental.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import com.rental.service.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,13 +45,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CartItemsRepository cartItemsRepository;
     @Autowired
-    private OrderDetailsRepository orderDetailsRepository;
-    @Autowired
     private InformationRepository informationRepository;
     @Autowired
-    private NotificationRepository notificationRepository;
-    @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
 
 
     //    @Override
@@ -107,17 +107,7 @@ public class OrderServiceImpl implements OrderService {
         }
         cartItemsRepository.removeCartItemsByUserAndProduct(
                 userRepository.findById(orderDTO.getUserId()).orElse(null), product);
-        Order order = orderRepository.save(orderConvert); // save to database
-        informationRepository.save(Information.builder() // nếu login bằng gmail thì kiểm tra lại
-                .order(order)
-                .status(InformationStatus.CENSORSHIP)
-                .title("Đơn Hàng có Id : " + order.getId() + " chờ kiểm duyệt")
-                .user(userRepository.findByUsername("admin"))
-                .isRead(false)
-                .description("Đã có đơn hàng từ sản phẩm " + product.getName() + " từ người dùng "
-                        + userData.getUsername() + " vui lòng kiểm duyệt sản phẩm ")
-                .build());
-        return modelMapper.map(order, OrderDTO.class);
+        return modelMapper.map(orderRepository.save(orderConvert), OrderDTO.class);
     }
 
     @Override
@@ -126,6 +116,23 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(pageable).map(o -> {
             return modelMapper.map(o, OrderShowDTO.class);
         });
+    }
+
+    @Override
+    public PagingResponse<OrderShowDTO> findAllHistory(Pageable pageable,OrderStatus status) {
+        List<OrderShowDTO> listStatus = orderRepository.findAllByStatus(status).map(
+                o -> modelMapper.map(o, OrderShowDTO.class)
+        ).collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), listStatus.size());
+        Page<OrderShowDTO> pageProduct = new PageImpl<>(listStatus.subList(start, end), pageable, listStatus.size());
+        return PagingResponse.<OrderShowDTO>builder()
+                .page(pageProduct.getPageable().getPageNumber() + 1)
+                .size(pageProduct.getSize())
+                .totalPage(pageProduct.getTotalPages())
+                .totalItem(pageProduct.getTotalElements())
+                .contends(pageProduct.getContent())
+                .build();
     }
 
     @Override
@@ -148,38 +155,80 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderShowDTO> update(OrderStatus status, Long id, String contend) {
         return orderRepository.findById(id).map(
                 i -> {
-                    i.setStatus(status);
-                    i.setIsRead(true);
-//                    informationRepository.findByUserAndOrder(i.getUser(), i).map(
-//                            x -> {
-//                                x.setIsRead(true);
-//                                return x;
-//                            });
-                    if (i.getStatus().equals(OrderStatus.DELIVERING)) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String url = "";
+                    List<Image> images = new ArrayList<>();
+                    i.getOrderDetails().forEach(
+                            orderDetails -> {
+                                if (orderDetails.getProduct().getImages() != null)
+                                    images.addAll(orderDetails.getProduct().getImages());
+                            }
+                    );
+                    if (!images.isEmpty()) { // cái này để check rằng nếu sản phẩm không có ảnh thì cũng không thể quăn lỗi
+                        url = images.get(0).getUrl();
+                    }
+                    if (status.equals(OrderStatus.DELIVERING)) {
+                        i.getOrderDetails().forEach(
+                                orderDetails -> {
+                                    Calendar currentDate = Calendar.getInstance();
+                                    currentDate.add(Calendar.DATE, 2);
+                                    Calendar currentDateCheck = Calendar.getInstance();
+                                    Calendar borrowDay = Calendar.getInstance();
+                                    borrowDay.setTime(orderDetails.getOrderBorrowDate());
+                                    if (currentDateCheck.getTime().compareTo(borrowDay.getTime()) > 0) { // không cho ngày quá khứ
+                                        throw new IllegalArgumentException("Sản Phẩm " + orderDetails.getProduct().getName() + " có ngày giao là "
+                                                + formatter.format(borrowDay.getTime())
+                                                + " nên đã qua ngày giao hàng ");
+                                    }
+                                    if (currentDate.getTime().compareTo(borrowDay.getTime()) < 0) { // set ngày hiện tại lên 2 ngày
+                                        throw new IllegalArgumentException("Sản Phẩm " + orderDetails.getProduct().getName() + " có ngày giao là "
+                                                + formatter.format(borrowDay.getTime()) + " nên giao lúc này là không hợp lệ, " +
+                                                "chỉ giao những đơn hàng có ngày thuê lớn hơn ngày hiện tại từ 1 đến 2 ngày ");
+                                    }
+                                }
+                        );
                         informationRepository.save(Information.builder()
                                 .order(i)
                                 .status(InformationStatus.CUSTOMER)
                                 .title("Đơn Hàng Của Bạn Đã Được Chấp Nhận")
                                 .user(i.getUser())
                                 .isRead(false)
+                                .image(url)
                                 .description("Đơn hàng của bạn đang được giao đến địa chỉ " + i.getAddress() +
                                         " vui lòng kiểm tra thông tin")
                                 .build());
                         i.getOrderDetails().forEach(
                                 p -> p.getProduct().setStatus(ProductStatus.RENTING));
-                    } else if (i.getStatus().equals(OrderStatus.CANCELLED)) {
+                    } else if (status.equals(OrderStatus.CANCELLED)) {
                         informationRepository.save(Information.builder()
                                 .order(i)
                                 .status(InformationStatus.CUSTOMER)
                                 .title("Đơn Hàng Của Bạn Đã Đã Bị Hủy")
                                 .user(i.getUser())
+                                .image(url)
                                 .isRead(false)
                                 .description(contend)
                                 .build());
                         i.getOrderDetails().forEach(
                                 p -> p.getProduct().setStatus(ProductStatus.APPROVED)
                         );
+                    } else if (status.equals(OrderStatus.PAID)) {
+                        informationRepository.save(Information.builder()
+                                .order(i)
+                                .status(InformationStatus.CUSTOMER)
+                                .image(url)
+                                .title("Xin Cảm Ơn")
+                                .user(i.getUser())
+                                .isRead(false)
+                                .description("Cảm ơn bạn đã tin tưởng và sử dụng sản phẩm của chúng tôi " +
+                                        " admid sẽ liên hệ với bạn sớm nhất để hoàn trả tiền cọc")
+                                .build());
+                        i.getOrderDetails().forEach(
+                                p -> p.getProduct().setStatus(ProductStatus.APPROVED)
+                        );
                     }
+                    i.setStatus(status);
+                    i.setIsRead(true);
                     return modelMapper.map(orderRepository.save(i), OrderShowDTO.class);
                 }
         );
