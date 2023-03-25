@@ -73,8 +73,8 @@ public class AutomaticSchedule {
         }
     }
 
-    //  @Scheduled(fixedDelay = 100000)
-    @Scheduled(cron = "0 0 2 * * ?")
+  //  @Scheduled(fixedDelay = 100000)
+   @Scheduled(cron = "0 0 1 * * ?")
     public void scheduleFixedDelayAdmin() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -87,7 +87,7 @@ public class AutomaticSchedule {
                     order -> {
                         orderDetailsRepository.findAllByOrder(order).forEach(
                                 orderDetails -> {
-                                    String imageUrl = "";
+                                    String imageUrl ="";
                                     Calendar currentDate = Calendar.getInstance();
                                     currentDate.add(Calendar.DATE, 1);
                                     Calendar returnDate = Calendar.getInstance();
@@ -98,6 +98,17 @@ public class AutomaticSchedule {
                                             formatter.format(returnDate.getTime()))) {
                                         System.out.println("Sending info ... order " + order.getId()
                                                 + " and product " + orderDetails.getProduct().getId() + " to admin");
+                                       Product product= productRepository.findById(orderDetails.getProduct().getId()).orElse(null);
+
+//                                       if (product!=null) {
+//                                           List<Image> imageList = new ArrayList<>();
+//                                           if (!product.getImages().isEmpty()){
+//                                               imageList.addAll(product.getImages());
+//                                           }
+//                                           if (imageList.isEmpty()){
+//                                               imageUrl=imageList.get(0).getUrl();
+//                                           }
+//                                       }
                                         informationRepository.save(
                                                 Information.builder()
                                                         .title("Sản Phẩm Xắp Đến Ngày Trả Hàng")

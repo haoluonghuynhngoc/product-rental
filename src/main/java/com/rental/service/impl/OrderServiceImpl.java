@@ -190,7 +190,7 @@ public class OrderServiceImpl implements OrderService {
                         informationRepository.save(Information.builder()
                                 .order(i)
                                 .status(InformationStatus.CUSTOMER)
-                                .title("Đơn Hàng Của Bạn Đã Được Chấp Nhận")
+                                .title("Đơn Hàng Của Bạn Đã Được Giao")
                                 .user(i.getUser())
                                 .isRead(false)
                                 .image(url)
@@ -222,6 +222,19 @@ public class OrderServiceImpl implements OrderService {
                                 .isRead(false)
                                 .description("Cảm ơn bạn đã tin tưởng và sử dụng sản phẩm của chúng tôi " +
                                         " admid sẽ liên hệ với bạn sớm nhất để hoàn trả tiền cọc")
+                                .build());
+                        i.getOrderDetails().forEach(
+                                p -> p.getProduct().setStatus(ProductStatus.APPROVED)
+                        );
+                    }else if (status.equals(OrderStatus.CONFIRMED)) {
+                        informationRepository.save(Information.builder()
+                                .order(i)
+                                .status(InformationStatus.CUSTOMER)
+                                .image(url)
+                                .title("Đơn Hàng Của Bạn Đã Được Chấp Nhận")
+                                .user(i.getUser())
+                                .isRead(false)
+                                .description("Admin đã chấp nhận đợn hàng của bạn chúng tôi sẽ giao sản phẩm đến cho bạn trước 1 ngày")
                                 .build());
                         i.getOrderDetails().forEach(
                                 p -> p.getProduct().setStatus(ProductStatus.APPROVED)

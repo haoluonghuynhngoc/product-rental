@@ -5,8 +5,8 @@ package com.rental.domain.enums;
  */
 public enum OrderStatus {
     PENDING,
+    CONFIRMED,
     DELIVERING,
-    DELIVERED,
     CANCELLED,
     RECALLED,
     PAID,
