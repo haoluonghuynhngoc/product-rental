@@ -122,7 +122,7 @@ public class OrderServiceImpl implements OrderService {
     public PagingResponse<OrderShowDTO> findAllHistory(Pageable pageable,OrderStatus status) {
         List<OrderShowDTO> listStatus = orderRepository.findAllByStatus(status).map(
                 o -> modelMapper.map(o, OrderShowDTO.class)
-        ).collect(Collectors.toList());
+        ).sorted((x, y) -> y.getId().compareTo(x.getId())).collect(Collectors.toList());
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), listStatus.size());
         Page<OrderShowDTO> pageProduct = new PageImpl<>(listStatus.subList(start, end), pageable, listStatus.size());

@@ -4,6 +4,7 @@ import com.rental.domain.enums.InformationStatus;
 import com.rental.repository.InformationRepository;
 import com.rental.service.InformationService;
 import com.rental.service.dto.InformationDTO;
+import com.rental.service.dto.InformationShowDTO;
 import com.rental.service.dto.PagingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -24,15 +25,13 @@ public class InformationResource {
     private InformationService informationService;
 
     @GetMapping("/getAll")
-    public ResponseEntity<PagingResponse<InformationDTO>> getAllInfoAdmin(
+    public ResponseEntity<PagingResponse<InformationShowDTO>> getAllInfoAdmin(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoAdmin(pageable));
     }
     @GetMapping("/getAllUser/{id}")
-    public ResponseEntity<PagingResponse<InformationDTO>> getAllInfoUser(
+    public ResponseEntity<PagingResponse<InformationShowDTO>> getAllInfoUser(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable,@PathVariable  Long id) {
-        if (!informationRepository.existsById(id))
-            throw new IllegalArgumentException("Không thể tìm thấy thông báo đơn hàng có id :" + id);
         return ResponseEntity.status(HttpStatus.OK).body(informationService.findAllInfoUser(pageable,id));
     }
 
@@ -47,7 +46,7 @@ public class InformationResource {
                 informationService.findAllInfoIsReadByUser(1L,InformationStatus.CENSORSHIP));
     }
     @GetMapping("/getDetailInfo/{id}")
-    public ResponseEntity<InformationDTO> getInfoById(@PathVariable Long id) {
+    public ResponseEntity<InformationShowDTO> getInfoById(@PathVariable Long id) {
         if (!informationRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm thấy thông báo đơn hàng có id :" + id);
         return ResponseEntity.status(HttpStatus.OK).body(
