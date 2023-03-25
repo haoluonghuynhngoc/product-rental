@@ -18,7 +18,7 @@ public interface OrderService {
     OrderDTO save(OrderDTO orderDTO);
 
     Optional<OrderShowDTO> update(OrderStatus status,Long id,String contend);
-
+    public PagingResponse<OrderShowDTO> findAllHistoryUser(Pageable pageable,boolean check,Long id);
     Page<OrderShowDTO> findAll(Pageable pageable);
     PagingResponse<OrderShowDTO> findAllHistory(Pageable pageable,OrderStatus status);
     Optional<OrderShowDTO> findOne(Long id);

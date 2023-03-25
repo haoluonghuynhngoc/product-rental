@@ -107,7 +107,7 @@ public class OrderResource {
                                                @RequestParam(name = "contend") String contend) {
         if (!orderRepository.existsById(id))
             throw new IllegalArgumentException("Không thể tìm thấy đơn hàng có id : " + id + " trong dữ liệu");
-        if(orderDetailsRepository.findAllByOrder(orderRepository.findById(id).orElse(null)).isEmpty())
+        if (orderDetailsRepository.findAllByOrder(orderRepository.findById(id).orElse(null)).isEmpty())
             throw new IllegalArgumentException("Đơn hàng chi tiết đã bị hủy bỏ nên không thể cập nhật trạng thái đơn hàng");
         if (contend == null || contend.equals("")) // câu này coi xem bên client có truyền về được k
             contend = "Đơn hàng của bạn đã bị hủy bỏ vì sản phẩm bị hỏng !!!";
@@ -118,11 +118,12 @@ public class OrderResource {
                 () -> new IllegalArgumentException("Không thể cập nhật đơn hàng")
         );
     }
+
     @GetMapping("/getAllStatus")
     public ResponseEntity<PagingResponse<OrderShowDTO>> getAllOrderHistory(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-            @RequestParam(name = "status") OrderStatus status ) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.findAllHistory(pageable,status));
+            @RequestParam(name = "status") OrderStatus status) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.findAllHistory(pageable, status));
     }
 
     @GetMapping("/getAll")
@@ -180,5 +181,16 @@ public class OrderResource {
     @GetMapping("/getStatic/{year}")
     public ResponseEntity<?> getOrderStatistics(@PathVariable(name = "year") int year) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.statisticOrderByYear(year));
+    }
+
+    @GetMapping("/getAllHistoryUser/{id}")
+    public ResponseEntity<PagingResponse<OrderShowDTO>> getAllOrderHistoryUser(
+            @org.springdoc.api.annotations.ParameterObject Pageable pageable
+            , @PathVariable Long id
+            , @RequestParam(name = "check") boolean check
+    ) {
+        if (!userRepository.existsById(id))
+            throw new IllegalArgumentException("Không thể tìm người dùng có Id :" + id + "trong dữ liệu ");
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.findAllHistoryUser(pageable, check, id));
     }
 }

@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PagingResponse<OrderShowDTO> findAllHistory(Pageable pageable,OrderStatus status) {
+    public PagingResponse<OrderShowDTO> findAllHistory(Pageable pageable, OrderStatus status) {
         List<OrderShowDTO> listStatus = orderRepository.findAllByStatus(status).map(
                 o -> modelMapper.map(o, OrderShowDTO.class)
         ).sorted((x, y) -> y.getId().compareTo(x.getId())).collect(Collectors.toList());
@@ -176,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
                                     Calendar borrowDay = Calendar.getInstance();
                                     borrowDay.setTime(orderDetails.getOrderBorrowDate());
                                     if (currentDateCheck.getTime().compareTo(borrowDay.getTime()) > 0) { // không cho ngày quá khứ
-                                        throw new IllegalArgumentException("Sản Phẩm " + orderDetails.getProduct().getName() + " có ngày giao là "
+                                        throw new IllegalArgumentException("Sản Phẩm " + orderDetails.getProduct().getName() + " có ngày mượn là "
                                                 + formatter.format(borrowDay.getTime())
                                                 + " nên đã qua ngày giao hàng ");
                                     }
@@ -226,7 +226,7 @@ public class OrderServiceImpl implements OrderService {
                         i.getOrderDetails().forEach(
                                 p -> p.getProduct().setStatus(ProductStatus.APPROVED)
                         );
-                    }else if (status.equals(OrderStatus.CONFIRMED)) {
+                    } else if (status.equals(OrderStatus.CONFIRMED)) {
                         informationRepository.save(Information.builder()
                                 .order(i)
                                 .status(InformationStatus.CUSTOMER)
@@ -245,6 +245,31 @@ public class OrderServiceImpl implements OrderService {
                     return modelMapper.map(orderRepository.save(i), OrderShowDTO.class);
                 }
         );
+    }
+
+    // true => don hang false lich su
+    @Override
+    public PagingResponse<OrderShowDTO> findAllHistoryUser(Pageable pageable, boolean check, Long id) {
+        List<OrderShowDTO> listStatus = orderRepository.findAllByUser(userRepository.findById(id).get()).stream().filter(o ->
+        {
+            if (!check) {
+                return o.getStatus().equals(OrderStatus.PAID) || o.getStatus().equals(OrderStatus.CANCELLED);
+            } else {
+                return o.getStatus().equals(OrderStatus.PENDING) || o.getStatus().equals(OrderStatus.DELIVERING)|| o.getStatus().equals(OrderStatus.CONFIRMED);
+            }
+        }).map(
+                o -> modelMapper.map(o, OrderShowDTO.class)
+        ).sorted((x, y) -> y.getId().compareTo(x.getId())).collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), listStatus.size());
+        Page<OrderShowDTO> pageProduct = new PageImpl<>(listStatus.subList(start, end), pageable, listStatus.size());
+        return PagingResponse.<OrderShowDTO>builder()
+                .page(pageProduct.getPageable().getPageNumber() + 1)
+                .size(pageProduct.getSize())
+                .totalPage(pageProduct.getTotalPages())
+                .totalItem(pageProduct.getTotalElements())
+                .contends(pageProduct.getContent())
+                .build();
     }
 
     @Override
