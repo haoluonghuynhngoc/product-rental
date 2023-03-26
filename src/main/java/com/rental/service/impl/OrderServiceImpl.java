@@ -181,9 +181,14 @@ public class OrderServiceImpl implements OrderService {
                                                 + " nên đã qua ngày giao hàng ");
                                     }
                                     if (currentDate.getTime().compareTo(borrowDay.getTime()) < 0) { // set ngày hiện tại lên 2 ngày
+                                        i.getOrderDetails().forEach(o -> {
+                                            if (o.getProduct().getStatus().equals(ProductStatus.RENTING))
+                                                throw new IllegalArgumentException("Sản phẩm đang được người dùng khác thuê");
+                                        });
                                         throw new IllegalArgumentException("Sản Phẩm " + orderDetails.getProduct().getName() + " có ngày giao là "
                                                 + formatter.format(borrowDay.getTime()) + " nên giao lúc này là không hợp lệ, " +
                                                 "chỉ giao những đơn hàng có ngày thuê lớn hơn ngày hiện tại từ 1 đến 2 ngày ");
+
                                     }
                                 }
                         );
@@ -255,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
             if (!check) {
                 return o.getStatus().equals(OrderStatus.PAID) || o.getStatus().equals(OrderStatus.CANCELLED);
             } else {
-                return o.getStatus().equals(OrderStatus.PENDING) || o.getStatus().equals(OrderStatus.DELIVERING)|| o.getStatus().equals(OrderStatus.CONFIRMED);
+                return o.getStatus().equals(OrderStatus.PENDING) || o.getStatus().equals(OrderStatus.DELIVERING) || o.getStatus().equals(OrderStatus.CONFIRMED);
             }
         }).map(
                 o -> modelMapper.map(o, OrderShowDTO.class)
@@ -292,12 +297,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderStatisticsDTO> statisticOrderByYear(int year) {
         List<OrderStatisticsDTO> listOrderStatistics = new ArrayList<>();
-
         List<Order> listOrderYear = orderRepository.findAll().stream().filter(o ->
         {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(Date.from(o.getCreatedDate()));
-            return calendar.get(Calendar.YEAR) == year; // đúng năm thì nó lấy k đúng năm thì không lấy
+            return calendar.get(Calendar.YEAR) == year && o.getStatus().equals(OrderStatus.PAID); // đúng năm thì nó lấy k đúng năm thì không lấy
         }).collect(Collectors.toList());
 
         Map<Integer, List<Order>> monthOrder = new HashMap<>();
@@ -326,7 +330,6 @@ public class OrderServiceImpl implements OrderService {
                     .totalRevenue(totalRevenue)
                     .build());
         });
-
         return listOrderStatistics;
     }
 }
